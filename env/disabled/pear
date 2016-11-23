@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#PEAR
+export PEAR_HOME=~/pear
+export PATH=$PEAR_HOME/bin/:$PATH

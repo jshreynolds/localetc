@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#XEP
+export XEP_HOME=$PERSONAL_JAVA_LIB_DIR/xep-4.2
+export PATH=$XEP_HOME:$PATH

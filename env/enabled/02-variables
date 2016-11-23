@@ -1,0 +1,4 @@
+#!/bin/bash
+export EDITOR=vi
+export MANWIDTH=80
+export RSYNC_RSH=/usr/bin/ssh

@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#SWT
+export CLASSPATH=$JAVA_LIB_DIR/swt.jar:$CLASSPATH
+export CLASSPATH=$JAVA_LIB_DIR/swt-gtk.jar:$CLASSPATH

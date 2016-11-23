@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#ANDROID
+export ADT_HOME=/Applications/adt-bundle-mac-x86_64-20140321
+export PATH=$ADT_HOME/sdk/platform-tools:$PATH

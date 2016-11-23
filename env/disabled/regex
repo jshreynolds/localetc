@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#REGEX
+export CLASSPATH=$JAVA_LIB_DIR/regexp.jar:$CLASSPATH
+

@@ -1,0 +1,6 @@
+#! /bin/bash
+
+#Eclipse 3.0
+export ECLIPSE_HOME=~/opt/eclipse
+export PATH=$ECLIPSE_HOME:$PATH
+

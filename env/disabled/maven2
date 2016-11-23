@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#MAVEN
+export MAVEN_HOME=$PERSONAL_JAVA_LIB_DIR/apache-maven-2.0.10
+export PATH=$MAVEN_HOME/bin:$PATH

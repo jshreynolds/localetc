@@ -1,0 +1,11 @@
+#! /bin/bash
+
+#Sonar 2.10
+
+export SONAR_INSTALL_DIR=~/lib/sonar
+
+export SONAR_HOME=$SONAR_INSTALL_DIR/sonarqube-4.5.6
+export PATH=$SONAR_HOME/bin/macosx-universal-64/:$PATH
+
+export SONAR_RUNNER_HOME=$SONAR_INSTALL_DIR/sonar-scanner-2.5.1
+export PATH=$SONAR_RUNNER_HOME/bin/:$PATH

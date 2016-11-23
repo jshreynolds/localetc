@@ -1,0 +1,6 @@
+#! /bin/bash
+
+#SUN J2EE
+export J2EE_HOME=$PERSONAL_JAVA_LIB_DIR/j2ee_SDK_7
+export GLASSFISH_HOME=$J2EE_HOME
+export PATH=$J2EE_HOME/bin:$PATH

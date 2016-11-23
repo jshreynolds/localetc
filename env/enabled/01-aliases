@@ -1,0 +1,110 @@
+#! /bin/bash
+
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias env="env | sort"
+alias json='python -mjson.tool'
+alias la="ls -la --color=auto"
+alias ls="ls -G"
+alias mv="mv -iv"
+alias rmf='rm -f'
+alias rmrm='rm -rf'
+alias sutextedit='sudo /Applications/TextEdit.app/Contents/MacOS/TextEdit'
+alias where="type -all"
+alias xml="xmllint --format -"
+alias pactivate="source ./venv/bin/activate"
+
+# for initfile in /etc/init.d/*
+# do
+#   cmd=`basename $initfile`
+#   alias init.$cmd="sudo $initfile"
+# done
+
+su_cmds="bunzip2
+cat
+chmod
+chown
+cp
+gunzip
+gzip
+ln
+make
+mkdir
+mkdirheir
+mount
+mv
+patch
+rm
+tail
+tar
+unzip
+vi
+zip"
+
+for cmd in $su_cmds
+do
+  alias "su$cmd=sudo $cmd" 
+done
+
+sudo_cmds="alien
+adduser
+apache2ctl
+aptitude
+cfdisk
+checkinstall
+chkrootkit
+dd
+dhclient
+fdisk
+halt
+hciattach
+hciconfig
+hcidump
+hcitool
+hsfconfig
+ifconfig
+ifdown
+ifup
+insmod
+iptables
+iwconfig
+iwlist
+killall 
+l2ping
+losetup
+lsbus
+lspci
+mailq 
+make-kpkg
+mii-tool
+modprobe
+mount
+mount.crypt
+ndiswrapper
+netstat
+port
+reboot
+rfcomm
+rmmod
+shutdown
+synce-serial-start
+systool
+su
+sux
+suxterm
+umount
+update-modules
+update-alternatives
+userdel
+usermod
+useradd
+ussp-push
+wvdial"
+
+for cmd in $sudo_cmds
+do
+  alias $cmd="sudo $cmd" 
+done
+

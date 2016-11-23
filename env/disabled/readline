@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#READLINE
+export CLASSPATH=$JAVA_LIB_DIR/libreadline-java.jar:$CLASSPATH
+

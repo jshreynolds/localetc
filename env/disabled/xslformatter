@@ -1,0 +1,6 @@
+#! /bin/bash
+
+#XSL Formatter
+export ANTENNA_HOME=~/bin/XSLFormatter
+export LD_LIBRARY_PATH=$ANTENNA_HOME/lib:$LD_LIBRARY_PATH
+export PATH=$ANTENNA_HOME:$PATH

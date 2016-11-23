@@ -1,0 +1,4 @@
+#! /bin/bash
+
+export ANACONDA_HOME=~/lib/miniconda3
+export PATH=$PATH:$ANACONDA_HOME/bin
