@@ -1,5 +1,5 @@
 #!/bin/sh
 
-source source.folder enabled
+source source_folder enabled
 
 HOSTNAME=`hostname`
