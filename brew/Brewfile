@@ -6,10 +6,11 @@ brew 'bitrise'
 mas 'xcode', id: 497799835
 cask 'oclint'
 
-
 #web developement
 brew 'nvm'
+brew 'phantomjs'
 cask 'atom'
+cask 'paw'
 
 #general development
 brew 'python'
@@ -20,6 +21,12 @@ cask 'java'
 cask 'sublime-text'
 cask 'lighttable'
 cask 'macdown'
+cask 'mono-mdk'
+cask 'virtualbox'
+
+#creative
+cask 'adobe-creative-cloud'
+cask 'sketch'
 
 #mac life
 cask '1password'
@@ -29,9 +36,5 @@ cask 'dropbox'
 cask 'firefox'
 cask 'flux'
 cask 'google-chrome'
-cask 'mono-mdk'
-cask 'paw'
-cask 'sketch'
 cask 'slack'
 cask 'spectacle'
-cask 'virtualbox'
