@@ -1,0 +1,37 @@
+cask_args appdir: '/Applications'
+tap 'caskroom/cask'
+
+#iOS Development
+brew 'bitrise'
+mas 'xcode', id: 497799835
+cask 'oclint'
+
+
+#web developement
+brew 'nvm'
+cask 'atom'
+
+#general development
+brew 'python'
+brew 'python3'
+brew 'rbenv'
+brew 'vim'
+cask 'java'
+cask 'sublime-text'
+cask 'lighttable'
+cask 'macdown'
+
+#mac life
+cask '1password'
+cask 'cathode'
+cask 'chromium'
+cask 'dropbox'
+cask 'firefox'
+cask 'flux'
+cask 'google-chrome'
+cask 'mono-mdk'
+cask 'paw'
+cask 'sketch'
+cask 'slack'
+cask 'spectacle'
+cask 'virtualbox'

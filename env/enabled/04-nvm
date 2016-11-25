@@ -1,4 +1,11 @@
 #! /bin/bash
 
+NVM_INSTALL_DIR=~/.nvm
+
+if type brew > /dev/null; then
+    NVM_INSTALL_DIR=`brew --prefix nvm`
+fi
+
 export NVM_DIR=~/.nvm
-. "/usr/local/opt/nvm/nvm.sh"
+. "$NVM_INSTALL_DIR/nvm.sh"
+
