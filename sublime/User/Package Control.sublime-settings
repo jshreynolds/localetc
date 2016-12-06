@@ -1,0 +1,48 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+		"DashDoc"
+	],
+	"installed_packages":
+	[
+		"1337 Color Scheme",
+		"AutoPEP8",
+		"Babel",
+		"BracketHighlighter",
+		"ColorSchemeSelector",
+		"CSS Colors",
+		"DashDoc",
+		"DocBlockr",
+		"Dockerfile Syntax Highlighting",
+		"EditorConfig",
+		"Emmet",
+		"Gradle_Language",
+		"HTML-CSS-JS Prettify",
+		"Jasmine JS",
+		"JavaScript & NodeJS Snippets",
+		"Javascript Beautify",
+		"JavaScript Completions",
+		"Jedi - Python autocompletion",
+		"JsFormat",
+		"LiveStyle",
+		"Monokai JSON+",
+		"Neon Color Scheme",
+		"nginx",
+		"Oceanic Color Scheme",
+		"Package Control",
+		"Pretty JSON",
+		"Pytest Snippets",
+		"requirementstxt",
+		"SideBarEnhancements",
+		"Solarized Color Scheme",
+		"SublimeLinter",
+		"SublimeLinter-flake8",
+		"SublimeLinter-jshint",
+		"Tag",
+		"Theme - Soda SolarizedDark",
+		"Theme - Sodarized",
+		"TypeScript",
+		"Zen Tabs"
+	]
+}

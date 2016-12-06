@@ -1,0 +1,36 @@
+{
+	"always_show_minimap_viewport": true,
+	"binary_file_patterns":
+	[
+		"node_modules/",
+		"DS_Store"
+	],
+	"color_scheme": "Packages/User/SublimeLinter/Oceanic - Eighties (SL).tmTheme",
+	"draw_minimap_border": true,
+	"folder_exclude_patterns":
+	[
+		".svn",
+		".git",
+		".hg",
+		"CVS",
+		"node_modules",
+		".idea"
+	],
+	"font_face": "Source Code Pro",
+	"font_size": 12,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"DashDoc",
+		"Vintage",
+		"Zen Tabs"
+	],
+	"rulers":
+	[
+		80
+	],
+	"show_panel_on_build": true,
+	"theme": "Sodarized Light 3.sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"use_tab_stops": true
+}

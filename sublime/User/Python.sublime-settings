@@ -1,0 +1,14 @@
+{
+
+    // turn on word wrap for source and text
+    // default value is "auto", which means off for source and on for text
+    "word_wrap": true,
+
+    // set word wrapping at this column
+    // default value is 0
+    "wrap_width": 80,
+    
+
+    // "auto_complete_triggers": [{"selector": "source.python", "characters": "."}],
+
+}

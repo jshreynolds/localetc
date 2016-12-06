@@ -5,24 +5,30 @@ tap 'caskroom/cask'
 brew 'bitrise'
 mas 'xcode', id: 497799835
 cask 'oclint'
+cask 'fastlane'
 
 #web developement
 brew 'nvm'
 brew 'phantomjs'
+brew 'yarn'
 cask 'atom'
 cask 'paw'
+
 
 #general development
 brew 'python'
 brew 'python3'
+brew 'the_silver_searcher'
 brew 'rbenv'
 brew 'vim'
+brew 'watchman'
 cask 'java'
 cask 'sublime-text'
 cask 'lighttable'
 cask 'macdown'
 cask 'mono-mdk'
 cask 'virtualbox'
+
 
 #creative
 cask 'adobe-creative-cloud'
@@ -36,5 +42,8 @@ cask 'dropbox'
 cask 'firefox'
 cask 'flux'
 cask 'google-chrome'
+cask 'little-snitch'
 cask 'slack'
 cask 'spectacle'
+mas 'wunderlist', id: 410628904
+mas 'tomatoone', id: 907364780  

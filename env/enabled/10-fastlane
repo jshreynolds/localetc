@@ -1,0 +1,4 @@
+#! /bin/bash
+
+export FASTLANE_HOME="$HOME/.fastlane"
+export PATH=$FASTLANE_HOME/bin:$PATH

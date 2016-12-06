@@ -1,0 +1,55 @@
+"pathogen
+execute pathogen#infect()
+
+"colors
+colorscheme badwolf
+syntax enable 
+
+
+"Whitespace
+set tabstop=4
+set softtabstop=4
+set expandtab
+
+
+"ui
+set number "line number
+set showcmd "show last command
+set cursorline "show highlighted line where the cursor is
+
+filetype plugin indent on
+
+set wildmenu "show visual menu for autocomple
+set showmatch "show matching highlight for cursors
+
+"search
+set incsearch "search as characters are typed
+set hlsearch "highlight search
+
+nnoremap <leader><space> :nohlsearch<CR>
+
+set foldenable
+set foldlevelstart=10
+set foldnestmax=3
+
+"space to toggle foldage
+nnoremap <space> za
+
+set foldmethod=syntax
+
+"movement
+nnoremap j gj
+nnoremap k gk
+
+"leader shortcuts
+inoremap jk <esc>
+
+nnoremap <leader>u :GundoToggle<CR>
+nnoremap <leader>s :mksession<CR>
+nnoremap <leader>a :Ag
+                        
+"cloure
+autocmd VimEnter *       RainbowParenthesesToggle
+autocmd Syntax   clojure RainbowParenthesesLoadRound
+autocmd Syntax   clojure RainbowParenthesesLoadSquare
+autocmd Syntax   clojure RainbowParenthesesLoadBraces
