@@ -2,7 +2,6 @@ cask_args appdir: '/Applications'
 tap 'caskroom/cask'
 
 #iOS Development
-brew 'bitrise'
 mas 'xcode', id: 497799835
 cask 'oclint'
 cask 'fastlane'
@@ -22,6 +21,7 @@ brew 'the_silver_searcher'
 brew 'rbenv'
 brew 'vim'
 brew 'watchman'
+cask 'docker'
 cask 'java'
 cask 'sublime-text'
 cask 'lighttable'
@@ -43,6 +43,7 @@ cask 'firefox'
 cask 'flux'
 cask 'google-chrome'
 cask 'little-snitch'
+cask 'private-internet-access'
 cask 'slack'
 cask 'spectacle'
 mas 'wunderlist', id: 410628904
