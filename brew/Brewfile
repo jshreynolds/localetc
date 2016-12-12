@@ -5,6 +5,7 @@ tap 'caskroom/cask'
 brew 'python'
 brew 'python3'
 brew 'rbenv'
+brew 'leiningen'
 cask 'java'
 
 #web developement
@@ -16,9 +17,10 @@ cask 'paw'
 
 #mobile development
 brew 'android-sdk'
+cask 'android-studio'
+cask 'intel-haxm'
 
 #general development
-brew 'leiningen'
 brew 'the_silver_searcher'
 brew 'vim'
 brew 'watchman'
