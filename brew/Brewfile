@@ -1,10 +1,12 @@
 cask_args appdir: '/Applications'
 tap 'caskroom/cask'
 
-#iOS Development
-mas 'xcode', id: 497799835
-cask 'oclint'
-cask 'fastlane'
+#core development
+brew 'python'
+brew 'python3'
+brew 'rbenv'
+brew 'leiningen'
+cask 'java'
 
 #web developement
 brew 'nvm'
@@ -13,16 +15,16 @@ brew 'yarn'
 cask 'atom'
 cask 'paw'
 
+#mobile development
+brew 'android-sdk'
+cask 'android-studio'
+cask 'intel-haxm'
 
 #general development
-brew 'python'
-brew 'python3'
 brew 'the_silver_searcher'
-brew 'rbenv'
 brew 'vim'
 brew 'watchman'
 cask 'docker'
-cask 'java'
 cask 'sublime-text'
 cask 'lighttable'
 cask 'macdown'
@@ -48,3 +50,8 @@ cask 'slack'
 cask 'spectacle'
 mas 'wunderlist', id: 410628904
 mas 'tomatoone', id: 907364780  
+
+#iOS Development
+cask 'oclint'
+cask 'fastlane'
+mas 'xcode', id: 497799835
