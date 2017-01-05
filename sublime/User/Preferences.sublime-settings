@@ -5,7 +5,8 @@
 		"node_modules/",
 		"DS_Store"
 	],
-	"color_scheme": "Packages/User/SublimeLinter/Oceanic - Eighties (SL).tmTheme",
+	"color_scheme": "Packages/Neon Color Scheme/Neon.tmTheme",
+	"theme": "Soda Dark 3.sublime-theme",
 	"draw_minimap_border": true,
 	"folder_exclude_patterns":
 	[
@@ -21,16 +22,13 @@
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
-		"DashDoc",
-		"Vintage",
-		"Zen Tabs"
+		"Vintage"
 	],
 	"rulers":
 	[
 		80
 	],
 	"show_panel_on_build": true,
-	"theme": "Sodarized Light 3.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"use_tab_stops": true
 }

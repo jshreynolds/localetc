@@ -2,7 +2,6 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
-		"DashDoc"
 	],
 	"installed_packages":
 	[
@@ -12,6 +11,7 @@
 		"BracketHighlighter",
 		"ColorSchemeSelector",
 		"CSS Colors",
+		"Dark Neon Color Scheme",
 		"DashDoc",
 		"DocBlockr",
 		"Dockerfile Syntax Highlighting",
@@ -31,18 +31,19 @@
 		"nginx",
 		"Oceanic Color Scheme",
 		"Package Control",
+		"PackageResourceViewer",
 		"Pretty JSON",
 		"Pytest Snippets",
+		"Rainbowth",
 		"requirementstxt",
 		"SideBarEnhancements",
 		"Solarized Color Scheme",
 		"SublimeLinter",
 		"SublimeLinter-flake8",
 		"SublimeLinter-jshint",
-		"Tag",
+		"Theme - Soda",
 		"Theme - Soda SolarizedDark",
 		"Theme - Sodarized",
-		"TypeScript",
 		"Zen Tabs"
 	]
 }

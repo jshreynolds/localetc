@@ -1,0 +1,21 @@
+{
+  "languages": [
+    "lisp",
+    "scheme",
+    "clojure",
+    "clojurescript",
+    "hylang"
+  ],
+  "palettes": {
+    "default": [
+      "red",
+      "orange",
+      "yellow",
+      "green",
+      "blue",
+      "indigo",
+      "violet"
+    ],
+    "Neon": ["#c66", "#de935f", "#ee6", "#b5bd68", "#81a2be", "#b294bb", "#ff69b4", "#8a2be2"]
+  }
+}

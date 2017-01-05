@@ -20,6 +20,7 @@ cask 'paw'
 
 #android development
 brew 'android-sdk'
+brew 'android-ndk'
 cask 'android-studio'
 cask 'intel-haxm'
 
@@ -56,6 +57,7 @@ mas 'wunderlist', id: 410628904
 mas 'tomatoone', id: 907364780  
 mas 'numbers', id: 409203825
 mas 'keynote', id: 409183694
+mas 'evernote', id: 406056744
 
 #iOS Development
 cask 'oclint'
