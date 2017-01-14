@@ -35,6 +35,7 @@ cask 'lighttable'
 cask 'macdown'
 cask 'virtualbox'
 cask 'gitup'
+cask 'dash'
 
 #creative
 cask 'adobe-creative-cloud'
@@ -61,5 +62,4 @@ mas 'evernote', id: 406056744
 
 #iOS Development
 cask 'oclint'
-cask 'fastlane'
 mas 'xcode', id: 497799835
