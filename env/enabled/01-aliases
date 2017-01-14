@@ -14,6 +14,7 @@ alias rmrm='rm -rf'
 alias sutextedit='sudo /Applications/TextEdit.app/Contents/MacOS/TextEdit'
 alias where="type -all"
 alias xml="xmllint --format -"
+alias xcrmdd='rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*'
 alias pactivate="source ./venv/bin/activate"
 
 # for initfile in /etc/init.d/*
