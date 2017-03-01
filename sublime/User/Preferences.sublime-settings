@@ -6,7 +6,6 @@
 		"DS_Store"
 	],
 	"color_scheme": "Packages/Neon Color Scheme/Neon.tmTheme",
-	"theme": "Soda Dark 3.sublime-theme",
 	"draw_minimap_border": true,
 	"folder_exclude_patterns":
 	[
@@ -18,7 +17,7 @@
 		".idea"
 	],
 	"font_face": "Source Code Pro",
-	"font_size": 12,
+	"font_size": 17,
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
@@ -29,6 +28,7 @@
 		80
 	],
 	"show_panel_on_build": true,
+	"theme": "Soda Dark 3.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"use_tab_stops": true
 }

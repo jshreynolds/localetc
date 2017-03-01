@@ -17,6 +17,7 @@
 		"Dockerfile Syntax Highlighting",
 		"EditorConfig",
 		"Emmet",
+		"ESLint",
 		"Gradle_Language",
 		"HTML-CSS-JS Prettify",
 		"Jasmine JS",
@@ -41,9 +42,11 @@
 		"SublimeLinter",
 		"SublimeLinter-flake8",
 		"SublimeLinter-jshint",
+		"Swift",
 		"Theme - Soda",
 		"Theme - Soda SolarizedDark",
 		"Theme - Sodarized",
+		"TypeScript",
 		"Zen Tabs"
 	]
 }

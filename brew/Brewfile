@@ -36,16 +36,19 @@ cask 'macdown'
 cask 'virtualbox'
 cask 'gitup'
 cask 'dash'
+cask 'stretchly'
 
 #creative
 cask 'adobe-creative-cloud'
 cask 'sketch'
+cask 'scrivener'
 
 #mac life
 cask '1password'
 cask 'bettertouchtool'
 cask 'cathode'
 cask 'chromium'
+cask 'cloud'
 cask 'dropbox'
 cask 'firefox'
 cask 'flux'
