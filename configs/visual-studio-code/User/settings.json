@@ -1,0 +1,10 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.wordWrap": true,
+
+    "editor.fontFamily": "Source Code Pro",
+
+    "editor.fontSize": 14,
+    "workbench.colorTheme": "Neon",
+    "editor.minimap.enabled": true,
+}
