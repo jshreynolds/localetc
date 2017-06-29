@@ -5,7 +5,6 @@
 	],
 	"installed_packages":
 	[
-		"1337 Color Scheme",
 		"AutoPEP8",
 		"Babel",
 		"BracketHighlighter",
@@ -17,6 +16,7 @@
 		"Dockerfile Syntax Highlighting",
 		"EditorConfig",
 		"Emmet",
+		"Enhanced Clojure",
 		"ESLint",
 		"Gradle_Language",
 		"HTML-CSS-JS Prettify",
@@ -33,12 +33,14 @@
 		"Oceanic Color Scheme",
 		"Package Control",
 		"PackageResourceViewer",
+		"paredit",
 		"Pretty JSON",
 		"Pytest Snippets",
 		"Rainbowth",
 		"requirementstxt",
 		"SideBarEnhancements",
 		"Solarized Color Scheme",
+		"SublimeHaskell",
 		"SublimeLinter",
 		"SublimeLinter-flake8",
 		"SublimeLinter-jshint",
@@ -47,6 +49,7 @@
 		"Theme - Soda SolarizedDark",
 		"Theme - Sodarized",
 		"TypeScript",
+		"Typewriter",
 		"Zen Tabs"
 	]
 }

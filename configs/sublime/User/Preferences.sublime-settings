@@ -16,7 +16,7 @@
 		"node_modules",
 		".idea"
 	],
-	"font_face": "Source Code Pro",
+	"font_face": "Courier Primal",
 	"font_size": 17,
 	"highlight_modified_tabs": true,
 	"ignored_packages":
@@ -27,6 +27,7 @@
 	[
 		80
 	],
+	"scroll_past_end": true,
 	"show_panel_on_build": true,
 	"theme": "Soda Dark 3.sublime-theme",
 	"translate_tabs_to_spaces": true,
