@@ -13,14 +13,11 @@ cask 'java'
 
 #web developement
 brew 'nvm'
-brew 'phantomjs'
-brew 'yarn'
 cask 'atom'
 cask 'paw'
 
 #android development
-brew 'android-sdk'
-brew 'android-ndk'
+cask 'android-sdk'
 cask 'android-studio'
 cask 'intel-haxm'
 
@@ -33,7 +30,6 @@ cask 'docker'
 cask 'sublime-text'
 cask 'lighttable'
 cask 'macdown'
-cask 'virtualbox'
 cask 'gitup'
 cask 'dash'
 cask 'stretchly'
@@ -45,7 +41,6 @@ cask 'scrivener'
 
 #mac life
 cask '1password'
-cask 'bettertouchtool'
 cask 'cathode'
 cask 'chromium'
 cask 'cloud'
@@ -60,9 +55,9 @@ cask 'spectacle'
 mas 'wunderlist', id: 410628904
 mas 'tomatoone', id: 907364780  
 mas 'numbers', id: 409203825
+mas 'pages', id: 409201541
 mas 'keynote', id: 409183694
 mas 'evernote', id: 406056744
 
 #iOS Development
-cask 'oclint'
 mas 'xcode', id: 497799835
