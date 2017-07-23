@@ -1,0 +1,38 @@
+VISUAL STUDIO CODE SETTINGS SYNC 
+Version: 2.8.1
+
+Upload Summary
+
+--------------------
+GITHUB TOKEN: c807fe22eabedd3930fca43727eeb1e54fa35501
+GITHUB GIST: e8c0e899eb75242d41a0f4dc0e2dc4c3
+GITHUB GIST TYPE: Secret
+
+--------------------
+
+If current theme / file icon extension is not installed. Restart will be Required to Apply Theme and File Icon.
+
+
+Files Upload.
+
+extensions.json
+settings.json
+javascript.json > snippets|javascript.json
+
+
+EXTENSIONS ADDED :
+
+auto-close-tag - Version :0.4.2
+code-settings-sync - Version :2.8.1
+EditorConfig - Version :0.9.3
+elm - Version :0.13.0
+gitlens - Version :3.6.1
+JavaScriptSnippets - Version :1.4.0
+prettier-vscode - Version :0.19.0
+theme-cobaltneon - Version :0.0.1
+Theme-Neon - Version :0.0.2
+tslint - Version :0.15.0
+vscode-css-formatter - Version :0.0.2
+vscode-docker - Version :0.0.15
+vscode-eslint - Version :1.2.11
+vscode-react-native - Version :0.3.2
