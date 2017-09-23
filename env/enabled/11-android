@@ -1,0 +1,12 @@
+#! /bin/bash
+
+#ANDROID SDK
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+
+
+#LEGACY ENV Variable
+export ANDROID_HOME=$ANDROID_SDK_ROOT
+
