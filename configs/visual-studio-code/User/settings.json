@@ -1,10 +1,11 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.wordWrap": true,
+    "editor.wordWrap": "on",
 
-    "editor.fontFamily": "Source Code Pro",
+    "editor.fontFamily": "Fira Code",
 
     "editor.fontSize": 14,
-    "workbench.colorTheme": "Neon",
+    "workbench.colorTheme": "Kimbie Dark",
     "editor.minimap.enabled": true,
+    "editor.formatOnSave": true
 }
