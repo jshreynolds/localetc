@@ -1,11 +1,14 @@
 // Place your settings in this file to overwrite the default settings
 {
     "editor.wordWrap": "on",
-
     "editor.fontFamily": "Fira Code",
-
     "editor.fontSize": 14,
-    "workbench.colorTheme": "Kimbie Dark",
+    "workbench.colorTheme": "Cobalt Neon",
     "editor.minimap.enabled": true,
-    "editor.formatOnSave": true
+    "gitlens.advanced.messages": {
+        "suppressResultsExplorerNotice": true,
+        "suppressShowKeyBindingsNotice": true
+    },
+    "editor.tabSize": 2,
+    "prettier.singleQuote": true,
 }

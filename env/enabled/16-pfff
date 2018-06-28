@@ -1,0 +1,5 @@
+#! /bin/bash
+
+#PFFF
+export PFFF_HOME=/usr/local/bin/pfff
+export PATH=$PATH:$PFFF_HOME
