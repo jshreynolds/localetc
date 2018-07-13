@@ -9,6 +9,7 @@ alias json='python -mjson.tool'
 alias la="ls -la --color=auto"
 alias ls="ls -G"
 alias mv="mv -iv"
+alias prp="pipenv run python"
 alias rmf='rm -f'
 alias rmrm='rm -rf'
 alias sutextedit='sudo /Applications/TextEdit.app/Contents/MacOS/TextEdit'
