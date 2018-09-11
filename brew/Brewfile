@@ -36,6 +36,7 @@ cask 'macdown'
 cask 'gitup'
 cask 'dash'
 cask 'stretchly'
+cask 'tableplus'
 
 #creative
 cask 'adobe-creative-cloud'
@@ -43,7 +44,6 @@ cask 'sketch'
 cask 'scrivener'
 
 #mac life
-cask '1password'
 cask 'cathode'
 cask 'chromium'
 cask 'disk-inventory-x'
@@ -63,6 +63,7 @@ mas 'numbers', id: 409203825
 mas 'pages', id: 409201541
 mas 'keynote', id: 409183694
 mas 'evernote', id: 406056744
+mas '1password', id: 1333542190
 
 #iOS Development
 mas 'xcode', id: 497799835
