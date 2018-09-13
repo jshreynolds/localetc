@@ -3,7 +3,7 @@
     "editor.wordWrap": "on",
     "editor.fontFamily": "Fira Code",
     "editor.fontSize": 14,
-    "workbench.colorTheme": "Cobalt Neon",
+    "workbench.colorTheme": "An Old Hope",
     "editor.minimap.enabled": true,
     "gitlens.advanced.messages": {
         "suppressResultsExplorerNotice": true,
