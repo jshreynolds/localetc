@@ -1,5 +1,7 @@
 cask_args appdir: '/Applications'
 tap 'caskroom/cask'
+tap 'heroku/brew'
+tap 'caskroom/fonts'
 
 #languages & language support
 brew 'elixir'
@@ -7,7 +9,7 @@ brew 'golang'
 brew 'python'
 brew 'python3'
 brew 'rbenv'
-cask 'haskell-stack'
+brew 'haskell-stack'
 brew 'leiningen'
 cask 'java'
 brew 'scala'
@@ -19,7 +21,6 @@ cask 'visual-studio-code'
 
 #android development
 cask 'android-sdk'
-cask 'android-studio'
 cask 'intel-haxm'
 
 #development tools
@@ -27,11 +28,10 @@ brew 'exercism'
 cask 'font-fira-code'
 brew 'git'
 brew 'heroku'
+brew 'pmd'
 brew 'the_silver_searcher'
 brew 'vim'
-brew 'watchman'
 cask 'docker'
-cask 'sublime-text'
 cask 'macdown'
 cask 'gitup'
 cask 'dash'
@@ -44,6 +44,7 @@ cask 'sketch'
 cask 'scrivener'
 
 #mac life
+cask '1password'
 cask 'cathode'
 cask 'chromium'
 cask 'disk-inventory-x'
@@ -59,11 +60,11 @@ cask 'spectacle'
 cask 'spotify'
 mas 'wunderlist', id: 410628904
 mas 'tomatoone', id: 907364780  
+mas 'trello', id: 1278508951
 mas 'numbers', id: 409203825
 mas 'pages', id: 409201541
 mas 'keynote', id: 409183694
 mas 'evernote', id: 406056744
-mas '1password', id: 1333542190
 
 #iOS Development
 mas 'xcode', id: 497799835
