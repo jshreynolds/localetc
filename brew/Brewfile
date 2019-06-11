@@ -1,47 +1,42 @@
 cask_args appdir: '/Applications'
-tap 'caskroom/cask'
 tap 'heroku/brew'
 tap 'caskroom/fonts'
 
 #languages & language support
 brew 'elixir'
 brew 'golang'
+brew 'haskell-stack'
 brew 'python'
 brew 'python3'
 brew 'rbenv'
-brew 'haskell-stack'
-brew 'leiningen'
-cask 'java'
-brew 'scala'
 
 #web developement
 brew 'nodenv'
-cask 'insomnia'
 cask 'visual-studio-code'
 
 #android development
-cask 'android-sdk'
 cask 'intel-haxm'
+cask 'android-sdk'
 
 #development tools
 brew 'exercism'
+cask 'dash'
+cask 'docker'
 cask 'font-fira-code'
 brew 'git'
-brew 'heroku'
-brew 'pmd'
-brew 'the_silver_searcher'
-brew 'vim'
-cask 'docker'
-cask 'macdown'
 cask 'gitup'
-cask 'dash'
+brew 'heroku'
+cask 'macdown'
+brew 'pmd'
 cask 'stretchly'
 cask 'tableplus'
+brew 'the_silver_searcher'
+brew 'vim'
 
 #creative
 cask 'adobe-creative-cloud'
-cask 'sketch'
 cask 'scrivener'
+cask 'sketch'
 
 #mac life
 cask '1password'
@@ -58,13 +53,17 @@ cask 'qlmarkdown'
 cask 'slack'
 cask 'spectacle'
 cask 'spotify'
-mas 'wunderlist', id: 410628904
+
+mas 'keynote', id: 409183694
+mas 'numbers', id: 409203825
+mas 'onenote', id: 784801555
+mas 'pages', id: 409201541
 mas 'tomatoone', id: 907364780  
 mas 'trello', id: 1278508951
-mas 'numbers', id: 409203825
-mas 'pages', id: 409201541
-mas 'keynote', id: 409183694
-mas 'evernote', id: 406056744
+mas 'wunderlist', id: 410628904
 
 #iOS Development
 mas 'xcode', id: 497799835
+
+# NOTE Java is handled by sdkman!
+# this includes java dependent sdks like scala and leiningen
