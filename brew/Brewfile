@@ -15,8 +15,7 @@ brew 'nodenv'
 cask 'visual-studio-code'
 
 #android development
-cask 'intel-haxm'
-cask 'android-sdk'
+cask 'android-studio'
 
 #development tools
 brew 'exercism'
@@ -26,7 +25,6 @@ cask 'font-fira-code'
 brew 'git'
 cask 'gitup'
 brew 'heroku'
-cask 'macdown'
 brew 'pmd'
 cask 'stretchly'
 cask 'tableplus'
@@ -53,6 +51,7 @@ cask 'qlmarkdown'
 cask 'slack'
 cask 'spectacle'
 cask 'spotify'
+cask 'typora'
 
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
