@@ -15,8 +15,7 @@ brew 'nodenv'
 cask 'visual-studio-code'
 
 #android development
-cask 'intel-haxm'
-cask 'android-sdk'
+cask 'android-studio'
 
 #development tools
 brew 'exercism'
@@ -26,8 +25,6 @@ cask 'font-fira-code'
 brew 'git'
 cask 'gitup'
 brew 'heroku'
-cask 'macdown'
-cask 'stretchly'
 cask 'tableplus'
 brew 'the_silver_searcher'
 brew 'vim'
@@ -44,14 +41,15 @@ cask 'chromium'
 cask 'disk-inventory-x'
 cask 'dropbox'
 cask 'firefox'
-cask 'flux'
 cask 'google-chrome'
 cask 'little-snitch'
 cask 'private-internet-access'
 cask 'qlmarkdown'
+cask 'selfcontrol'
 cask 'slack'
 cask 'spectacle'
 cask 'spotify'
+cask 'typora'
 
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
