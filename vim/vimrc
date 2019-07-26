@@ -41,6 +41,8 @@ set foldmethod=syntax
 nnoremap j gj
 nnoremap k gk
 
+set backspace=indent,eol,start
+
 "leader shortcuts
 inoremap jk <esc>
 
@@ -53,3 +55,4 @@ autocmd VimEnter *       RainbowParenthesesToggle
 autocmd Syntax   clojure RainbowParenthesesLoadRound
 autocmd Syntax   clojure RainbowParenthesesLoadSquare
 autocmd Syntax   clojure RainbowParenthesesLoadBraces
+

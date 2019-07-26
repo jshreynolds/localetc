@@ -56,9 +56,9 @@ mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
 mas 'onenote', id: 784801555
 mas 'pages', id: 409201541
+mas 'todoist', id: 585829637
 mas 'tomatoone', id: 907364780  
 mas 'trello', id: 1278508951
-mas 'wunderlist', id: 410628904
 
 #iOS Development
 mas 'xcode', id: 497799835
