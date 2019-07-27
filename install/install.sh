@@ -5,6 +5,8 @@ then
    echo "please provide a name for your machine"
 fi 
 
+sudo -v
+
 set name = $1
 
 ./bootstrap.sh
