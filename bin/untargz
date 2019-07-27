@@ -1,0 +1,13 @@
+#! /bin/bash
+
+if [ $# -ne 1 ]
+then
+    echo "Usage: untargz archive [tarargs]"
+    exit 1
+fi
+
+export archive=$1
+#export args=$2
+
+tar -xvzf $archive $args 
+

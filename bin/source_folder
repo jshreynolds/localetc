@@ -1,0 +1,20 @@
+#! /bin/bash
+
+scriptname=source.folder
+
+if [ $# -ne 1 ]
+then
+    echo "Arguments missing!"
+    echo "Usage: $scriptname directory-to-source"
+    echo "Example: $scriptname programs-available"
+    exit 1
+fi
+
+toSource=$1
+
+if [ "`ls $toSource`" != "" ]; then
+for file in $toSource/*
+do
+  . $file
+done
+fi

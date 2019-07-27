@@ -1,0 +1,12 @@
+#! /bin/bash
+
+if [ $# -ne 1 ]
+then
+    echo "Usage: untargz archive"
+    exit 1
+fi
+
+export archive=$1
+
+tar -xvjf $archive
+

@@ -1,0 +1,5 @@
+#! /bin/bash
+
+export PRIVATE_KEYPATH=$1
+
+GIT_SSH_COMMAND="ssh -i $PRIVATE_KEYPATH" git "$@"

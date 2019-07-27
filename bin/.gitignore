@@ -1,0 +1,9 @@
+#Exclude Third Party Apps
+lein
+z.sh
+
+#OSX Cruft
+.DS_Store
+
+
+archive

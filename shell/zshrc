@@ -87,7 +87,3 @@ setopt extendedglob
 
 source $HOME/etc/setenv
 
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/jreynolds/.sdkman"
-[[ -s "/Users/jreynolds/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/jreynolds/.sdkman/bin/sdkman-init.sh"
