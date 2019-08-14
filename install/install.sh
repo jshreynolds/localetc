@@ -17,4 +17,4 @@ set name = $1
 ./rbenv.sh
 ./sdkman.sh
 ./vim.sh
-./apple.sh
+./macos.sh
