@@ -52,6 +52,8 @@ cask 'slack'
 cask 'spectacle'
 cask 'spotify'
 cask 'typora'
+brew 'zsh-completion'
+brew 'zsh-syntax-hightlighting'
 
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
