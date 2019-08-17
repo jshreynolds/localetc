@@ -23,7 +23,6 @@ cask 'dash'
 cask 'docker'
 cask 'font-fira-code'
 brew 'git'
-cask 'gitup'
 brew 'heroku'
 cask 'tableplus'
 brew 'the_silver_searcher'
@@ -53,7 +52,6 @@ cask 'spectacle'
 cask 'spotify'
 cask 'typora'
 brew 'zsh-completion'
-brew 'zsh-syntax-hightlighting'
 
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
