@@ -79,11 +79,6 @@ defaults write com.apple.CrashReporter DialogType -string "none"
 # Set Help Viewer windows to non-floating mode
 defaults write com.apple.helpviewer DevMode -bool true
 
-# Fix for the ancient UTF-8 bug in QuickLook (https://mths.be/bbo)
-# Commented out, as this is known to cause problems in various Adobe apps :(
-# See https://github.com/mathiasbynens/dotfiles/issues/237
-#echo "0x08000100:0" > ~/.CFUserTextEncoding
-
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
@@ -507,6 +502,20 @@ defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 
 # Update extensions automatically
 defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
+
+###############################################################################
+# Menu Bar customization                                                                        #
+###############################################################################
+
+defaults write com.apple.systemuiserver "menuExtras" '(
+    "/System/Library/CoreServices/Menu Extras/Clock.menu",
+    "/System/Library/CoreServices/Menu Extras/Battery.menu",
+    "/System/Library/CoreServices/Menu Extras/AirPort.menu",
+    "/System/Library/CoreServices/Menu Extras/Volume.menu",
+    "/System/Library/CoreServices/Menu Extras/Bluetooth.menu",
+    "/System/Library/CoreServices/Menu Extras/TextInput.menu",
+    "/System/Library/CoreServices/Menu Extras/Displays.menu"
+)'
 
 ###############################################################################
 # Mail                                                                        #
