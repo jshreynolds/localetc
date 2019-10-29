@@ -1,4 +1,9 @@
 #!/usr/bin/env zsh
+
+echo
+echo "Installing and configuring mac specific stuff..."
+echo
+
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
@@ -815,4 +820,4 @@ for app in "Activity Monitor" \
 	"iCal"; do
 	killall "${app}" &> /dev/null
 done
-echo "Done. Note that some of these changes require a logout/restart to take effect."
+echo "Done with mac! Note that some of these changes require a logout/restart to take effect."

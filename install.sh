@@ -2,13 +2,15 @@
 
 if [ $# -ne 1 ] 
 then
+   echo
    echo "please provide a name for your machine as the first argument to this script"
-   echo "./install.sh mybook"
+   echo "EXAMPLE: ./install.sh mybook"
    exit 1
 fi 
 
 # Ask for the administrator password upfront
-echo "Enter your admin password at the prompt..."
+echo
+echo "Enter your admin password at the prompt to use throughout the installation..."
 echo
 
 sudo -v
@@ -27,6 +29,8 @@ echo
 
 # Install xcode tools
 xcode-select --install
+# Accept the xcode license
+sudo xcodebuild -license
 
 echo
 read -p "Install xcode command-line tools. Hit Enter when it's done..."
@@ -37,12 +41,13 @@ echo
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
 pushd ~/etc
+
 ./brew.sh
 ./cc.sh
-./ohmyzsh.sh
 ./nodenv.sh
 ./rbenv.sh
 ./sdkman.sh
 ./vim.sh
 ./macos.sh $name
+./ohmyzsh.sh
 popd
