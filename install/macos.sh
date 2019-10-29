@@ -1,12 +1,4 @@
 #!/usr/bin/env zsh
-
-if [ $# -ne 1 ] 
-then
-   echo "please provide a name for your machine"
-fi 
-
-set name = $1
-
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
@@ -20,6 +12,15 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+if [ $# -ne 1 ] 
+then
+   echo "please provide a name for your machine as an argument to this script"
+   exit 1
+fi 
+
+set name = $1
+
 
 # Set computer name (as done via System Preferences → Sharing)
 sudo scutil --set ComputerName $name
