@@ -5,6 +5,7 @@ then
    echo
    echo "please provide a name for your machine as the first argument to this script"
    echo "EXAMPLE: ./install.sh mybook"
+   echo
    exit 1
 fi 
 
