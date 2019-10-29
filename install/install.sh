@@ -2,7 +2,8 @@
 
 if [ $# -ne 1 ] 
 then
-   echo "please provide a name for your machine as an argument to this script"
+   echo "please provide a name for your machine as the first argument to this script"
+   echo "./install.sh mybook"
    exit 1
 fi 
 
