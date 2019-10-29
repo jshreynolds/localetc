@@ -42,7 +42,7 @@ sudo xcodebuild -license
 
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
-pushd ~/etc
+pushd ~/etc/install
 
 ./brew.sh
 ./cc.sh
