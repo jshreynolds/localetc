@@ -1,6 +1,6 @@
 cask_args appdir: '/Applications'
 tap 'heroku/brew'
-tap 'caskroom/fonts'
+tap 'homebrew/cask-fonts'
 
 #languages & language support
 brew 'elixir'

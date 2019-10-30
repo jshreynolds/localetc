@@ -19,7 +19,7 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-set name = $1
+export name=$1
 
 # Generate ssh key
 ssh-keygen
@@ -31,6 +31,7 @@ echo
 echo
 read -p "Installing xcode command-line tools. Hit Enter when it's done and then accept the xcode license in the console..."
 echo
+
 # Install xcode tools
 xcode-select --install
 # Accept the xcode license
