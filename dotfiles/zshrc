@@ -85,9 +85,17 @@ setopt extendedglob
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# AUTOCOMPLETE TERRAFORM
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/bin/terraform terraform
+#END AUTOCOMPLETE
+
+
 source $HOME/etc/setenv
 
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/jreynolds/.sdkman"
 [[ -s "/Users/jreynolds/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/jreynolds/.sdkman/bin/sdkman-init.sh"
+
+

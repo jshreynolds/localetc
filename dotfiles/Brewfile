@@ -19,6 +19,7 @@ cask 'visual-studio-code'
 cask 'android-studio'
 
 #development tools
+cask 'anaconda'
 brew 'exercism'
 cask 'dash'
 cask 'docker'
@@ -42,6 +43,7 @@ cask 'disk-inventory-x'
 cask 'dropbox'
 cask 'firefox'
 cask 'google-chrome'
+cask 'iterm2'
 cask 'little-snitch'
 cask 'notion'
 cask 'private-internet-access'
@@ -52,12 +54,12 @@ cask 'spectacle'
 cask 'spotify'
 cask 'typora'
 brew 'zsh-completion'
+brew 'zsh-syntax-highlighting'
 
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
 mas 'onenote', id: 784801555
 mas 'pages', id: 409201541
-mas 'todoist', id: 585829637
 mas 'tomatoone', id: 907364780  
 mas 'trello', id: 1278508951
 

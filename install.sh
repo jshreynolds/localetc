@@ -34,10 +34,6 @@ echo
 
 # Install xcode tools
 xcode-select --install
-# Accept the xcode license
-sudo xcodebuild -license
-
-
 
 #get the repo and do all the things!
 
