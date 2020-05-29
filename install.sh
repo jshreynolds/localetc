@@ -29,11 +29,19 @@ read -p "Upload the public ssh key just generated [~/.ssh/id_rsa.pub] to github 
 echo
 
 echo
-read -p "Installing xcode command-line tools. Hit Enter when it's done and then accept the xcode license in the console..."
+read -p "Installing xcode command-line tools. 
+Hit Enter to continue.  Once it's done and then accept the xcode license in the prompt if requested"
 echo
 
 # Install xcode tools
 xcode-select --install
+
+echo
+read -p "Accepting xcode license.  Hit Enter to continue..."
+echo
+sudo xcodebuild -license accept
+
+
 
 #get the repo and do all the things!
 
@@ -44,6 +52,7 @@ pushd ~/etc/install
 ./brew.sh
 ./cc.sh
 ./nodenv.sh
+./pyenv.sh
 ./rbenv.sh
 ./sdkman.sh
 ./vim.sh

@@ -1,15 +1,3 @@
 #! /bin/zsh
 
-echo
-echo "Installing a ruby using rubyenv"
-echo
-
-sudo xcodebuild -license
-
-#Install the latest version of a local ruby and cocoapods
-rbenv install 2.3.3
-rbenv global 2.3.3
-
-echo
-echo "Done with rubyenv!"
-echo
+./xenv.sh rbenv 2.7.1
