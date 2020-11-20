@@ -57,5 +57,7 @@ pushd ~/etc/install
 ./sdkman.sh
 ./vim.sh
 ./macos.sh $name
+./spacemacs.sh
 ./ohmyzsh.sh
+./tmux.sh
 popd

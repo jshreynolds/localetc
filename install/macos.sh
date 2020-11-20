@@ -35,7 +35,6 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
 
-
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 # Possible values: `WhenScrolling`, `Automatic` and `Always`
@@ -50,9 +49,6 @@ defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-
-# Disable the “Are you sure you want to open this application?” dialog
-defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Display ASCII control characters using caret notation in standard text views
 # Try e.g. `cd /tmp; unidecode "\x{0000}" > cc.txt; open -e cc.txt`
