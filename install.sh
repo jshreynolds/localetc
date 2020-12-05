@@ -51,10 +51,7 @@ pushd ~/etc/install
 
 ./brew.sh
 ./cc.sh
-./nodenv.sh
-./pyenv.sh
-./rbenv.sh
-./sdkman.sh
+./asdf.sh
 ./vim.sh
 ./macos.sh $name
 ./spacemacs.sh

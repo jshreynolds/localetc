@@ -1,5 +1,0 @@
-#! /bin/bash
-
-#LOG4J
-export CLASSPATH=$JAVA_LIB_DIR/log4j-1.2.jar:$CLASSPATH
-

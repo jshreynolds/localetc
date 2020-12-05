@@ -1,6 +1,0 @@
-#! /bin/bash
-
-#MYSQL
-export PRODAGIO_HOME=~/tech/prodagio-testing-tool
-export PATH=$PRODAGIO_HOME/src/main/scripts/ssh:$PATH
-

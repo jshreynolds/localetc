@@ -1,5 +1,0 @@
-#! /bin/bash
-
-#JUNIT
-export CLASSPATH=$JAVA_LIB_DIR/junit.jar:$CLASSPATH
-

@@ -1,7 +1,0 @@
-#! /bin/bash
-
-#SAXON 8
-export SAXON8_HOME=$PERSONAL_JAVA_LIB_DIR/saxon-8.4B
-export CLASSPATH=$SAXON8_HOME/saxon8.jar:$CLASSPATH
-export CLASSPATH=$SAXON8_HOME/saxon8-dom.jar:$CLASSPATH
-

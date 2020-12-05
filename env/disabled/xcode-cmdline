@@ -1,7 +1,0 @@
-#! /bin/bash
-
-#XCODE Command Line
-
-export DEVELOPER_HOME=/Applications/Xcode.app/Contents/Developer
-export PATH=$DEVELOPER_HOME/usr/bin:$PATH
-

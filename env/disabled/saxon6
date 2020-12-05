@@ -1,6 +1,0 @@
-#! /bin/bash
-
-#SAXON 
-export SAXON6_HOME=$PERSONAL_JAVA_LIB_DIR/saxon-6.5.3
-export CLASSPATH=$SAXON6_HOME/saxon.jar:$CLASSPATH
-

@@ -1,5 +1,0 @@
-#! /bin/bash
-
-#PLAY
-
-alias mongod="mongod --config /usr/local/etc/mongod.conf"

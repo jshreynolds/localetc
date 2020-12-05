@@ -1,0 +1,3 @@
+#! /bin/bash
+
+eval ". $(brew --prefix asdf)/asdf.sh"

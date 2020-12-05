@@ -1,7 +1,0 @@
-#! /bin/bash
-
-#OCTAVE
-
-export OCTAVE_HOME=/usr/local/octave/3.8.2
-export PATH=$OCTAVE_HOME/bin:$PATH
-

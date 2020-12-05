@@ -1,9 +1,0 @@
-#! /bin/bash
-
-#Sun j2ee server 
-export J2EE_HOME=~/opt/SUNWappserver
-export PATH=$J2EE_HOME/bin:$PATH
-
-for jar in $J2EE_HOME/lib/*.jar; do
-	export CLASSPATH=$jar:$CLASSPATH
-done

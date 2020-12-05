@@ -1,6 +1,0 @@
-#! /bin/bash
-
-#JYTHON
-export JYTHON_HOME=~/bin/jython2.5b3
-export PATH=$JYTHON_HOME/bin:$PATH
-export CLASSPATH=/sw/share/java/readline-java/libreadline-java.jar:$CLASSPATH

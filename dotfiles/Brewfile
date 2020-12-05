@@ -3,16 +3,28 @@ tap 'heroku/brew'
 tap 'homebrew/cask-fonts'
 tap 'mongodb/brew'
 
-#languages & language support
-brew 'elixir'
-brew 'golang'
-brew 'haskell-stack'
-brew 'pyenv'
-cask 'r'
-brew 'rbenv'
+#core
+brew 'fish'
+
+#development tools
+cask 'anaconda'
+brew 'asdf'
+brew 'exercism'
+brew 'gfortran'
+cask 'dash'
+cask 'font-fira-code'
+brew 'git'
+brew 'gh'
+brew 'mongodb-database-tools'
+brew 'postgresql'
+cask 'rstudio'
+cask 'sf-symbols'
+cask 'tableplus'
+brew 'terraform'
+brew 'the_silver_searcher'
+brew 'vim'
 
 #web developement
-brew 'nodenv'
 cask 'visual-studio-code'
 
 #android development
@@ -23,21 +35,6 @@ cask 'docker'
 docker-machine-driver-vmware
 brew 'helm'
 brew 'kubectl'
-
-#development tools
-cask 'anaconda'
-brew 'exercism'
-cask 'dash'
-cask 'font-fira-code'
-brew 'git'
-brew 'gh'
-brew 'mongodb-database-tools'
-brew 'postgresql'
-cask 'rstudio'
-cask 'tableplus'
-brew 'terraform'
-brew 'the_silver_searcher'
-brew 'vim'
 
 #cloud cli
 brew 'awscli'
@@ -52,6 +49,7 @@ cask 'sketch'
 
 #mac life
 cask 'chromium'
+cask 'discord'
 cask 'disk-inventory-x'
 cask 'emacs'
 cask 'firefox'
@@ -82,6 +80,3 @@ brew 'rsync'
 
 #iOS Development
 mas 'xcode', id: 497799835
-
-# NOTE Java is handled by sdkman!
-# this includes java dependent sdks like scala and leiningen
