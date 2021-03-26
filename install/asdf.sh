@@ -10,7 +10,7 @@ asdf global java $latest
 asdf plugin add nodejs
 bash -c '${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring'
 
-PACKS="clojure elixir golang haskell helm nodejs poetry python ruby rust scala terraform"
+PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python ruby rust scala terraform"
 
 for lang in $PACKS
 do
