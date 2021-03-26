@@ -15,3 +15,4 @@ to manage units of configuration for my terminal.
 
 1. Download the `install/boostrap.sh` script on your osx machine.
 2. Run it.  This will generate an ssh key for you and prompt you to do the rest of the steps necessary to configure your machine just how _I_ like it.
+# ghactions
