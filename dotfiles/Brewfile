@@ -11,6 +11,7 @@ brew 'fish'
 #development tools
 cask 'anaconda'
 brew 'asdf'
+brew 'cowsay'
 brew 'exercism'
 cask 'dash'
 cask 'font-fira-code'
@@ -34,7 +35,6 @@ cask 'android-studio'
 
 #container tools
 cask 'docker'
-docker-machine-driver-vmware
 
 #cloud cli
 brew 'awscli'
