@@ -28,27 +28,14 @@ echo
 read -p "Upload the public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
 echo
 
-echo
-read -p "Installing xcode command-line tools. 
-Hit Enter to continue.  Once it's done and then accept the xcode license in the prompt if requested"
-echo
-
-# Install xcode tools
-xcode-select --install
-
-echo
-read -p "Accepting xcode license.  Hit Enter to continue..."
-echo
-sudo xcodebuild -license accept
-
-
-
 #get the repo and do all the things!
 
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
 pushd ~/etc/install
 
+
+./xcode.sh
 ./brew.sh
 ./cc.sh
 ./asdf.sh

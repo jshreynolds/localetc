@@ -1,15 +1,12 @@
 cask_args appdir: '/Applications'
 tap 'heroku/brew'
 tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-drivers'
 tap 'mongodb/brew'
-tap 'qmk/qmk'
 
 #core
 brew 'fish'
 
 #development tools
-cask 'anaconda'
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
@@ -19,11 +16,8 @@ brew 'git'
 brew 'gh'
 brew 'mongodb-database-tools'
 brew 'postgresql'
-brew 'qmk'
 cask 'rstudio'
 cask 'sf-symbols'
-cask 'tableplus'
-brew 'terraform'
 brew 'the_silver_searcher'
 brew 'vim'
 

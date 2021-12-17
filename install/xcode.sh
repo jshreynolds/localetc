@@ -2,7 +2,7 @@
 
 
 echo
-echo "Installing brew files, casks, and fonts..."
+echo "Updating xcode license and ..."
 echo
 
 # Brew

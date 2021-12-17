@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/zsh
 
 #Java has no numerical latest so this must be done manually
 asdf plugin-add java
@@ -12,9 +12,9 @@ bash -c '${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-ke
 
 PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python ruby rust scala terraform"
 
-for lang in $PACKS
+for pack in $PACKS
 do
-    asdf plugin-add $pack
+    asdf plugin add $pack
     latest=$(asdf latest $pack)  
     asdf install $pack $latest
     asdf global $pack $latest
