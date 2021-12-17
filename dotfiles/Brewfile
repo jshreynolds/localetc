@@ -48,10 +48,12 @@ cask 'disk-inventory-x'
 cask 'emacs'
 cask 'firefox'
 cask 'google-chrome'
+brew 'gpg-suite-no-mail'
 cask 'iterm2'
 cask 'kicad'
 cask 'little-snitch'
-cask 'private-internet-access'
+brew 'mas'
+cask 'nordvpn'
 cask 'qlmarkdown'
 cask 'qmk-toolbox'
 cask 'selfcontrol'
@@ -74,5 +76,3 @@ mas 'word', id: 462054704
 #better commandline tools
 brew 'rsync'
 
-#iOS Development
-mas 'xcode', id: 497799835

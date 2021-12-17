@@ -19,5 +19,3 @@ do
     asdf install $pack $latest
     asdf global $pack $latest
 done
-
-rehash

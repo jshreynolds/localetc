@@ -2,7 +2,7 @@
 
 
 echo
-echo "Updating xcode license and ..."
+echo "Installing brew..."
 echo
 
 # Brew
@@ -11,12 +11,6 @@ echo
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 brew analytics off
-
-pushd ../dotfiles
-
-brew bundle
-
-popd
 
 echo
 echo "Done with brew!"

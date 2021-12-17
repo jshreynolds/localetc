@@ -18,13 +18,14 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # General UI/UX                                                               #
 ###############################################################################
 
-if [ $# -ne 1 ] 
+if [[ -z $MACHINE_NAME ]] 
 then
-   echo "please provide a name for your machine as an argument to this script"
+   echo
+   echo "Error: \$MACHINE_NAME not set!"
+   echo "Please run this script with that environment variable set"
+   echo
    exit 1
 fi 
-
-export name=$1
 
 # Set computer name (as done via System Preferences → Sharing)
 sudo scutil --set ComputerName $name
