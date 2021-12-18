@@ -1,7 +1,7 @@
 #! /bin/sh
 
 echo
-echo "Installing XCode directly!"
+echo "Installing xcode..."
 echo
 
 mas install 497799835  #Xcode
@@ -13,5 +13,5 @@ echo
 sudo xcodebuild -license accept
 
 echo
-echo "All done!"
+echo "xcode installed!"
 echo

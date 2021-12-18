@@ -7,7 +7,7 @@ echo
 
 pushd ~/etc/dotfiles
 
-brew bundle
+brew bundle -v
 
 popd
 

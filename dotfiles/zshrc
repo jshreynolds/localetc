@@ -99,4 +99,4 @@ setopt extendedglob
 autoload -U +X bashcompinit && bashcompinit
 #END AUTOCOMPLETE
 
-#source $HOME/etc/setenv
+source $HOME/etc/setenv
