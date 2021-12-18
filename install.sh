@@ -22,10 +22,12 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 export name=$1
 
 # Generate ssh key
-ssh-keygen
+if [[ ! -a $HOME/.ssh/id_rsa ]]; then
+  ssh-keygen
+fi
 
 echo
-read -p "Upload the public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
+read -p "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
 echo
 
 echo
@@ -41,10 +43,7 @@ read -p "Accepting xcode license.  Hit Enter to continue..."
 echo
 sudo xcodebuild -license accept
 
-
-
 #get the repo and do all the things!
-
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
 pushd ~/etc/install
