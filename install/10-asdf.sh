@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/zsh
 
 #Java has no numerical latest so this must be done manually
 asdf plugin-add java
@@ -16,10 +16,8 @@ export PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python R 
 
 for pack in $PACKS
 do
-    asdf plugin-add $pack
+    asdf plugin add $pack
     latest=$(asdf latest $pack)  
     asdf install $pack $latest
     asdf global $pack $latest
 done
-
-rehash

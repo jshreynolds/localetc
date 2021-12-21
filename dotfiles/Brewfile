@@ -1,15 +1,12 @@
 cask_args appdir: '/Applications'
 tap 'heroku/brew'
 tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-drivers'
 tap 'mongodb/brew'
-tap 'qmk/qmk'
 
 #core
 brew 'fish'
 
 #development tools
-cask 'anaconda'
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
@@ -22,9 +19,7 @@ brew 'gnupg'
 brew 'mongodb-database-tools'
 cask 'mongodb-compass-isolated-edition'
 brew 'postgresql'
-brew 'qmk'
 cask 'sf-symbols'
-cask 'tableplus'
 brew 'tmux'
 brew 'the_silver_searcher'
 brew 'vim'
@@ -61,10 +56,12 @@ cask 'disk-inventory-x'
 cask 'emacs'
 cask 'firefox'
 cask 'google-chrome'
+brew 'gpg-suite-no-mail'
 cask 'iterm2'
 cask 'kicad'
 cask 'little-snitch'
-cask 'private-internet-access'
+brew 'mas'
+cask 'nordvpn'
 cask 'qlmarkdown'
 cask 'qmk-toolbox'
 cask 'selfcontrol'
@@ -88,5 +85,3 @@ mas 'word', id: 462054704
 #better commandline tools
 brew 'rsync'
 
-#iOS Development
-mas 'xcode', id: 497799835
