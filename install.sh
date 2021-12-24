@@ -30,11 +30,6 @@ fi
 # Install xcode tools
 xcode-select --install
 
-echo
-read -p "Accepting xcode license.  Hit Enter to continue..."
-echo
-sudo xcodebuild -license accept
-
 
 #get the repo and do all the things!
 git clone git@github.com:jshreynolds/localetc.git ~/etc

@@ -12,7 +12,7 @@ bash -c '${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-ke
 
 
 export R_EXTRA_CONFIGURE_OPTIONS='--enable-R-shlib --with-cairo'
-export PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python R ruby rust scala terraform"
+export PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python ruby rust scala terraform"
 
 for pack in $PACKS
 do
