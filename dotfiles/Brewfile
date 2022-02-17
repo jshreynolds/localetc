@@ -35,6 +35,7 @@ cask 'android-studio'
 
 #container tools
 cask 'docker'
+brew 'skaffold'
 
 #cloud cli
 brew 'awscli'
@@ -58,6 +59,7 @@ cask 'iterm2'
 cask 'little-snitch'
 brew 'mas'
 cask 'microsoft-teams'
+cask 'miro'
 cask 'nordvpn'
 cask 'qlmarkdown'
 cask 'rectangle'
@@ -71,11 +73,15 @@ brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
 mas '1password', id: 1333542190
+mas 'airmail', id: 918858936
+mas 'cardhop', id: 1290358394
 mas 'excel', id: 462058435
+mas 'fantastical', id: 975937182
 mas 'goodnotes', id: 1444383602
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
 mas 'pages', id: 409201541
+mas 'swiftui', id: 1485436674
 mas 'trello', id: 1278508951
 mas 'word', id: 462054704
 
