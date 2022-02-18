@@ -23,13 +23,16 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 if [[ ! -a $HOME/.ssh/id_rsa ]]; then
   ssh-keygen
   echo
-  read -p "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
-  echo
 fi
+
+read -p "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
+echo
 
 # Install xcode tools
 xcode-select --install
 
+read -p "wait for xcode tools to install and then hit Enter..."
+echo
 
 #get the repo and do all the things!
 git clone git@github.com:jshreynolds/localetc.git ~/etc
