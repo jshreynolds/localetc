@@ -6,6 +6,24 @@ tap 'mongodb/brew'
 #core
 brew 'fish'
 
+#replacement command lines for osx
+brew 'rsync'
+brew 'git'
+
+
+#new commando lines
+brew 'bat'
+brew 'curlie'
+brew 'dog'
+brew 'duf'
+brew 'dust'
+brew 'jq'
+brew 'lsd'
+brew 'mcfly'
+brew 'the_silver_searcher'
+brew 'zoxide'
+
+
 #development tools
 brew 'asdf'
 brew 'cowsay'
@@ -13,7 +31,6 @@ brew 'exercism'
 cask 'dash'
 cask 'font-fira-code'
 brew 'gcc'
-brew 'git'
 brew 'gh'
 brew 'gnupg'
 brew 'mongodb-database-tools'
@@ -22,10 +39,8 @@ brew 'postgresql'
 cask 'r'
 cask 'rstudio'
 cask 'sf-symbols'
-brew 'tmux'
-brew 'the_silver_searcher'
 brew 'vim'
-
+brew 'zellij'
 
 #web developement
 cask 'visual-studio-code'
@@ -55,36 +70,30 @@ cask 'emacs'
 cask 'firefox'
 cask 'google-chrome'
 cask 'gpg-suite-no-mail'
-cask 'iterm2'
+cask 'kitty'
 cask 'little-snitch'
 brew 'mas'
 cask 'microsoft-edge'
 cask 'miro'
 cask 'nordvpn'
-cask 'qlmarkdown'
 cask 'rectangle'
 cask 'selfcontrol'
 cask 'slack'
 cask 'spectacle'
 cask 'spotify'
 cask 'tunnelblick'
-cask 'typora' 
+cask 'typora'
+cask 'zoom'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
 mas '1password', id: 1333542190
-mas 'cardhop', id: 1290358394
 mas 'excel', id: 462058435
-mas 'fantastical', id: 975937182
 mas 'goodnotes', id: 1444383602
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
 mas 'pages', id: 409201541
 mas 'spark', id: 1176895641
 mas 'swiftui', id: 1485436674
-mas 'trello', id: 1278508951
 mas 'word', id: 462054704
-
-#better commandline tools
-brew 'rsync'
 

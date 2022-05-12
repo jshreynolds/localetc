@@ -18,6 +18,7 @@ alias where="type -all"
 alias xml="xmllint --format -"
 alias xcrmdd='rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*'
 alias pactivate="source ./venv/bin/activate"
+alias zelliful="zellij attach --create beautiful"
 
 # for initfile in /etc/init.d/*
 # do
