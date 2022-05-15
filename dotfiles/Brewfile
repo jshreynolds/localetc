@@ -7,7 +7,6 @@ tap 'mongodb/brew'
 brew 'fish'
 
 #command lines for osx
-brew 'mmv'
 brew 'rsync'
 brew 'git'
 
@@ -21,6 +20,7 @@ brew 'dust'
 brew 'jq'
 brew 'lsd'
 brew 'mcfly'
+brew 'mmv'
 brew 'the_silver_searcher'
 brew 'zoxide'
 
@@ -30,17 +30,21 @@ brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
 cask 'dash'
+brew 'direnv'
 cask 'font-fira-code'
+brew 'font-source-code-pro'
 brew 'gcc'
 brew 'gh'
 brew 'gnupg'
+brew 'lazydocker'
 brew 'mongodb-database-tools'
 cask 'mongodb-compass-isolated-edition'
+brew 'neovim'
 brew 'postgresql'
 cask 'r'
 cask 'rstudio'
 cask 'sf-symbols'
-brew 'vim'
+cask 'svn'
 brew 'zellij'
 
 #web developement
@@ -97,4 +101,3 @@ mas 'pages', id: 409201541
 mas 'spark', id: 1176895641
 mas 'swiftui', id: 1485436674
 mas 'word', id: 462054704
-
