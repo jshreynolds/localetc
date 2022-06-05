@@ -6,7 +6,8 @@ tap 'mongodb/brew'
 #core
 brew 'fish'
 
-#replacement command lines for osx
+#command lines for osx
+brew 'mmv'
 brew 'rsync'
 brew 'git'
 
