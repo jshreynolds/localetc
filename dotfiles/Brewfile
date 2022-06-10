@@ -37,6 +37,7 @@ brew 'font-source-code-pro'
 brew 'gcc'
 brew 'gh'
 brew 'gnupg'
+brew 'jq'
 brew 'lazydocker'
 brew 'mongodb-database-tools'
 cask 'mongodb-compass-isolated-edition'
@@ -46,6 +47,7 @@ cask 'r'
 cask 'rstudio'
 cask 'sf-symbols'
 cask 'svn'
+brew 'yq'
 brew 'zellij'
 
 #web developement
@@ -63,6 +65,7 @@ brew 'awscli'
 brew 'azure-cli'
 cask 'google-cloud-sdk'
 brew 'heroku'
+brew 'kube-ps1'
 
 #creative
 cask 'adobe-creative-cloud'
