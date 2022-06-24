@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+source "/opt/homebrew/opt/kube-ps1/share/kube-ps1.sh"
+
