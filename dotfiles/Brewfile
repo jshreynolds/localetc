@@ -4,9 +4,13 @@ tap 'homebrew/cask-fonts'
 tap 'mongodb/brew'
 
 #core
+brew 'bash'
 brew 'fish'
 
 #command lines for osx
+brew 'coreutils'
+brew 'nns'
+brew 'openssl'
 brew 'rsync'
 brew 'git'
 
