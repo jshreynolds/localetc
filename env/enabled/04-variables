@@ -1,4 +1,7 @@
 #!/bin/bash
-export EDITOR=vim
+export EDITOR=nvim
 export MANWIDTH=80
 export RSYNC_RSH=/usr/bin/ssh
+
+# mcfly
+export MCFLY_RESULTS=50
