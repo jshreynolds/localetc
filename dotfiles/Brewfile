@@ -31,6 +31,7 @@ brew 'zoxide'
 
 
 #development tools
+brew 'anaconda
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
@@ -52,6 +53,7 @@ cask 'r'
 cask 'rstudio'
 cask 'sf-symbols'
 cask 'svn'
+brew 'vault'
 brew 'yq'
 brew 'zellij'
 
@@ -77,6 +79,7 @@ cask 'adobe-creative-cloud'
 cask 'scrivener'
 
 #mac life
+brew 'alacritty'
 cask 'asana'
 cask 'chromium'
 cask 'discord'
@@ -85,7 +88,6 @@ cask 'emacs'
 cask 'firefox'
 cask 'google-chrome'
 cask 'gpg-suite-no-mail'
-cask 'kitty'
 cask 'little-snitch'
 brew 'mas'
 cask 'microsoft-edge'
