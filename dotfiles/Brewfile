@@ -31,7 +31,7 @@ brew 'zoxide'
 
 
 #development tools
-brew 'anaconda
+brew 'anaconda'
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'

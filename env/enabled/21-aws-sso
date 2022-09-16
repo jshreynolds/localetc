@@ -1,0 +1,4 @@
+#! /bin/bash
+
+#AWS features that ease using EKS etc.
+alias sso-k8s='aws sso login --profile $PROFILE && aws eks --profile $PROFILE update-kubeconfig --name $(aws eks --profile $PROFILE list-clusters | jq -r ".clusters[0]")'
