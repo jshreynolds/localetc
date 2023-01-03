@@ -9,7 +9,6 @@ brew 'fish'
 
 #command lines for osx
 brew 'coreutils'
-brew 'nns'
 brew 'openssl'
 brew 'rsync'
 brew 'git'
@@ -31,7 +30,6 @@ brew 'zoxide'
 
 
 #development tools
-brew 'anaconda'
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
@@ -96,8 +94,6 @@ cask 'nordvpn'
 cask 'rectangle'
 cask 'selfcontrol'
 cask 'slack'
-cask 'spectacle'
-cask 'spotify'
 cask 'tunnelblick'
 cask 'typora'
 cask 'zoom'
@@ -105,11 +101,11 @@ brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
 mas '1password', id: 1333542190
+mas '1password for Safari', id: 1569813296
 mas 'excel', id: 462058435
 mas 'goodnotes', id: 1444383602
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
 mas 'pages', id: 409201541
-mas 'spark', id: 1176895641
 mas 'swiftui', id: 1485436674
 mas 'word', id: 462054704
