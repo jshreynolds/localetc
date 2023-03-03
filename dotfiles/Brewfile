@@ -6,6 +6,7 @@ tap 'mongodb/brew'
 #core
 brew 'bash'
 brew 'fish'
+cask 'powershell'
 
 #command lines for osx
 brew 'coreutils'
