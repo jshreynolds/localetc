@@ -26,9 +26,15 @@ brew 'jq'
 brew 'lsd'
 brew 'mcfly'
 brew 'mmv'
+brew 'rm-improved'
 brew 'the_silver_searcher'
 brew 'zoxide'
 
+#fonts
+
+cask 'font-fira-code'
+brew 'font-source-code-pro'
+brew 'victor-mono'
 
 #development tools
 brew 'asdf'
@@ -37,8 +43,6 @@ brew 'exercism'
 brew 'dagger'
 cask 'dash'
 brew 'direnv'
-cask 'font-fira-code'
-brew 'font-source-code-pro'
 brew 'gcc'
 brew 'gh'
 brew 'gnupg'
