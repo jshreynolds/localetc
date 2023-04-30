@@ -20,4 +20,4 @@ alias gd="git diff"
 alias gdc="git diff --cached"
 
 # lsd defaults
-alias l="lsd -l --blocks name,size,date,permission,user,group --date '+%Y-%M-%d %H:%m:%S'"
+alias l="lsd -l --date '+%Y-%M-%d %H:%m:%S'"
