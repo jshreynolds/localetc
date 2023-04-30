@@ -10,7 +10,7 @@ pushd ~/etc/dotfiles
 ZELLIJ_CONFIG_DIR=~/.config/zellij
 
 mkdir -p $ZELLIJ_CONFIG_DIR
-cp -r zellij.kdl $ZELLIJ_CONFIG_DIR/config.kdl
+ln -s `pwd`/zellij.kdl $ZELLIJ_CONFIG_DIR/config.kdl
 
 popd
 

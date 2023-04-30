@@ -4,111 +4,20 @@
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias git_branch_clean="git branch | grep -v "master" | xargs git branch -D"
 alias env="env | sort"
-alias json='python -mjson.tool'
-alias la="ls -la --color=auto"
-alias ls="ls -G"
 alias mv="mv -iv"
-alias prp="pipenv run python"
 alias rmf='rm -f'
 alias rmrm='rm -rf'
-alias sutextedit='sudo /Applications/TextEdit.app/Contents/MacOS/TextEdit'
 alias where="type -all"
 alias xml="xmllint --format -"
 alias xcrmdd='rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*'
-alias pactivate="source ./venv/bin/activate"
 alias zelliful="zellij attach --create beautiful"
 
-# for initfile in /etc/init.d/*
-# do
-#   cmd=`basename $initfile`
-#   alias init.$cmd="sudo $initfile"
-# done
+# temporary ohmyzsh removal coverage
+alias gst="git status"
+alias gco="git checkout"
+alias gd="git diff"
+alias gdc="git diff --cached"
 
-su_cmds="bunzip2
-cat
-chmod
-chown
-cp
-gunzip
-gzip
-ln
-make
-mkdir
-mkdirheir
-mount
-mv
-patch
-rm
-tail
-tar
-unzip
-vi
-zip"
-
-for cmd in $su_cmds
-do
-  alias "su$cmd=sudo $cmd" 
-done
-
-sudo_cmds="alien
-adduser
-apache2ctl
-aptitude
-cfdisk
-checkinstall
-chkrootkit
-dd
-dhclient
-fdisk
-halt
-hciattach
-hciconfig
-hcidump
-hcitool
-hsfconfig
-ifconfig
-ifdown
-ifup
-insmod
-iptables
-iwconfig
-iwlist
-killall 
-l2ping
-losetup
-lsbus
-lspci
-mailq 
-make-kpkg
-mii-tool
-modprobe
-mount
-mount.crypt
-ndiswrapper
-netstat
-port
-reboot
-rfcomm
-rmmod
-shutdown
-synce-serial-start
-systool
-su
-sux
-suxterm
-umount
-update-modules
-update-alternatives
-userdel
-usermod
-useradd
-ussp-push
-wvdial"
-
-for cmd in $sudo_cmds
-do
-  alias $cmd="sudo $cmd" 
-done
-
+# lsd defaults
+alias l="lsd -l --blocks name,size,date,permission,user,group --date '+%Y-%M-%d %H:%m:%S'"

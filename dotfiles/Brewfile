@@ -32,9 +32,11 @@ brew 'zoxide'
 
 #fonts
 
-cask 'font-fira-code'
-brew 'font-source-code-pro'
-brew 'victor-mono'
+cask 'font-3270-nerd-font'
+cask 'font-caskaydia-code-nerd-font'
+cask 'font-fira-code-nerd-font'
+cask 'font-haskiug-nerd-font'
+cask 'font-open-dyslexic-nerd-font'
 
 #development tools
 brew 'asdf'
@@ -82,11 +84,10 @@ cask 'adobe-creative-cloud'
 cask 'scrivener'
 
 #mac life
-brew 'alacritty'
+cask 'anki'
 cask 'asana'
 cask 'chromium'
 cask 'discord'
-cask 'disk-inventory-x'
 cask 'emacs'
 cask 'firefox'
 cask 'google-chrome'
@@ -107,7 +108,9 @@ brew 'zsh-syntax-highlighting'
 mas '1password', id: 1333542190
 mas 'excel', id: 462058435
 mas 'goodnotes', id: 1444383602
+mas 'grandperspective', id: 1111570163
 mas 'keynote', id: 409183694
 mas 'numbers', id: 409203825
+mas 'nebo', id: 1119601770
 mas 'pages', id: 409201541
 mas 'word', id: 462054704
