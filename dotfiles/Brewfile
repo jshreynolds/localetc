@@ -33,10 +33,9 @@ brew 'zoxide'
 #fonts
 
 cask 'font-3270-nerd-font'
-cask 'font-caskaydia-code-nerd-font'
+cask 'font-caskaydia-cove-nerd-font'
 cask 'font-fira-code-nerd-font'
-cask 'font-haskiug-nerd-font'
-cask 'font-open-dyslexic-nerd-font'
+cask 'font-hasklug-nerd-font'
 
 #development tools
 brew 'asdf'
@@ -84,6 +83,7 @@ cask 'adobe-creative-cloud'
 cask 'scrivener'
 
 #mac life
+cask '1password'
 cask 'anki'
 cask 'asana'
 cask 'chromium'
@@ -105,7 +105,6 @@ cask 'zoom'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
-mas '1password', id: 1333542190
 mas 'excel', id: 462058435
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
