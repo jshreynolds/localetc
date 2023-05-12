@@ -15,6 +15,10 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 setopt extendedglob
 
+bindkey  "^A"   beginning-of-line
+bindkey  "^E"   end-of-line
+
 source $HOME/etc/setenv
 
-source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
+
+source /Users/jreynolds/.config/broot/launcher/bash/br

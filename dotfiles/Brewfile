@@ -17,6 +17,7 @@ brew 'git'
 
 #new commando lines
 brew 'bat'
+brew 'broot'
 brew 'curlie'
 brew 'dog'
 brew 'duf'

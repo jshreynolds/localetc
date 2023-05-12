@@ -4,7 +4,9 @@
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
+alias editalias="nvim ~/etc/env/enabled/02-aliases"
 alias env="env | sort"
+alias more="less -r"
 alias ls="ls --color"
 alias mv="mv -iv"
 alias rmf='rm -f'
@@ -15,11 +17,13 @@ alias xcrmdd='rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*'
 alias zelliful="zellij attach --create beautiful"
 
 # temporary ohmyzsh removal coverage
-alias gst="git status"
+alias ga.="git add ."
+alias gcm="git commit -m"
 alias gco="git checkout"
 alias gd="git diff"
 alias gdc="git diff --cached"
 alias gp="git push"
+alias gst="git status"
 
 # lsd defaults
-alias l="lsd -l --date '+%Y-%M-%d %H:%m:%S'"
+alias l="lsd -l --color always --date '+%Y-%M-%d %H:%m:%S'"
