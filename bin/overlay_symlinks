@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+# Set the input and output directories
+input_dir=$1
+output_dir=$2
+
+# Create directories in the output directory that don't already exist
+for dir in $(find $input_dir -type d); do
+  new_dir=${dir/$input_dir/$output_dir}
+  if [ ! -d $new_dir ]; then
+    echo making $new_dir
+    mkdir -p $new_dir
+  fi
+done
+
+# Create symlinks to files in the input directory
+for file in $(find $input_dir -type f | xargs readlink -f); do
+  new_file=${file/$input_dir/$output_dir}
+  echo linking "$file -> $new_file"
+  rm $new_file
+  ln -s $file $new_file
+done

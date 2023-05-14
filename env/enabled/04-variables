@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 export EDITOR=nvim
 export MANWIDTH=80
 export RSYNC_RSH=/usr/bin/ssh
