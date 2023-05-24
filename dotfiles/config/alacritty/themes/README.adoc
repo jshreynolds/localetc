@@ -1,0 +1,5 @@
+This theme was copied from the repo at:
+
+https://github.com/alacritty/alacritty-theme
+
+It is version controlled here to make cross machine configuration easier but it is a derivative file and could stop working at any time.
