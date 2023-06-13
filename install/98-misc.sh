@@ -6,10 +6,7 @@ echo
 echo "Installing $NAME..."
 echo
 
-# Alacritty themes (alacritty should be installed by now!)
-
-mkdir -p ~/.config/alacritty/themes
-git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
+# Insert any miscellaneous installation logic here
 
 echo
 echo "Done with $NAME!"
