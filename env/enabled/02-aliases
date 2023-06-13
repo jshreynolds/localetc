@@ -28,4 +28,4 @@ alias gst="git status"
 alias grst="git restore -- "
 
 # lsd defaults
-alias l="lsd -l --color always --date '+%Y-%M-%d %H:%m:%S'"
+alias l="lsd -l --color always --date '+%Y-%m-%d %H:%M:%S'"
