@@ -26,6 +26,7 @@ alias gpu="git pull"
 alias gp="git push"
 alias gst="git status"
 alias grst="git restore -- "
+alias gpsup="git push -u  "
 
 # lsd defaults
 alias l="lsd -l --color always --date '+%Y-%m-%d %H:%M:%S'"
