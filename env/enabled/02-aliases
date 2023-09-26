@@ -25,8 +25,9 @@ alias gdc="git diff --cached"
 alias gpu="git pull"
 alias gp="git push"
 alias gst="git status"
-alias grst="git restore -- "
 alias gpsup="git push -u  "
+alias grs="git restore -- "
+alias grst="git restore --staged "
 
 # lsd defaults
 alias l="lsd -l --color always --date '+%Y-%m-%d %H:%M:%S'"
