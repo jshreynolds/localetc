@@ -1,24 +1,6 @@
-# Workaround for brew zsh completion
-
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-
-  autoload -Uz compinit
-  compinit
-fi
-
-export EDITOR=nvim
-
-# User configuration
-
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-
 setopt extendedglob
 
 bindkey  "^A"   beginning-of-line
 bindkey  "^E"   end-of-line
 
 source $HOME/etc/setenv
-
-
-source /Users/jreynolds/.config/broot/launcher/bash/br

@@ -1,0 +1,6 @@
+#! eval sh
+
+BR_CONFIG=~/.config/broot/launcher/bash/br
+if [ -f $BR_CONFIG ]; then
+    source $BR_CONFIG
+fi
