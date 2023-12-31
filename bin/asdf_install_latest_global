@@ -1,0 +1,14 @@
+#! /bin/bash
+
+if [ $# -ne 1 ]
+then
+    echo "Installs the latest version of the asdf package specified and then "
+    echo "sets it to be the globally used version"
+    echo "Usage: asdf_install_latest_global [plugin_name]"
+    exit 1
+fi
+
+export asdf_package=$1
+
+asdf install $asdf_package latest && asdf global $asdf_package latest
+
