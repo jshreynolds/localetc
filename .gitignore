@@ -5,3 +5,4 @@ private
 workspaceStorage
 .netrwhist
 bin/helm2
+.crates*
