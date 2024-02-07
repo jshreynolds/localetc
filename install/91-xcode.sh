@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 echo
 echo "Installing xcode..."
@@ -7,7 +7,7 @@ echo
 mas install 497799835  #Xcode
 
 echo
-read -p "Accepting xcode license.  Hit Enter to continue..."
+read -pr "Accepting xcode license.  Hit Enter to continue..."
 echo
 
 sudo xcodebuild -license accept

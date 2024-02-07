@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo
 echo "Installing and configuring mac specific stuff..."
@@ -27,11 +27,12 @@ then
    exit 1
 fi 
 
+name=$MACHINE_NAME
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName $name
-sudo scutil --set HostName $name
-sudo scutil --set LocalHostName $name
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string $name
+sudo scutil --set ComputerName "$name"
+sudo scutil --set HostName "$name"
+sudo scutil --set LocalHostName "$name"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$name"
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "

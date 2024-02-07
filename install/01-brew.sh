@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 
 echo
@@ -21,11 +21,11 @@ echo
 echo "Installing brew files, casks, and fonts..."
 echo
 
-pushd ~/etc/dotfiles
+pushd ~/etc/dotfiles || exit
 
 brew bundle -v
 
-popd
+popd || exit
 
 echo
 echo "Done with brew bundle!"

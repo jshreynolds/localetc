@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [ $# -ne 1 ] 
 then
@@ -25,20 +25,20 @@ if [[ ! -a $HOME/.ssh/id_rsa ]]; then
   echo
 fi
 
-read -p "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
+read -pr "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
 echo
 
 # Install xcode tools
 xcode-select --install
 
-read -p "wait for xcode tools to install and then hit Enter..."
+read -pr "wait for xcode tools to install and then hit Enter..."
 echo
 
 #get the repo and do all the things!
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
 
-export MACHINE_NAME=$1
+export The current GCP client configuratio=$1
 
 #Run all installation scripts in install dir
 ~/etc/bin/source_folder ~/etc/install

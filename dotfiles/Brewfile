@@ -3,17 +3,19 @@ tap 'heroku/brew'
 tap 'homebrew/cask-fonts'
 tap 'mongodb/brew'
 
-#core
+# shells and shell debuggers
 brew 'bash'
+brew 'bashdb'
 brew 'fish'
 cask 'powershell'
+brew 'zsh'
+brew 'zshdb'
 
-#command line updates for older macos versions
+# command line updates for older macos versions
 brew 'coreutils'
 brew 'openssl'
 brew 'rsync'
 brew 'git'
-
 
 #new commando lines
 brew 'bat'
@@ -32,13 +34,13 @@ brew 'the_silver_searcher'
 brew 'zoxide'
 
 #fonts
-
 cask 'font-3270-nerd-font'
 cask 'font-caskaydia-cove-nerd-font'
 cask 'font-fira-code-nerd-font'
 cask 'font-hasklug-nerd-font'
 
 #development tools
+cask 'alacritty'
 brew 'asdf'
 brew 'cowsay'
 brew 'exercism'
@@ -60,7 +62,10 @@ brew 'pre-commit'
 cask 'r'
 cask 'rstudio'
 cask 'sf-symbols'
+brew 'shellcheck'
+brew 'starship'
 cask 'svn'
+brew 'xcodes'
 brew 'vault'
 brew 'yq'
 brew 'zellij'
@@ -89,8 +94,6 @@ cask 'scrivener'
 #mac life
 cask '1password'
 cask 'anki'
-cask 'asana'
-cask 'chromium'
 cask 'discord'
 cask 'emacs'
 cask 'firefox'
@@ -103,17 +106,11 @@ cask 'nordvpn'
 cask 'rectangle'
 cask 'selfcontrol'
 cask 'slack'
-cask 'tunnelblick'
 cask 'typora'
 cask 'zoom'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
-mas 'excel', id: 462058435
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
-mas 'keynote', id: 409183694
-mas 'numbers', id: 409203825
 mas 'nebo', id: 1119601770
-mas 'pages', id: 409201541
-mas 'word', id: 462054704
