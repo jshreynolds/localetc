@@ -17,7 +17,7 @@ brew 'openssl'
 brew 'rsync'
 brew 'git'
 
-#new commando lines
+# new updated command lines
 brew 'bat'
 brew 'broot'
 brew 'curlie'
@@ -33,13 +33,13 @@ brew 'rm-improved'
 brew 'the_silver_searcher'
 brew 'zoxide'
 
-#fonts
+# fonts
 cask 'font-3270-nerd-font'
 cask 'font-caskaydia-cove-nerd-font'
 cask 'font-fira-code-nerd-font'
 cask 'font-hasklug-nerd-font'
 
-#development tools
+# development tools
 cask 'alacritty'
 brew 'asdf'
 brew 'cowsay'
@@ -49,6 +49,7 @@ cask 'dash'
 brew 'direnv'
 brew 'gcc'
 brew 'gh'
+brew 'gopls'
 brew 'git-lfs'
 brew 'gnupg'
 brew 'jq'
@@ -64,34 +65,36 @@ cask 'rstudio'
 cask 'sf-symbols'
 brew 'shellcheck'
 brew 'starship'
-cask 'svn'
+brewb 'svn'
 brew 'xcodes'
 brew 'vault'
 brew 'yq'
 brew 'zellij'
 
-#web developement
+# web developement
 cask 'visual-studio-code'
 
-#android development
+# android development
 cask 'android-studio'
 
-#container tools
-cask 'docker'
-brew 'skaffold'
+# game development
+cask 'unity-hub'
+cask 'unity'
 
-#cloud cli
+# container tools
+cask 'docker'
+
+# cloud cli
 brew 'awscli'
 brew 'azure-cli'
 cask 'google-cloud-sdk'
 brew 'heroku'
-brew 'kube-ps1'
 
-#creative
+# creative
 cask 'adobe-creative-cloud'
 cask 'scrivener'
 
-#mac life
+# mac life
 cask '1password'
 cask 'anki'
 cask 'discord'
@@ -111,6 +114,8 @@ cask 'zoom'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
+# app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
 mas 'nebo', id: 1119601770
+mas 'whatsapp', id: 310633997

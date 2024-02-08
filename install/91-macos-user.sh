@@ -1,41 +1,30 @@
 #!/bin/bash
 
 echo
-echo "Installing and configuring mac specific stuff..."
+echo "Installing and configuring mac user specific settings..."
+echo
+echo 
+
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+echo "Opening System Security Preferences"
+echo "Please allow full disk access to Terminal in order to use 'defaults' to edit mail and safari system preferences."
+echo "Hit enter to continue..." 
+read -r
+
+echo
+echo "Opening Keyboard Shorcuts Pane."
+echo "Select Mission Control and deselect Show Desktop."
+echo "Then select Function Keys and toggle them on."
+echo "Quit System Preferences and then hit enter to continue..."
+open "x-apple.systempreferences:com.apple.preference.keyboard?Shortcuts"
+read -r
 echo
 
-# Close any open System Preferences panes, to prevent them from overriding
-# settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
-
-# Ask for the administrator password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
-
-if [[ -z $MACHINE_NAME ]] 
-then
-   echo
-   echo "Error: \$MACHINE_NAME not set!"
-   echo "Please run this script with that environment variable set"
-   echo
-   exit 1
-fi 
-
-name=$MACHINE_NAME
-# Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "$name"
-sudo scutil --set HostName "$name"
-sudo scutil --set LocalHostName "$name"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$name"
-
-# Disable the sound effects on boot
-sudo nvram SystemAudioVolume=" "
 
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -57,10 +46,6 @@ defaults write com.apple.CrashReporter DialogType -string "none"
 
 # Set Help Viewer windows to non-floating mode
 defaults write com.apple.helpviewer DevMode -bool true
-
-# Reveal IP address, hostname, OS version, etc. when clicking the clock
-# in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Disable automatic capitalization as it’s annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
@@ -105,12 +90,6 @@ defaults write NSGlobalDomain AppleLocale -string "en_US@currency=USD"
 defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
 defaults write NSGlobalDomain AppleMetricUnits -bool true
 
-# Show language menu in the top right corner of the boot screen
-sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
-
-# Set the timezone; see `sudo systemsetup -listtimezones` for other values
-sudo systemsetup -settimezone "America/Chicago" > /dev/null
-
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
@@ -127,9 +106,6 @@ defaults write com.apple.screencapture type -string "png"
 
 # Disable shadow in screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
-
-# Enable HiDPI display modes (requires restart)
-sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
 
 ###############################################################################
 # Finder                                                                      #
@@ -189,9 +165,6 @@ defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
 # Show the ~/Library folder
 chflags nohidden ~/Library
-
-# Show the /Volumes folder
-sudo chflags nohidden /Volumes
 
 # Expand the following File Info panes:
 # “General”, “Open with”, and “Sharing & Permissions”
@@ -269,13 +242,13 @@ defaults write com.apple.dock show-recents -bool false
 #defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
 #
 ## Show the full URL in the address bar (note: this still hides the scheme)
-#defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 #
 ## Set Safari’s home page to `about:blank` for faster loading
 #defaults write com.apple.Safari HomePage -string "about:blank"
 #
 ## Prevent Safari from opening ‘safe’ files automatically after downloading
-#defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
 #
 ## Hide Safari’s bookmarks bar by default
 #defaults write com.apple.Safari ShowFavoritesBar -bool false
@@ -287,7 +260,7 @@ defaults write com.apple.dock show-recents -bool false
 #defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
 #
 ## Enable Safari’s debug menu
-defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+####### defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 #
 ## Make Safari’s search banners default to Contains instead of Starts With
 #defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false
@@ -309,10 +282,10 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 defaults write com.apple.Safari WebAutomaticSpellingCorrectionEnabled -bool false
 #
 ## Disable AutoFill
-#defaults write com.apple.Safari AutoFillFromAddressBook -bool false
-#defaults write com.apple.Safari AutoFillPasswords -bool false
-#defaults write com.apple.Safari AutoFillCreditCardData -bool false
-#defaults write com.apple.Safari AutoFillMiscellaneousForms -bool false
+defaults write com.apple.Safari AutoFillFromAddressBook -bool false
+defaults write com.apple.Safari AutoFillPasswords -bool false
+defaults write com.apple.Safari AutoFillCreditCardData -bool false
+defaults write com.apple.Safari AutoFillMiscellaneousForms -bool false
 #
 ## Warn about fraudulent websites
 defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true
@@ -363,55 +336,12 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
 
 ###############################################################################
-# # Spotlight                                                                   #
-# ###############################################################################
+# Spotlight                                                                   #
+###############################################################################
 
-# # Hide Spotlight tray-icon (and subsequent helper)
-# #sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
-# # Disable Spotlight indexing for any volume that gets mounted and has not yet
-# # been indexed before.
-# # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-# sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
-# # Change indexing order and disable some search results
-# # Yosemite-specific search results (remove them if you are using macOS 10.9 or older):
-# # 	MENU_DEFINITION
-# # 	MENU_CONVERSION
-# # 	MENU_EXPRESSION
-# # 	MENU_SPOTLIGHT_SUGGESTIONS (send search queries to Apple)
-# # 	MENU_WEBSEARCH             (send search queries to Apple)
-# # 	MENU_OTHER
-# defaults write com.apple.spotlight orderedItems -array \
-# 	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
-# 	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
-# 	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
-# 	'{"enabled" = 1;"name" = "PDF";}' \
-# 	'{"enabled" = 1;"name" = "FONTS";}' \
-# 	'{"enabled" = 0;"name" = "DOCUMENTS";}' \
-# 	'{"enabled" = 0;"name" = "MESSAGES";}' \
-# 	'{"enabled" = 0;"name" = "CONTACT";}' \
-# 	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
-# 	'{"enabled" = 0;"name" = "IMAGES";}' \
-# 	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
-# 	'{"enabled" = 0;"name" = "MUSIC";}' \
-# 	'{"enabled" = 0;"name" = "MOVIES";}' \
-# 	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
-# 	'{"enabled" = 0;"name" = "SPREADSHEETS";}' \
-# 	'{"enabled" = 0;"name" = "SOURCE";}' \
-# 	'{"enabled" = 0;"name" = "MENU_DEFINITION";}' \
-# 	'{"enabled" = 0;"name" = "MENU_OTHER";}' \
-# 	'{"enabled" = 0;"name" = "MENU_CONVERSION";}' \
-# 	'{"enabled" = 0;"name" = "MENU_EXPRESSION";}' \
-# 	'{"enabled" = 0;"name" = "MENU_WEBSEARCH";}' \
-# 	'{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
-# # Load new settings before rebuilding the index
-# killall mds > /dev/null 2>&1
-# # Make sure indexing is enabled for the main volume
-# sudo mdutil -i on / > /dev/null
-# # Rebuild the index from scratch
-# sudo mdutil -E / > /dev/null
 
 ###############################################################################
-# Terminal & iTerm 2                                                          #
+# Terminal                                                                    #
 ###############################################################################
 
 # Only use UTF-8 in Terminal.app
@@ -428,9 +358,6 @@ defaults write com.apple.terminal SecureKeyboardEntry -bool true
 
 # Disable the annoying line marks
 defaults write com.apple.Terminal ShowLineMarks -int 0
-
-# Don’t display the annoying prompt when quitting iTerm
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
 ###############################################################################
 # Time Machine                                                                #
@@ -483,6 +410,11 @@ defaults write com.apple.appstore WebKitDeveloperExtras -bool true
 # Enable Debug Menu in the Mac App Store
 defaults write com.apple.appstore ShowDebugMenu -bool true
 
+# Disable Autoplay 
+defaults write com.apple.appstore AutoPlayVideoSetting -string off
+defaults write com.apple.appstore UserSetAutoPlayVideoSetting -bool true
+defaults write com.apple.appstore AVDesktopPlaybackControlsControllerShowsDurationInsteadOfTimeRemainingDefaultsKey --bool 1
+
 # Enable the automatic update check
 defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
 
@@ -522,16 +454,23 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
 ###############################################################################
-# Google Chrome & Google Chrome Canary                                        #
+# Advertising                                                                 #
 ###############################################################################
 
-# Use the system-native print preview dialog
-defaults write com.google.Chrome DisablePrintPreview -bool true
-defaults write com.google.Chrome.canary DisablePrintPreview -bool true
+# Disallow ID'ing
+defaults write com.apple.AdLib allowIdentifierForAdvertising -boolean false
 
-# Expand the print dialog by default
-defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
-defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true
+# Disallow Personalized advertising
+defaults write com.apple.AdLib allowApplePersonalizedAdvertising -boolean false
+
+###############################################################################
+# Rmmove Security hole if you'd like                                          #
+###############################################################################
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+echo "Opening System Security Preferences"
+echo "Please remove full disk access from Terminal if you'd like better security."
+echo "Hit enter to continue..." 
+read -r
 
 ###############################################################################
 # Kill affected applications                                                  #
