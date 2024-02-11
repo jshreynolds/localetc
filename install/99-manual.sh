@@ -1,13 +1,19 @@
 #!/bin/bash
 
-# log in to vscode for extension syncing
-echo "Please sign in to VS Code to enable syncing"
-open vscode://
-echo
-echo "Hit enter to continue..."
-read -r
-echo
+applications=(
+    Anki.app
+    GoodNotes.app
+    Nebo.app
+    NordVPN.app
+    "Visual Studio Code.app"
+    WhatsApp.app
+)
 
-# log in to whatsapp
-echo "Please sign in to WhatsApp"
-open whatsapp://
+for app in "${applications[@]}"; do
+    echo "Please sign in to ${app} to enable syncing"
+    open "/Applications/${app}"
+    echo
+    echo "Hit enter to continue..."
+    read -r
+    echo
+done

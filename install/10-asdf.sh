@@ -7,7 +7,7 @@ asdf install java "$latest"
 asdf global java "$latest"
 
 export R_EXTRA_CONFIGURE_OPTIONS='--enable-R-shlib --with-cairo'
-export PACKS="clojure elixir golang haskell helm kubectl nodejs poetry python ruby rust scala skaffold terraform"
+export PACKS="clojure deno elixir golang haskell helm kubectl nodejs poetry python ruby rust scala skaffold terraform"
 
 for pack in $PACKS
 do
