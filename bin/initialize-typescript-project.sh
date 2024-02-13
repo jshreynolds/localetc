@@ -65,6 +65,7 @@ cat << EOF > tsconfig.json
     "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,
+    "strict": true,
     "target": "es6"
   },
   "lib": ["es2015"]
@@ -105,15 +106,15 @@ import { _ } from "../src/main";
 
 describe("tests should pass", () => {
   test("one", () => {
-    const inputOne = [];
-    const expectedOutput = [];
+    const inputOne: number[] = [];
+    const expectedOutput: number[] = [];
     const outputOne = _(inputOne);
     expect(outputOne).toEqual(expectedOutput);
   });
 
   test("two", () => {
-    const inputTwo = [];
-    const expectedOutput = [];
+    const inputTwo: number[] = [];
+    const expectedOutput: number[] = [];
     const outputTwo = _(inputTwo);
     expect(outputTwo).toEqual(expectedOutput);
   });

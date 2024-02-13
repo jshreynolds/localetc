@@ -5,15 +5,13 @@ import subprocess
 
 
 def main(sysArgs):
-    if len(sysArgs) != 3:
+    
+    if len(sysArgs) < 3:
         print("need a name and email as args")
         sys.exit(1)
 
-    # Remove the file name argument
-    sysArgs.pop(0)
-
-    name = sysArgs[0]
-    email = sysArgs[1]
+    name = ' '.join(sysArgs[1:-1])
+    email = sysArgs[-1]
 
     subprocess.run(["git", "config", "--local", "user.name", name])
     subprocess.run(["git", "config", "--local", "user.email", email])

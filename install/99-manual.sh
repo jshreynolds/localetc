@@ -17,3 +17,4 @@ for app in "${applications[@]}"; do
     read -r
     echo
 done
+

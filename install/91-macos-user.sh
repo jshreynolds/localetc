@@ -15,9 +15,14 @@ echo
 echo "Opening Keyboard Shorcuts Pane."
 echo "Select Mission Control and deselect Show Desktop."
 echo "Then select Function Keys and toggle them on."
-echo "Quit System Preferences and then hit enter to continue..."
 open "x-apple.systempreferences:com.apple.preference.keyboard?Shortcuts"
 read -r
+echo
+
+echo "Opening AirDrop and Handoff settings"
+open "x-apple.systempreferences:com.apple.AirDrop-Handoff-Settings.extension"
+echo "Disable AirPlay target."
+echo "Hit enter to continue..."
 echo
 
 osascript -e 'tell application "System Preferences" to quit'
