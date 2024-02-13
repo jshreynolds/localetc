@@ -25,7 +25,7 @@ npm install --save-dev @types/node @types/jest
 
 # Add scripts
 npx npm-add-script \
-  -k "start" \
+  -k "start-dev" \
   -v "npx ts-node-dev --respawn --pretty --transpile-only src/index.ts" \
   --force
 
@@ -59,12 +59,13 @@ EOF
 cat << EOF > tsconfig.json
 {
   "compilerOptions": {
-    "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "module": "commonjs",
     "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "dist",
     "sourceMap": true,
-    "outDir": "dist"
+    "target": "es6"
   },
   "lib": ["es2015"]
 }
