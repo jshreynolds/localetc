@@ -1,3 +1,9 @@
+## 0.2.0 (2024-02-25)
+
+### Feat
+
+- add commitizen conventional commit structure.  enable direnv-asdf
+
 ## 0.1.0 (2024-02-25)
 
 ### Feat
