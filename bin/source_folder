@@ -2,19 +2,18 @@
 
 scriptname=source.folder
 
-if [ $# -ne 1 ]
-then
-    echo "Arguments missing!"
-    echo "Usage: $scriptname directory-to-source"
-    echo "Example: $scriptname programs-available"
-    exit 1
+if [ $# -ne 1 ]; then
+  echo "Arguments missing!"
+  echo "Usage: $scriptname directory-to-source"
+  echo "Example: $scriptname programs-available"
+  exit 1
 fi
 
 toSource=$1
 
-if [ "`ls $toSource`" != "" ]; then
-for file in $toSource/*
-do
-  . $file
-done
+if [ "$(ls "$toSource")" != "" ]; then
+  for file in "$toSource"/*; do
+    # shellcheck source=/dev/null
+    source "$file"
+  done
 fi

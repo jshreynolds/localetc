@@ -1,18 +1,21 @@
 #! /bin/bash
 
-#Java has no numerical latest so this must be done manually
-asdf plugin-add java
-latest=$(asdf latest java "adoptopenjdk-[0-9]")
-asdf install java "$latest"
-asdf global java "$latest"
+PACKS=$(< ~/etc/dotfiles/asdf)
 
-export R_EXTRA_CONFIGURE_OPTIONS='--enable-R-shlib --with-cairo'
-export PACKS="clojure deno elixir golang haskell helm kubectl nodejs poetry python ruby rust scala skaffold terraform"
+function get_latest() {
+    pack=$1
+    if [[ $pack = "java" ]]; then
+        latest=$(asdf latest java "adoptopenjdk-[0-9]")
+    else
+        latest=$(asdf latest "$pack")  
+    fi
+    echo "$latest"
+}
 
 for pack in $PACKS
 do
     asdf plugin add "$pack"
-    latest=$(asdf latest "$pack")  
+    latest=$(get_latest "$pack")
     asdf install "$pack" "$latest"
     asdf global "$pack" "$latest"
 done

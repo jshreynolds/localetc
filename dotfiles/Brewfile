@@ -117,5 +117,6 @@ brew 'zsh-syntax-highlighting'
 # app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
+mas 'kagi for safari', id: 1622835804
 mas 'nebo', id: 1119601770
 mas 'whatsapp', id: 310633997
