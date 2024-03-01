@@ -29,6 +29,7 @@ brew 'asdf'
 brew 'bat'
 brew 'broot'
 brew 'curlie'
+brew 'd2'
 brew 'dog'
 brew 'duf'
 brew 'dust'
@@ -91,7 +92,6 @@ cask 'google-cloud-sdk'
 brew 'heroku'
 
 # creative
-cask 'adobe-creative-cloud'
 cask 'scrivener'
 
 # mac life

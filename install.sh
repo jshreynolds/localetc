@@ -39,5 +39,5 @@ echo
 #get the repo and do all the things!
 git clone git@github.com:jshreynolds/localetc.git ~/etc
 
-#Run all installation scripts in install dir
-~/etc/bin/source_folder ~/etc/install
+#Run all installation scripts enabled in the install dir
+~/etc/bin/source_folder ~/etc/install/enabled
