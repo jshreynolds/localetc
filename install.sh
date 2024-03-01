@@ -25,13 +25,13 @@ if [[ ! -a $HOME/.ssh/id_rsa ]]; then
   echo
 fi
 
-read -pr "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
+read -r -p "Upload your public ssh key just generated [~/.ssh/id_rsa.pub] to github and hit Enter..."
 echo
 
 # Install xcode tools
 xcode-select --install
 
-read -pr "wait for xcode tools to install and then hit Enter..."
+read -r -p "wait for xcode tools to install and then hit Enter..."
 echo
 
 #get the repo and do all the things!
