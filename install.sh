@@ -9,6 +9,8 @@ then
    exit 1
 fi 
 
+export MACHINE_NAME=$1
+
 # Ask for the administrator password upfront
 echo
 echo "Enter your admin password at the prompt to use throughout the installation..."
@@ -36,9 +38,6 @@ echo
 
 #get the repo and do all the things!
 git clone git@github.com:jshreynolds/localetc.git ~/etc
-
-
-export The current GCP client configuratio=$1
 
 #Run all installation scripts in install dir
 ~/etc/bin/source_folder ~/etc/install

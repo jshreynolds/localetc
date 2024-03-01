@@ -5,24 +5,29 @@ echo "Installing and configuring mac user specific settings..."
 echo
 echo 
 
-open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
 echo "Opening System Security Preferences"
 echo "Please allow full disk access to Terminal in order to use 'defaults' to edit mail and safari system preferences."
 echo "Hit enter to continue..." 
-read -r
 
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+read -r
 echo
+
 echo "Opening Keyboard Shorcuts Pane."
 echo "Select Mission Control and deselect Show Desktop."
-echo "Then select Function Keys and toggle them on."
+echo "Then select Function Keys and toggle them on and then hit Done."
+echo "Press Enter to conitnue..."
+
 open "x-apple.systempreferences:com.apple.preference.keyboard?Shortcuts"
 read -r
 echo
 
 echo "Opening AirDrop and Handoff settings"
-open "x-apple.systempreferences:com.apple.AirDrop-Handoff-Settings.extension"
-echo "Disable AirPlay target."
+echo "Disable AirPlay Reciever."
 echo "Hit enter to continue..."
+
+open "x-apple.systempreferences:com.apple.AirDrop-Handoff-Settings.extension"
+read -r
 echo
 
 osascript -e 'tell application "System Preferences" to quit'
@@ -418,7 +423,6 @@ defaults write com.apple.appstore ShowDebugMenu -bool true
 # Disable Autoplay 
 defaults write com.apple.appstore AutoPlayVideoSetting -string off
 defaults write com.apple.appstore UserSetAutoPlayVideoSetting -bool true
-defaults write com.apple.appstore AVDesktopPlaybackControlsControllerShowsDurationInsteadOfTimeRemainingDefaultsKey --bool 1
 
 # Enable the automatic update check
 defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
