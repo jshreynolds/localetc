@@ -10,7 +10,7 @@ Shell script basics (making it usable for bash AND zsh.
 ##USAGE
 
 1. `curl https://raw.githubusercontent.com/jshreynolds/localetc/main/install.sh`
-2. chmod 755 install.sh && ./install.sh
+2. `chmod 755 install.sh && ./install.sh`
 3. Do what it says
 4. Good news, friend! You will have a configured system **JUST LIKE MINE!!!**
 
