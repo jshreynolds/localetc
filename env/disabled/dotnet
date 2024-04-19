@@ -1,0 +1,6 @@
+#! eval zsh
+
+ASDF_SET_DOTNET_CONFIG=~/.asdf/plugins/dotnet/set-dotnet-env.zsh
+if [ -f $ASDF_SET_DOTNET_CONFIG ]; then
+    source $ASDF_SET_DOTNET_CONFIG
+fi

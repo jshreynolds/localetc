@@ -1,6 +1,6 @@
 cask_args appdir: '/Applications'
-tap 'heroku/brew'
 tap 'homebrew/cask-fonts'
+tap "buo/cask-upgrade"
 tap 'mongodb/brew'
 
 # shells and shell debuggers
@@ -16,6 +16,9 @@ brew 'coreutils'
 brew 'openssl'
 brew 'rsync'
 brew 'git'
+
+# support for asdf install of yarn
+brew 'gpg'
 
 # fonts
 cask 'font-3270-nerd-font'
@@ -54,10 +57,12 @@ brew 'lazydocker'
 cask 'lens'
 brew 'lsd'
 brew 'mcfly'
+brew 'mise'
 brew 'mmv'
 brew 'mongodb-database-tools'
 cask 'mongodb-compass-isolated-edition'
 brew 'neovim'
+brew 'poetry'
 brew 'postgresql'
 brew 'pre-commit'
 cask 'r'
@@ -89,7 +94,6 @@ cask 'docker'
 brew 'awscli'
 brew 'azure-cli'
 cask 'google-cloud-sdk'
-brew 'heroku'
 
 # creative
 cask 'scrivener'
@@ -106,6 +110,7 @@ brew 'mas'
 cask 'microsoft-edge'
 cask 'miro'
 cask 'nordvpn'
+cask 'onedrive'
 cask 'rectangle'
 cask 'selfcontrol'
 cask 'slack'
