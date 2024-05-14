@@ -1,6 +1,5 @@
 cask_args appdir: '/Applications'
 tap 'homebrew/cask-fonts'
-tap "buo/cask-upgrade"
 tap 'mongodb/brew'
 
 # shells and shell debuggers
@@ -33,7 +32,6 @@ brew 'bat'
 brew 'broot'
 brew 'curlie'
 brew 'd2'
-brew 'dog'
 brew 'duf'
 brew 'dust'
 brew 'cowsay'
@@ -85,7 +83,6 @@ cask 'android-studio'
 
 # game development
 cask 'unity-hub'
-cask 'unity'
 
 # container tools
 cask 'docker'
