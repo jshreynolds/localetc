@@ -1,0 +1,14 @@
+#!/bin/bash
+
+PREFIX=$1
+NAME=$2
+
+PROJECT="$PREFIX""_""$NAME"
+
+if [[ "$#" -ne 2 ]]; then
+  echo "need two args, prefix and name"
+  exit 1
+fi
+
+pbj g -p "$PREFIX" -v leet -t python "$NAME"
+code "$PROJECT" "$PROJECT""/""$NAME""/main.py" "$PROJECT""/tests/test_main.py"
