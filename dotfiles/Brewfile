@@ -81,9 +81,6 @@ brew 'zoxide'
 # android development
 cask 'android-studio'
 
-# game development
-cask 'unity-hub'
-
 # container tools
 cask 'docker'
 
