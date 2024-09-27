@@ -5,3 +5,6 @@ export RSYNC_RSH=/usr/bin/ssh
 
 # mcfly
 export MCFLY_RESULTS=50
+
+# telemetry
+export DOTNET_CLI_TELEMETRY_OPTOUT=true

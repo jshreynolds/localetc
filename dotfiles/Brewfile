@@ -2,11 +2,16 @@ cask_args appdir: '/Applications'
 tap 'homebrew/cask-fonts'
 tap 'mongodb/brew'
 
-# shells and shell debuggers
+# shells, shell debuggers, terminals
+cask 'alacritty'
 brew 'bash'
 brew 'bashdb'
+brew 'direnv'
 brew 'fish'
 cask 'powershell'
+brew 'starship'
+cask 'warp'
+brew 'zellij'
 brew 'zsh'
 brew 'zshdb'
 
@@ -26,7 +31,6 @@ cask 'font-fira-code-nerd-font'
 cask 'font-hasklug-nerd-font'
 
 # development tools
-cask 'alacritty'
 brew 'asdf'
 brew 'bat'
 brew 'broot'
@@ -38,7 +42,6 @@ brew 'cowsay'
 brew 'exercism'
 brew 'dagger'
 cask 'dash'
-brew 'direnv'
 brew 'dog'
 brew 'duf'
 brew 'dust'
@@ -48,18 +51,15 @@ brew 'gh'
 brew 'gopls'
 brew 'git-lfs'
 brew 'gnupg'
+brew 'graphviz'
 brew 'httpie'
-cask 'httpie'
 brew 'jq'
-brew 'lazydocker'
-cask 'lens'
 brew 'lsd'
 brew 'mcfly'
 brew 'mise'
 brew 'mmv'
 brew 'mongodb-database-tools'
 cask 'mongodb-compass-isolated-edition'
-brew 'neovim'
 brew 'poetry'
 brew 'postgresql'
 brew 'pre-commit'
@@ -68,21 +68,24 @@ brew 'rm-improved'
 cask 'rstudio'
 cask 'sf-symbols'
 brew 'shellcheck'
-brew 'starship'
 brew 'svn'
 brew 'the_silver_searcher'
-brew 'xcodes'
-brew 'vault'
-cask 'visual-studio-code'
 brew 'yq'
-brew 'zellij'
 brew 'zoxide'
 
 # android development
 cask 'android-studio'
 
-# container tools
+# browsers
+cask 'brave-browser'
+cask 'firefox'
+cask 'google-chrome'
+cask 'microsoft-edge'
+
+# containers
 cask 'docker'
+brew 'lazydocker'
+cask 'lens'
 
 # cloud cli
 brew 'awscli'
@@ -92,30 +95,41 @@ cask 'google-cloud-sdk'
 # creative
 cask 'scrivener'
 
+# editors n' ides
+cask 'cursor'
+cask 'emacs'
+brew 'neovim'
+cask 'visual-studio-code'
+brew 'xcodes'
+brew 'zed'
+
 # mac life
 cask '1password'
 cask 'anki'
-cask 'discord'
-cask 'emacs'
-cask 'firefox'
-cask 'google-chrome'
 cask 'lulu'
 brew 'mas'
-cask 'microsoft-edge'
 cask 'miro'
 cask 'nordvpn'
-cask 'onedrive'
 cask 'rectangle'
 cask 'selfcontrol'
-cask 'slack'
+cask 'thinkorswim'
 cask 'typora'
-cask 'zoom'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
+
+# chatware
+cask 'discord'
+cask 'slack'
+mas 'whatsapp', id: 310633997
+cask 'zoom'
+
+# crapulent windows tooling
+cask 'microsoft-onenote'
+cask 'microsoft-outlook'
+cask 'microsoft-teams'
+cask 'onedrive'
 
 # app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
-mas 'kagi for safari', id: 1622835804
 mas 'nebo', id: 1119601770
-mas 'whatsapp', id: 310633997
