@@ -1,11 +1,14 @@
 clojure
+dagger
 deno
+dotnet
 elixir
 golang
 helm
 java
 kubectl
 nodejs
+pnpm
 protoc
 python
 ruby
@@ -13,3 +16,4 @@ rust
 scala
 terraform
 tilt
+usage
