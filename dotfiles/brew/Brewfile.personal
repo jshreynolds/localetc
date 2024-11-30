@@ -1,0 +1,22 @@
+# creative
+cask 'scrivener'
+
+# mac life
+cask '1password'
+
+# privacy
+cask 'lulu'
+cask 'nordvpn'
+cask 'selfcontrol'
+
+# finance
+cask 'thinkorswim'
+
+# chatware
+cask 'slack'
+
+# crapulent windows tooling
+cask 'microsoft-onenote'
+cask 'microsoft-outlook'
+cask 'microsoft-teams'
+cask 'onedrive'

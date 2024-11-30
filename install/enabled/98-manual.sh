@@ -2,6 +2,7 @@
 
 applications=(
     Anki.app
+    Cursor.app
     Dash.app
     GoodNotes.app
     Nebo.app

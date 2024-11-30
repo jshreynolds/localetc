@@ -7,10 +7,8 @@ cask 'alacritty'
 brew 'bash'
 brew 'bashdb'
 brew 'direnv'
-brew 'fish'
 cask 'powershell'
 brew 'starship'
-cask 'warp'
 brew 'zellij'
 brew 'zsh'
 brew 'zshdb'
@@ -21,9 +19,6 @@ brew 'openssl'
 brew 'rsync'
 brew 'git'
 
-# support for asdf install of yarn
-brew 'gpg'
-
 # fonts
 cask 'font-3270-nerd-font'
 cask 'font-caskaydia-cove-nerd-font'
@@ -31,7 +26,6 @@ cask 'font-fira-code-nerd-font'
 cask 'font-hasklug-nerd-font'
 
 # development tools
-brew 'asdf'
 brew 'bat'
 brew 'broot'
 brew 'curlie'
@@ -91,9 +85,6 @@ brew 'awscli'
 brew 'azure-cli'
 cask 'google-cloud-sdk'
 
-# creative
-cask 'scrivener'
-
 # editors n' ides
 cask 'cursor'
 cask 'emacs'
@@ -103,29 +94,17 @@ brew 'xcodes'
 brew 'zed'
 
 # mac life
-cask '1password'
 cask 'anki'
-cask 'lulu'
 brew 'mas'
 cask 'miro'
-cask 'nordvpn'
-cask 'selfcontrol'
-cask 'thinkorswim'
 cask 'typora'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
 # chatware
 cask 'discord'
-cask 'slack'
 mas 'whatsapp', id: 310633997
 cask 'zoom'
-
-# crapulent windows tooling
-cask 'microsoft-onenote'
-cask 'microsoft-outlook'
-cask 'microsoft-teams'
-cask 'onedrive'
 
 # app store apps
 mas 'goodnotes', id: 1444383602
