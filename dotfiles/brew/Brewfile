@@ -76,7 +76,8 @@ cask 'google-chrome'
 cask 'microsoft-edge'
 
 # containers
-cask 'docker'
+brew 'colima'
+brew 'docker'
 brew 'lazydocker'
 cask 'lens'
 
@@ -89,14 +90,13 @@ cask 'google-cloud-sdk'
 cask 'cursor'
 cask 'emacs'
 brew 'neovim'
-cask 'visual-studio-code'
-brew 'xcodes'
 brew 'zed'
 
 # mac life
 cask 'anki'
 brew 'mas'
 cask 'miro'
+cask 'obsidian'
 cask 'typora'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
