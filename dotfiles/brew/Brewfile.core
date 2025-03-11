@@ -1,5 +1,4 @@
 cask_args appdir: '/Applications'
-tap 'homebrew/cask-fonts'
 tap 'mongodb/brew'
 
 # shells, shell debuggers, terminals
@@ -57,23 +56,23 @@ brew 'poetry'
 brew 'postgresql'
 brew 'pre-commit'
 cask 'r'
+brew 'ripgrep'
 brew 'rm-improved'
 cask 'rstudio'
 cask 'sf-symbols'
 brew 'shellcheck'
 brew 'svn'
 brew 'the_silver_searcher'
+brew 'tokei'
 brew 'yq'
 brew 'zoxide'
-
-# android development
-cask 'android-studio'
 
 # browsers
 cask 'brave-browser'
 cask 'firefox'
 cask 'google-chrome'
 cask 'microsoft-edge'
+cask 'orion'
 
 # containers
 brew 'colima'
@@ -90,14 +89,13 @@ cask 'google-cloud-sdk'
 cask 'cursor'
 cask 'emacs'
 brew 'neovim'
-brew 'zed'
 
 # mac life
+cask '1password'
 cask 'anki'
 brew 'mas'
 cask 'miro'
 cask 'obsidian'
-cask 'typora'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
@@ -105,8 +103,16 @@ brew 'zsh-syntax-highlighting'
 cask 'discord'
 mas 'whatsapp', id: 310633997
 cask 'zoom'
+cask 'slack'
 
 # app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
 mas 'nebo', id: 1119601770
+
+# ai
+brew cask 'claude'
+brew cask 'chatgpt'
+
+# privacy
+cask 'nordvpn'

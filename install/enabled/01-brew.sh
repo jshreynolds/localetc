@@ -21,12 +21,18 @@ echo
 
 pushd ~/etc/dotfiles/brew || exit
 
-brew bundle -v
+brew bundle -v --file=Brewfile.core
 
 read -p "Would you like to install personal packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   brew bundle -v --file=Brewfile.personal
+fi
+
+read -p "Would you like to install work packages? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  brew bundle -v --file=Brewfile.work
 fi
 
 popd || exit

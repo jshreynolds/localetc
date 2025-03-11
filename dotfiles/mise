@@ -8,6 +8,7 @@ helm
 java
 kubectl
 nodejs
+ollama
 pnpm
 protoc
 python
