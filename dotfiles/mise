@@ -6,6 +6,8 @@ elixir
 golang
 helm
 java
+kafka
+kafkactl
 kubectl
 nodejs
 ollama
