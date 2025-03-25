@@ -86,7 +86,10 @@ cask 'google-cloud-sdk'
 # editors n' ides
 cask 'cursor'
 cask 'emacs'
-brew 'neovim'
+brew 'neovim'\
+cask 'visual-studio-code'
+cask 'windsurf'
+
 
 # mac life
 cask '1password'

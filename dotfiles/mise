@@ -11,6 +11,7 @@ kafkactl
 kubectl
 nodejs
 ollama
+podman
 pnpm
 protoc
 python
