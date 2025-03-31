@@ -36,3 +36,6 @@ alias ll="lsd -l --color always --date '+%Y-%m-%d %H:%M:%S'"
 
 # poetry
 alias potest="poetry run pytest"
+
+# kubernets
+alias k="kubectl"
