@@ -17,6 +17,11 @@ git config --global init.defaultBranch main
 git config --global alias.ignore '!gi() { curl -sL https://www.toptal.com/developers/gitignore/api/$@ ;}; gi'
 echo "git configured"
 
+echo "Loading in docker configuration..."
+mkdir -p ~/.docker
+ln -s ~/etc/dotfiles/docker/config.json ~/.docker/config.json
+echo "docker configured"
+
 echo
 echo "Done with $NAME!"
 echo
