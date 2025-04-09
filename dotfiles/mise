@@ -8,6 +8,7 @@ helm
 java
 kafka
 kafkactl
+kn
 kubectl
 nodejs
 ollama

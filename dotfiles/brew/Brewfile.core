@@ -77,6 +77,8 @@ brew 'colima'
 brew 'docker'
 brew 'lazydocker'
 cask 'lens'
+brew 'minikube
+cask 'podman-desktop'
 
 # cloud cli
 brew 'awscli'
@@ -86,7 +88,7 @@ cask 'google-cloud-sdk'
 # editors n' ides
 cask 'cursor'
 cask 'emacs'
-brew 'neovim'\
+brew 'neovim'
 cask 'visual-studio-code'
 cask 'windsurf'
 
