@@ -75,10 +75,10 @@ cask 'orion'
 # containers
 brew 'colima'
 brew 'docker'
+brew 'k9s'
 brew 'lazydocker'
-cask 'lens'
-brew 'minikube
-cask 'podman-desktop'
+brew 'minikube'
+cask 'openlens'
 
 # cloud cli
 brew 'awscli'
