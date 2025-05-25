@@ -45,6 +45,7 @@ brew 'gnupg'
 brew 'graphviz'
 brew 'httpie'
 brew 'jq'
+brew 'lazygit'
 brew 'lsd'
 brew 'mcfly'
 brew 'mmv'
@@ -73,7 +74,10 @@ brew 'poetry'
 
 
 # ios development tools
+brew 'swiftlint'
+brew 'xcbeautify'
 brew 'xcodegen'
+brew 'xcode-build-server'
 
 # browsers
 cask 'brave-browser'
