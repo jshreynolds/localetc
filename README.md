@@ -36,8 +36,21 @@ etc/
 ├── dotfiles/           # Configuration files to be symlinked
 │   ├── brew/           # Homebrew package lists (core, personal, work)
 │   ├── config/         # Application configurations
+│   │   ├── alacritty/  # Terminal emulator config
+│   │   ├── claude/     # Claude Code settings (.cursorrules)
+│   │   ├── gh/         # GitHub CLI config
+│   │   └── zellij/     # Terminal multiplexer config
 │   ├── docker/         # Docker settings
+<<<<<<< Updated upstream
 │   └── shell/          # Shell configurations
+=======
+<<<<<<< Updated upstream
+│   ├── mise            # Development runtime manager config
+│   └── zshrc           # Shell configuration
+=======
+│   └── shell/          # Shell configurations (zshrc, mise)
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 ├── env/                # Environment setup scripts
 │   ├── enabled/        # Active environment configurations
 │   └── disabled/       # Available but inactive configurations

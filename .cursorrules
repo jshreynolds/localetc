@@ -1,0 +1,76 @@
+# macOS Configuration Project Guidelines
+
+## Project Structure
+
+This is a shell-based macOS configuration system. Key locations:
+
+- **Installation Scripts**: `install/enabled/` (numbered for execution order)
+- **Shared Libraries**: `install/lib/` (logger.sh, common.sh, summary.sh)
+- **Configuration Files**: `dotfiles/`
+  - Shell configs: `dotfiles/shell/` (zshrc, mise)
+  - Brewfiles: `dotfiles/brew/` (core, personal, work)
+  - App configs: `dotfiles/config/`
+    - Claude Code: `dotfiles/config/claude/.cursorrules`
+- **Environment Scripts**: `env/enabled/` and `env/disabled/`
+- **Utility Scripts**: `bin/`
+- **Logs**: `.logs/` (installation logs and summaries)
+
+## Development Guidelines
+
+### When modifying installation scripts:
+1. Always source the shared libraries:
+   ```bash
+   source "${INSTALL_DIR}/lib/logger.sh"
+   source "${INSTALL_DIR}/lib/common.sh"
+   source "${INSTALL_DIR}/lib/summary.sh"
+   ```
+
+2. Use logging functions for all output:
+   - `log_info` - General information
+   - `log_success` - Successful operations
+   - `log_error` - Errors
+   - `log_warning` - Warnings
+   - `log_section` - Section headers
+
+3. Track installations for summary:
+   - `track_package` - Track package installations
+   - `track_symlink` - Track symlink creation
+   - `track_manual_step` - Track required manual steps
+
+### Package Management Rules:
+- **Homebrew** (`dotfiles/brew/`): System tools, CLI utilities, GUI apps, fonts
+- **mise** (`dotfiles/shell/mise`): Programming languages and their version managers ONLY
+  - ✅ Correct: nodejs, python, ruby, golang, rust
+  - ❌ Incorrect: docker, kubectl, terraform (these go in Brewfiles)
+
+### Common Functions Available:
+- `command_exists` - Check if command is available
+- `ask_yes_no` - Interactive yes/no prompts
+- `safe_symlink` - Create symlinks with automatic backup
+- `check_disk_space` - Verify available disk space
+- `install_brewfile` - Install from a specific Brewfile
+- `is_apple_silicon` - Check if running on M1/M2/M3
+- `run_command` - Run command with logging
+
+### Maintenance Scripts:
+- `etc-status` - Show current configuration status
+- `etc-update` - Update repository and all packages
+
+### Testing Changes:
+Run linting after modifications:
+```bash
+shellcheck install/enabled/*.sh
+shellcheck install/lib/*.sh
+```
+
+### Commit Guidelines:
+- Use conventional commits (feat:, fix:, refactor:, docs:)
+- Reference script names when changing them
+- Keep changes focused and atomic
+
+## Important Notes:
+- This is a shell-only project - no need for testing frameworks
+- Keep scripts idempotent (safe to run multiple times)
+- Always use absolute paths in symlinks
+- Log all significant actions for debugging
+- Maintain backward compatibility when possible

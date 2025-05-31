@@ -22,6 +22,10 @@ After running the automated installation, the following manual steps are require
 - [ ] **VS Code**: Sign in to enable Settings Sync
 
 ### Development
+<<<<<<< Updated upstream
+=======
+- [ ] **Claude Code**: Install from https://claude.ai/download (if not already installed)
+>>>>>>> Stashed changes
 - [ ] **GitHub**: Generate personal access token for CLI
 - [ ] **GPG Keys**: Import or generate new GPG keys for commit signing
 - [ ] **SSH Keys**: Add SSH key to GitHub/GitLab/etc
