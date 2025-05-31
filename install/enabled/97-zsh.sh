@@ -9,7 +9,7 @@ if [[ -f ~/.zshrc ]]; then
     mv ~/.zshrc ~/.zshrc.bak
 fi
 
-ln -s ~/etc/dotfiles/zshrc ~/.zshrc
+ln -s ~/etc/dotfiles/shell/zshrc ~/.zshrc
 
 echo
 echo "Done with zshrc!"

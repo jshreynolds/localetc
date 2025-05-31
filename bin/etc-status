@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# etc-status - Show status of etc configuration
+#
+# Displays current status of the macOS configuration system
+#
+
+echo "🔧 macOS Configuration Status"
+echo "============================="
+echo
+
+# Git status
+if [[ -d ~/etc/.git ]]; then
+    echo "📦 Repository:"
+    cd ~/etc
+    echo "   Last updated: $(git log -1 --format='%cd' --date=relative 2>/dev/null || echo 'unknown')"
+    echo "   Current branch: $(git branch --show-current 2>/dev/null || echo 'unknown')"
+    echo "   Status: $(git status --porcelain | wc -l | tr -d ' ') uncommitted changes"
+    echo
+fi
+
+# Installed tools
+echo "🛠️  Installed Tools:"
+
+# Check for Homebrew
+if command -v brew >/dev/null 2>&1; then
+    brew_version=$(brew --version | head -1 | cut -d' ' -f2)
+    echo "   ✓ Homebrew $brew_version"
+    echo "     - Formulae: $(brew list --formula | wc -l | tr -d ' ')"
+    echo "     - Casks: $(brew list --cask | wc -l | tr -d ' ')"
+else
+    echo "   ✗ Homebrew not installed"
+fi
+
+# Check for mise
+if command -v mise >/dev/null 2>&1; then
+    mise_version=$(mise --version 2>/dev/null | cut -d' ' -f2)
+    echo "   ✓ mise $mise_version"
+    echo "     - Tools: $(mise list --installed 2>/dev/null | wc -l | tr -d ' ')"
+else
+    echo "   ✗ mise not installed"
+fi
+
+# Other key tools
+for tool in git zsh node python go rust docker kubectl terraform; do
+    if command -v $tool >/dev/null 2>&1; then
+        case $tool in
+            git) version=$(git --version | cut -d' ' -f3) ;;
+            zsh) version=$(zsh --version | cut -d' ' -f2) ;;
+            node) version=$(node --version | tr -d 'v') ;;
+            python) version=$(python --version 2>&1 | cut -d' ' -f2) ;;
+            go) version=$(go version | cut -d' ' -f3 | tr -d 'go') ;;
+            rust) version=$(rustc --version | cut -d' ' -f2) ;;
+            docker) version=$(docker --version | cut -d' ' -f3 | tr -d ',') ;;
+            kubectl) version=$(kubectl version --client --short 2>/dev/null | cut -d' ' -f3) ;;
+            terraform) version=$(terraform version | head -1 | cut -d' ' -f2 | tr -d 'v') ;;
+            *) version="installed" ;;
+        esac
+        echo "   ✓ $tool $version"
+    fi
+done
+
+echo
+
+# Configuration status
+echo "📁 Configuration Files:"
+echo "   Dotfiles: $(find ~/etc/dotfiles -type f | wc -l | tr -d ' ') files"
+echo "   Symlinks: $(find ~ -maxdepth 2 -type l -ls 2>/dev/null | grep '~/etc' | wc -l | tr -d ' ') active"
+echo "   Env scripts: $(ls ~/etc/env/enabled/*.sh 2>/dev/null | wc -l | tr -d ' ') enabled"
+echo
+
+# Recent logs
+if [[ -d ~/etc/.logs ]]; then
+    echo "📋 Recent Activity:"
+    latest_log=$(ls -t ~/etc/.logs/install-*.log 2>/dev/null | head -1)
+    if [[ -n "$latest_log" ]]; then
+        echo "   Last install: $(basename "$latest_log" | sed 's/install-\(.*\)\.log/\1/' | sed 's/\(....\)\(..\)\(..\)-\(..\)\(..\)\(..\)/\1-\2-\3 \4:\5:\6/')"
+    fi
+    
+    latest_summary=$(ls -t ~/etc/.logs/install-summary-*.txt 2>/dev/null | head -1)
+    if [[ -n "$latest_summary" ]]; then
+        successful=$(grep -c "^\[✓\]" "$latest_summary" 2>/dev/null || echo "0")
+        echo "   Last run: $successful successful installations"
+    fi
+fi
+
+echo
+echo "Run 'etc-update' to check for updates"

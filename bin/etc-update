@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# etc-update - Update etc configuration and tools
+#
+# Updates the configuration repository and installed tools
+#
+
+echo "🔄 Updating macOS Configuration"
+echo "==============================="
+echo
+
+# Update the repository
+echo "📦 Updating repository..."
+cd ~/etc
+if git pull; then
+    echo "✓ Repository updated"
+else
+    echo "✗ Failed to update repository"
+fi
+echo
+
+# Update Homebrew
+if command -v brew >/dev/null 2>&1; then
+    echo "🍺 Updating Homebrew..."
+    brew update
+    
+    outdated=$(brew outdated)
+    if [[ -n "$outdated" ]]; then
+        echo "Found outdated packages:"
+        echo "$outdated"
+        echo
+        read -p "Upgrade all packages? [y/N]: " response
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            brew upgrade
+            brew cleanup
+        fi
+    else
+        echo "✓ All Homebrew packages are up to date"
+    fi
+else
+    echo "⚠️  Homebrew not installed"
+fi
+echo
+
+# Update mise tools
+if command -v mise >/dev/null 2>&1; then
+    echo "🔧 Updating development tools..."
+    mise self-update
+    
+    # Check for outdated tools
+    outdated=$(mise outdated 2>/dev/null)
+    if [[ -n "$outdated" ]]; then
+        echo "Found outdated tools:"
+        echo "$outdated"
+        echo
+        read -p "Upgrade all tools? [y/N]: " response
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            mise upgrade
+        fi
+    else
+        echo "✓ All development tools are up to date"
+    fi
+else
+    echo "⚠️  mise not installed"
+fi
+
+echo
+echo "✅ Update complete!"
+echo
+echo "Run 'etc-status' to see current configuration status"

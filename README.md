@@ -37,8 +37,7 @@ etc/
 │   ├── brew/           # Homebrew package lists (core, personal, work)
 │   ├── config/         # Application configurations
 │   ├── docker/         # Docker settings
-│   ├── mise            # Development runtime manager config
-│   └── zshrc           # Shell configuration
+│   └── shell/          # Shell configurations
 ├── env/                # Environment setup scripts
 │   ├── enabled/        # Active environment configurations
 │   └── disabled/       # Available but inactive configurations
@@ -114,7 +113,7 @@ mv env/disabled/10_python.sh env/enabled/
 
 ### Adding New Tools
 1. For Homebrew packages: Edit `dotfiles/brew/Brewfile.*`
-2. For development runtimes: Add to `dotfiles/mise`
+2. For development runtimes: Add to `dotfiles/shell/mise`
 3. For custom scripts: Add to `bin/`
 4. For environment configs: Create numbered scripts in `env/enabled/`
 
