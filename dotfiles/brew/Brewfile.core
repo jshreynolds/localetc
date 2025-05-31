@@ -25,16 +25,14 @@ cask 'font-fira-code-nerd-font'
 # core development tools
 brew 'bat'
 brew 'broot'
-brew 'curlie'
-brew 'd2'
-brew 'duf'
-brew 'dust'
 brew 'cowsay'
-brew 'exercism'
+brew 'curlie'
 cask 'dash'
+brew 'd2'
 brew 'dog'
 brew 'duf'
 brew 'dust'
+brew 'exercism'
 brew 'fd'
 brew 'fzf'
 brew 'gcc'
@@ -72,7 +70,6 @@ brew 'tokei'
 brew 'mise'
 brew 'poetry'
 
-
 # ios development tools
 brew 'swiftlint'
 brew 'xcbeautify'
@@ -89,10 +86,12 @@ cask 'orion'
 # containers
 brew 'colima'
 brew 'docker'
+brew 'docker-compose'
 brew 'k9s'
 brew 'lazydocker'
 brew 'minikube'
 cask 'openlens'
+brew 'podman'
 
 # cloud cli
 brew 'awscli'
@@ -128,8 +127,6 @@ mas 'grandperspective', id: 1111570163
 mas 'nebo', id: 1119601770
 
 # ai
-brew cask 'claude'
-brew cask 'chatgpt'
-
-# privacy
-cask 'nordvpn'
+cask 'claude'
+cask 'chatgpt'
+cask 'ollama'
