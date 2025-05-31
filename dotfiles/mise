@@ -4,12 +4,14 @@ deno
 dotnet
 elixir
 golang
+gradle
 helm
 java
 kafka
 kafkactl
 kn
 kubectl
+maven
 nodejs
 ollama
 podman
