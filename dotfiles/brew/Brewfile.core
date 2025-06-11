@@ -94,8 +94,10 @@ cask 'openlens'
 brew 'podman'
 
 # cloud cli
+brew 'aiven-client'
 brew 'awscli'
 brew 'azure-cli'
+brew 'confluent-cli'
 cask 'google-cloud-sdk'
 
 # editors n' ides
