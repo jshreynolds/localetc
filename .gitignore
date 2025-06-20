@@ -7,3 +7,4 @@ workspaceStorage
 bin/helm2
 .crates*
 .vscode
+.logs
