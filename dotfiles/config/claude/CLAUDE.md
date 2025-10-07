@@ -49,3 +49,9 @@
 - Feature envy (methods that use another object's data excessively)
 - Primitive obsession (using primitives instead of small objects)
 - Shotgun surgery (one change requires edits in many places)
+
+# Claude code configuration
+When initializing a repository for use with claude code, create the following files
+- `CLAUDE.md`
+- `.ai/instructions.md`
+All initialization details should be written to the `.ai/insructions.md` file and imported into `CLAUDE.md`

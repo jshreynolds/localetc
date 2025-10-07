@@ -130,6 +130,7 @@ mas 'grandperspective', id: 1111570163
 mas 'nebo', id: 1119601770
 
 # ai
+brew 'aichat'
 cask 'claude'
 cask 'chatgpt'
 cask 'ollama'
