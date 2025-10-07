@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Rancher Desktop environment configuration
+# This file configures Rancher Desktop CLI tools
+
+if [ -d "$HOME/.rd/bin" ]; then
+    export PATH="$HOME/.rd/bin:$PATH"
+fi
