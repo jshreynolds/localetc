@@ -53,5 +53,5 @@
 # Claude code configuration
 When initializing a repository for use with claude code, create the following files
 - `CLAUDE.md`
-- `.ai/instructions.md`
-All initialization details should be written to the `.ai/insructions.md` file and imported into `CLAUDE.md`
+- `AGENT.md`
+All initialization details should be written to the `AGENT.md` file and imported into `CLAUDE.md`
