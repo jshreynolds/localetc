@@ -8,3 +8,6 @@ export MCFLY_RESULTS=50
 
 # telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
+
+# custom starship path
+export STARSHIP_CONFIG=~/etc/dotfiles/config/starship.toml
