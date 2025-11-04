@@ -26,7 +26,7 @@ alias gdc="git diff --cached"
 alias gpu="git pull"
 alias gp="git push"
 alias gst="git status"
-alias gpsup="git push -u  "
+alias gpsup="git push -u origin $(git branch --show-current)"
 alias grs="git restore -- "
 alias grst="git restore --staged "
 
