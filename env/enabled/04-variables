@@ -6,8 +6,9 @@ export RSYNC_RSH=/usr/bin/ssh
 # mcfly
 export MCFLY_RESULTS=50
 
-# telemetry
+# opt out of traacking/telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
+export NEXT_TELEMETRY_DISABLED=1
 
 # custom starship path
 export STARSHIP_CONFIG=~/etc/dotfiles/config/starship.toml

@@ -120,7 +120,6 @@ brew 'zsh-syntax-highlighting'
 
 # chatware
 cask 'discord'
-mas 'whatsapp', id: 310633997
 cask 'zoom'
 cask 'slack'
 

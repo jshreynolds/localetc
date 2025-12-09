@@ -6,6 +6,9 @@ cask 'lulu'
 cask 'nordvpn'
 cask 'selfcontrol'
 
+# chat
+mas 'whatsapp', id: 310633997
+
 # finance
 cask 'thinkorswim'
 
