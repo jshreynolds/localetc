@@ -29,7 +29,7 @@ brew 'cowsay'
 brew 'curlie'
 cask 'dash'
 brew 'd2'
-brew 'dog'
+brew 'doge'
 brew 'duf'
 brew 'dust'
 brew 'exercism'
@@ -43,6 +43,7 @@ brew 'git-lfs'
 brew 'gnupg'
 brew 'graphviz'
 brew 'httpie'
+brew 'jj'
 brew 'jq'
 brew 'lazygit'
 brew 'lsd'
@@ -72,7 +73,6 @@ brew 'mise'
 brew 'poetry'
 
 # ios development tools
-brew 'swiftlint'
 brew 'xcbeautify'
 brew 'xcodegen'
 brew 'xcode-build-server'
@@ -98,7 +98,6 @@ brew 'podman'
 brew 'aiven-client'
 brew 'awscli'
 brew 'azure-cli'
-brew 'confluent-cli'
 cask 'google-cloud-sdk'
 
 # editors n' ides
@@ -115,6 +114,7 @@ cask 'anki'
 brew 'mas'
 cask 'miro'
 cask 'obsidian'
+cask 'rectangle'
 brew 'zsh-completion'
 brew 'zsh-syntax-highlighting'
 
@@ -126,7 +126,9 @@ cask 'slack'
 # app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
-mas 'nebo', id: 1119601770
+mas 'ticktick', id: 966085870
+# uncomment when mas supports ipad apps
+# mas 'myscript notes', id: 1119601770 
 
 # ai
 brew 'aichat'

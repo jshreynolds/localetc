@@ -2,7 +2,6 @@ clojure
 dagger
 deno
 dotnet
-elixir
 golang
 gradle
 helm

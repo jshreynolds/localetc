@@ -1,15 +1,11 @@
 #!/bin/bash
 
 applications=(
-    Anki.app
     Cursor.app
     Dash.app
     GoodNotes.app
-    Nebo.app
-    NordVPN.app
     Rectangle.app
     "Visual Studio Code.app"
-    WhatsApp.app
 )
 
 for app in "${applications[@]}"; do
