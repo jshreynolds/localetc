@@ -65,8 +65,10 @@ cask 'mongodb-compass-isolated-edition'
 brew 'postgresql'
 
 # code hygiene
+brew 'onefetch'
 brew 'shellcheck'
 brew 'tokei'
+brew 'scc'
 
 # project management
 brew 'mise'
@@ -105,8 +107,7 @@ cask 'cursor'
 cask 'emacs'
 brew 'neovim'
 cask 'visual-studio-code'
-cask 'windsurf'
-
+cask 'zed'
 
 # mac life
 cask '1password'
@@ -128,7 +129,7 @@ mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
 mas 'ticktick', id: 966085870
 # uncomment when mas supports ipad apps
-# mas 'myscript notes', id: 1119601770 
+# mas 'myscript notes', id: 1119601770
 
 # ai
 brew 'aichat'
