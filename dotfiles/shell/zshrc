@@ -4,7 +4,3 @@ bindkey  "^A"   beginning-of-line
 bindkey  "^E"   end-of-line
 
 source $HOME/etc/setenv
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/jreynolds/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

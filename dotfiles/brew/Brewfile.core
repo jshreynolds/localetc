@@ -134,5 +134,10 @@ mas 'ticktick', id: 966085870
 # ai
 brew 'aichat'
 cask 'claude'
+cask 'claude-code'
 cask 'chatgpt'
+brew 'huggingface-cli'
 cask 'ollama'
+cask 'opencode'
+brew 'llama.cpp'
+cask 'lm-studio'
