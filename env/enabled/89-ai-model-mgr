@@ -1,0 +1,19 @@
+#! eval sh
+
+export AI_MODELS_ROOT="$HOME/ai/models"
+export MODEL_MGR="$HOME/etc/tools/ai-model-manager"
+
+_model_mgr_python() {
+    if [ ! -d "$MODEL_MGR/.venv" ]; then
+        echo "No .venv found in $MODEL_MGR"
+        echo "Set it up with:"
+        echo "  cd $MODEL_MGR"
+        echo "  uv venv .venv"
+        echo "  uv pip install huggingface_hub"
+        return 1
+    fi
+    "$MODEL_MGR/.venv/bin/python" "$@"
+}
+
+dlmodel() { _model_mgr_python "$MODEL_MGR/dl_model.py" "$@"; }
+models()  { _model_mgr_python "$MODEL_MGR/registry.py" "$@"; }

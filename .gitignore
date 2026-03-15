@@ -8,3 +8,4 @@ bin/helm2
 .crates*
 .vscode
 .logs
+.venv
