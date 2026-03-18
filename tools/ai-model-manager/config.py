@@ -81,3 +81,22 @@ BASE_MODELS = [
 ]
 
 MODEL_EXTENSIONS = {".safetensors", ".ckpt", ".pt", ".pt2", ".pth", ".bin", ".pkl", ".sft", ".gguf"}
+
+# ComfyUI yaml key → folders it searches (for extra_model_paths.yaml generation).
+# Where ComfyUI groups multiple folders under one key, we list them together.
+# Single-folder keys are derived automatically from MODEL_TYPE_FOLDERS;
+# only the grouped keys need to be declared explicitly.
+_GROUPED = {
+    "diffusion_models": [MODEL_TYPE_FOLDERS["diffusion_models"], MODEL_TYPE_FOLDERS["unet"]],
+    "text_encoders":    [MODEL_TYPE_FOLDERS["text_encoder"], MODEL_TYPE_FOLDERS["clip"]],
+    "controlnet":       [MODEL_TYPE_FOLDERS["controlnet"], MODEL_TYPE_FOLDERS["t2i_adapter"]],
+}
+
+# Folders that are part of a group (don't give them their own yaml key)
+_GROUPED_FOLDERS = {f for folders in _GROUPED.values() for f in folders}
+
+# Build the full map: grouped keys + everything else as standalone keys
+COMFYUI_SEARCH_PATHS: dict[str, list[str]] = {**_GROUPED}
+for folder in MODEL_TYPE_FOLDERS.values():
+    if folder not in _GROUPED_FOLDERS:
+        COMFYUI_SEARCH_PATHS.setdefault(folder, [folder])

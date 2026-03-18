@@ -17,3 +17,4 @@ _model_mgr_python() {
 
 dlmodel() { _model_mgr_python "$MODEL_MGR/dl_model.py" "$@"; }
 models()  { _model_mgr_python "$MODEL_MGR/registry.py" "$@"; }
+generate_comfyui_paths()  { _model_mgr_python "$MODEL_MGR/generate_comfy_ui_paths.py" "$@"; }
