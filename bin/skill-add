@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# skill-add — install a skill globally and register it in skills.list
+#
+# Usage: skill-add <source> [<skill-name>]
+#   <source>      GitHub short path (org/repo), full GitHub URL,
+#                 or any website with a well-known skills endpoint
+#   <skill-name>  specific skill within the source (optional; omit to install all)
+#
+# Examples:
+#   skill-add vercel-labs/agent-skills research-helper
+#   skill-add microsoft/azure-skills microsoft-foundry
+#   skill-add https://likec4.dev/ likec4-dsl
+#   skill-add vercel-labs/agent-skills   # installs all skills from source
+#
+
+set -euo pipefail
+
+SKILLS_LIST="${HOME}/etc/dotfiles/skills/skills.list"
+
+if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+fi
+
+source="$1"
+skill_name="${2:-}"
+
+# Ensure the skills directory exists (created by 65-skills.sh during install)
+if [[ ! -d "${HOME}/.agents/skills" ]]; then
+    echo "Error: ~/.agents/skills does not exist. Re-run the install script first:"
+    echo "  ~/etc/install/enabled/65-skills.sh"
+    exit 1
+fi
+
+# Install via npx skills
+if [[ -n "${skill_name}" ]]; then
+    echo "Installing skill '${skill_name}' from ${source}..."
+    npx --yes skills add -g -y -s "${skill_name}" "${source}"
+    entry="${source} ${skill_name}"
+else
+    echo "Installing all skills from ${source}..."
+    npx --yes skills add -g --all "${source}"
+    entry="${source}"
+fi
+
+# Update skills.list — add entry if not already present
+if grep -qxF "${entry}" "${SKILLS_LIST}" 2>/dev/null; then
+    echo "Already in skills.list: ${entry}"
+else
+    echo "${entry}" >> "${SKILLS_LIST}"
+    echo "Added to skills.list: ${entry}"
+fi

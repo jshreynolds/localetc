@@ -1,0 +1,16 @@
+# skills.list — canonical list of third-party skills
+#
+# Format: <github-package> [<skill-name>]
+#   <github-package>  GitHub path (org/repo) or full https URL
+#   <skill-name>      specific skill within the package (optional; omit to install all)
+#
+# Examples:
+#   microsoft/azure-skills microsoft-foundry
+#   vercel-labs/agent-skills research-helper
+#   https://github.com/myorg/my-skills
+#
+# Managed by: bin/skill-add (adds entries here automatically on install)
+# Installed by: install/enabled/65-skills.sh
+
+https://likec4.dev/
+git@github.com:kepano/obsidian-skills.git
