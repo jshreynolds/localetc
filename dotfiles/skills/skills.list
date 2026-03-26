@@ -12,5 +12,5 @@
 # Managed by: bin/skill-add (adds entries here automatically on install)
 # Installed by: install/enabled/65-skills.sh
 
-https://likec4.dev/
 git@github.com:kepano/obsidian-skills.git
+https://likec4.dev/

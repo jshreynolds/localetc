@@ -81,17 +81,20 @@ else
         package=$(echo "${line}" | awk '{print $1}')
         skill_name=$(echo "${line}" | awk '{print $2}')
 
+        log_info "Processing skill entry: ${line}"
+        log_info "Package: ${package}, Skill: ${skill_name:-<all>}"
+
         if [[ -n "${skill_name}" ]]; then
             log_info "Installing skill '${skill_name}' from ${package}"
-            if npx --yes skills add "${package}" -g -y -s "${skill_name}"; then
+            if npx --yes skills add "${package}" -g -y -s "${skill_name}" < /dev/null; then
                 log_success "Installed: ${skill_name}"
             else
                 log_error "Failed to install: ${skill_name} from ${package}"
             fi
         else
-            log_info "Installing all skills from ${package}"
-            if npx --yes skills add -g --all "${package}"; then
-                log_success "Installed all from: ${package}"
+            log_info "Installing from ${package}"
+            if npx --yes skills add "${package}" -g -y < /dev/null; then
+                log_success "Installed from: ${package}"
             else
                 log_error "Failed to install from: ${package}"
             fi
