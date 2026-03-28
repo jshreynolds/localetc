@@ -36,11 +36,11 @@ fi
 # Install via npx skills
 if [[ -n "${skill_name}" ]]; then
     echo "Installing skill '${skill_name}' from ${source}..."
-    npx --yes skills add -g -y -s "${skill_name}" "${source}"
+    npx --yes skills add "${source}" -g -y -s "${skill_name}"
     entry="${source} ${skill_name}"
 else
     echo "Installing all skills from ${source}..."
-    npx --yes skills add -g --all "${source}"
+    npx --yes skills add "${source}" -g -y
     entry="${source}"
 fi
 

@@ -1,0 +1,20 @@
+{
+  "skill_name": "decision-helper",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I can't decide whether to get a standing desk or keep my current setup. help me think through it",
+      "expected_output": "A quick decision log covering intake, problem definition, objectives, and alternatives at minimum. Should recognize this as low stakes and move fast. Should ask for Obsidian vault path. Should produce a markdown decision log file."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm trying to decide whether to adopt TypeScript across our whole codebase or keep it just for new modules. We're a team of 5 and the codebase is about 80k lines of JS.",
+      "expected_output": "A medium-depth decision log working through PrOACT phases. Should identify this as medium stakes. Should explore objectives (type safety, developer experience, migration cost), generate alternatives beyond the binary, and build a consequences table. Should ask for Obsidian vault path."
+    },
+    {
+      "id": 3,
+      "prompt": "I got two job offers and I need to decide by Friday. One is a senior role at a stable company with great benefits, the other is a lead role at an early-stage startup with equity. Help me decide.",
+      "expected_output": "A thorough high-stakes decision process. Should go deep on objectives (especially surfacing hidden ones like risk tolerance, career trajectory, lifestyle). Should challenge assumptions about both options. Should suggest sleeping on it if time allows. Should produce a complete decision log with review dates set."
+    }
+  ]
+}

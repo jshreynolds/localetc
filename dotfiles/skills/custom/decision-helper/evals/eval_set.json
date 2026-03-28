@@ -1,0 +1,82 @@
+[
+  {
+    "query": "ok so I got promoted to team lead last month and now I need to decide whether to keep coding 60% of the time or shift to mostly management. my skip-level said either is fine but I need to commit to one direction by our next 1:1 on thursday",
+    "should_trigger": true
+  },
+  {
+    "query": "we're moving next year and I keep going back and forth between staying in Portland where we have friends and community, or relocating to Austin where my wife got a really good offer. she says she's fine either way but I can tell she wants to go. help me think through this properly",
+    "should_trigger": true
+  },
+  {
+    "query": "should I use postgres or mongodb for this new service? it's a multi-tenant saas thing, mostly CRUD but we might need some analytics later. team is 3 people, we all know postgres but mongo might be simpler for the document-heavy parts",
+    "should_trigger": true
+  },
+  {
+    "query": "I can't decide between these two laptops. the M4 macbook pro is $2500 and the thinkpad X1 is $1800. I do a mix of coding and video editing. I've been on linux for 10 years but I'm kinda curious about macos",
+    "should_trigger": true
+  },
+  {
+    "query": "I have three different approaches for the auth system rewrite and I keep going in circles. Option A is roll our own with JWTs, B is Auth0 which costs $$$, C is Keycloak self-hosted. Each has serious tradeoffs and my CTO wants a recommendation by EOW. Can you help me structure my thinking here?",
+    "should_trigger": true
+  },
+  {
+    "query": "my landlord just told me they're selling the house and I need to figure out if I should try to buy it (they offered me first refusal at $380k) or find a new rental. I have about $50k saved. this is stressing me out, I have like 3 weeks to decide",
+    "should_trigger": true
+  },
+  {
+    "query": "weighing whether to go back to school for an MBA or just keep grinding at my current trajectory. I'm 32, making decent money as a senior PM, but I feel like I'm hitting a ceiling without the credential. Stanford accepted me but it's $200k all-in",
+    "should_trigger": true
+  },
+  {
+    "query": "pros and cons of switching our CI from Jenkins to GitHub Actions? we have about 40 pipelines and a dedicated devops person who knows Jenkins inside out",
+    "should_trigger": true
+  },
+  {
+    "query": "I need to pick a pediatrician for my kid and I'm overwhelmed. there are like 6 options in network and I've read reviews for all of them but I keep second-guessing myself. my wife thinks I'm overthinking it but this feels important",
+    "should_trigger": true
+  },
+  {
+    "query": "ugh I've been agonizing over whether to accept this contract gig for like a week now. it pays 2x my current salary but it's 6 months with no benefits and I'd have to quit my full-time job. my partner is nervous about it. I keep making spreadsheets and then ignoring them",
+    "should_trigger": true
+  },
+  {
+    "query": "can you help me write a pros and cons list component in React? I want two columns with drag and drop",
+    "should_trigger": false
+  },
+  {
+    "query": "what are the tradeoffs between REST and GraphQL? just explain the technical differences, I don't need help deciding — we already picked GraphQL, I just want to understand what we gave up",
+    "should_trigger": false
+  },
+  {
+    "query": "help me write a decision tree classifier in python using scikit-learn. I have a CSV with customer churn data and I want to predict which customers will leave",
+    "should_trigger": false
+  },
+  {
+    "query": "I need to refactor this function, it's getting too long. Can you break it into smaller pieces? Here's the code...",
+    "should_trigger": false
+  },
+  {
+    "query": "can you explain how the PrOACT framework works? I'm writing a blog post about decision-making methodologies",
+    "should_trigger": false
+  },
+  {
+    "query": "I already decided to use Kubernetes. Now help me set up the cluster — I need a deployment yaml for my Node.js app with 3 replicas",
+    "should_trigger": false
+  },
+  {
+    "query": "review this PR for me, it changes how we handle user preferences. I want to make sure the migration is safe before I merge",
+    "should_trigger": false
+  },
+  {
+    "query": "compare these two JSON objects and tell me what changed. here they are...",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the best way to handle feature flags? I've heard of LaunchDarkly and split.io but also just using env vars. not really a decision I need help with, more just curious what's standard",
+    "should_trigger": false
+  },
+  {
+    "query": "I need to write a post-mortem for an outage we had last week. can you help me structure it? the root cause was a bad database migration that didn't have a rollback plan",
+    "should_trigger": false
+  }
+]
