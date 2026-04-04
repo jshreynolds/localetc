@@ -4,17 +4,17 @@
     {
       "id": 1,
       "prompt": "I can't decide whether to get a standing desk or keep my current setup. help me think through it",
-      "expected_output": "A quick decision log covering intake, problem definition, objectives, and alternatives at minimum. Should recognize this as low stakes and move fast. Should ask for Obsidian vault path. Should produce a markdown decision log file."
+      "expected_output": "Should ask for Obsidian vault path. Should begin with Phase 0 Intake questions. Should NOT assess the stakes and skip phases — all phases are covered. Should NOT generate objectives or alternatives itself. Should ask the user to articulate their own objectives, alternatives, and evaluations. Should produce a markdown decision log file populated only with user-provided content."
     },
     {
       "id": 2,
       "prompt": "I'm trying to decide whether to adopt TypeScript across our whole codebase or keep it just for new modules. We're a team of 5 and the codebase is about 80k lines of JS.",
-      "expected_output": "A medium-depth decision log working through PrOACT phases. Should identify this as medium stakes. Should explore objectives (type safety, developer experience, migration cost), generate alternatives beyond the binary, and build a consequences table. Should ask for Obsidian vault path."
+      "expected_output": "Should ask for Obsidian vault path. Should work through all PrOACT phases by asking questions. Should NOT generate objectives like 'type safety' or 'developer experience' — should ask the user what their objectives are. Should NOT suggest alternatives beyond the binary — should prompt the user to generate alternatives using framework methods (constraint-challenging, etc.). Process feedback should be limited to clarity, completeness, and consistency of the user's thinking."
     },
     {
       "id": 3,
       "prompt": "I got two job offers and I need to decide by Friday. One is a senior role at a stable company with great benefits, the other is a lead role at an early-stage startup with equity. Help me decide.",
-      "expected_output": "A thorough high-stakes decision process. Should go deep on objectives (especially surfacing hidden ones like risk tolerance, career trajectory, lifestyle). Should challenge assumptions about both options. Should suggest sleeping on it if time allows. Should produce a complete decision log with review dates set."
+      "expected_output": "Should ask for Obsidian vault path. Should go through all phases asking the user for input. Should NOT evaluate the offers, express opinions on which is better, or generate risk assessments. Should NOT say things like 'the startup carries more risk' or 'the stable company offers security'. If the user asks 'which should I pick?', should redirect to process. Should ask the user to identify their own objectives, alternatives, consequences, and risk tolerance. Process feedback limited to completeness, clarity, and consistency."
     }
   ]
 }

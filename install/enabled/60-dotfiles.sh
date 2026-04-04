@@ -22,8 +22,23 @@ fi
 
 # Standard config directory symlinks
 log_section "Setting up application configurations"
-~/etc/bin/overlay_symlinks ~/etc/dotfiles/config ~/.config
-track_symlink "~/etc/dotfiles/config" "~/.config"
+ensure_directory ~/.config
+for entry in ~/etc/dotfiles/config/*; do
+    name="$(basename "$entry")"
+    target="$HOME/.config/$name"
+    if [[ -d "$entry" ]]; then
+        # For directories: back up existing dir, then symlink the whole folder
+        if [[ -d "$target" && ! -L "$target" ]]; then
+            log_info "Backing up existing $target to ${target}.bak"
+            mv "$target" "${target}.bak"
+        fi
+        safe_symlink "$entry" "$target"
+    else
+        # For files: symlink directly
+        safe_symlink "$entry" "$target"
+    fi
+    track_symlink "~/etc/dotfiles/config/$name" "~/.config/$name"
+done
 
 # Claude Code specific configuration
 if [[ -d ~/.claude ]]; then
