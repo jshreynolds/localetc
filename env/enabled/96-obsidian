@@ -1,3 +1,8 @@
 #! /bin/bash
 
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+
+# Set environment variables for Obsidian vaults and agentic knowledge base
+export WORKSIDIAN=~/Dropbox/worksidian
+export OBSIDIAN=~/Documents/vault
+export AGENTIC_KB=~/Dropbox/agentic-kb

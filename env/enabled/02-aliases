@@ -35,7 +35,10 @@ alias l="lsd -l --truncate-owner-after 3 --color always --date '+%y-%m-%d %H:%M'
 alias ll="lsd -l --color always --date '+%Y-%m-%d %H:%M:%S'"
 
 # poetry
-alias potest="poetry run pytest"
+alias uvtest="uv run pytest"
 
 # kubernets
 alias k="kubectl"
+
+# codex + zellij workaround
+alias codex="codex --no-alt-screen"
