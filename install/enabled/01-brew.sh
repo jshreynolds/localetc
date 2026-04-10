@@ -19,7 +19,7 @@ echo
 echo "Installing brew files, casks, and fonts..."
 echo
 
-pushd ~/etc/dotfiles/brew || exit
+pushd ~/etc/install/packages || exit
 
 brew bundle -v --file=Brewfile.core
 

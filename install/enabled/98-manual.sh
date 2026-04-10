@@ -2,7 +2,6 @@
 
 applications=(
     Cursor.app
-    Dash.app
     GoodNotes.app
     Rectangle.app
     "Visual Studio Code.app"
@@ -16,6 +15,3 @@ for app in "${applications[@]}"; do
     read -r
     echo
 done
-
-open ~/Documents/dash/license.dash-license
-

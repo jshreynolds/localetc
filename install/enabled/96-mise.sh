@@ -25,7 +25,7 @@ if ! command_exists mise; then
 fi
 
 # Load packages from config file
-MISE_CONFIG="${HOME}/etc/dotfiles/shell/mise"
+MISE_CONFIG="${HOME}/etc/install/packages/mise"
 
 if [[ ! -f "$MISE_CONFIG" ]]; then
     log_error "mise config file not found: $MISE_CONFIG"
