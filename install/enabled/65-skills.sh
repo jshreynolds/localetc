@@ -27,7 +27,7 @@ else
 fi
 
 SKILLS_LIST="${ETC_DIR}/dotfiles/skills/skills.list"
-CUSTOM_SKILLS_DIR="${ETC_DIR}/dotfiles/skills/custom"
+CUSTOM_SKILLS_DIR="${ETC_DIR}/dotfiles/skills"
 AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
 
 # Create a symlink to a directory, backing up any existing directory first
@@ -108,9 +108,10 @@ fi
 log_section "Symlinking custom skills"
 
 shopt -s nullglob
-for skill_dir in "${CUSTOM_SKILLS_DIR}"/*/; do
+for skill_dir in "${CUSTOM_SKILLS_DIR}"/*; do
+    [[ -d "$skill_dir" ]] || continue
     skill_name=$(basename "${skill_dir}")
-    link_dir "${skill_dir%/}" "${AGENTS_SKILLS_DIR}/${skill_name}"
+    link_dir "${skill_dir}" "${AGENTS_SKILLS_DIR}/${skill_name}"
 done
 shopt -u nullglob
 
