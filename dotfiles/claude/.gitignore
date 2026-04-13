@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Except these files
+!.gitignore
+!CLAUDE.md
+!XP.md
+!settings.json
+!skills/
+skills/*
+!skills/custom
