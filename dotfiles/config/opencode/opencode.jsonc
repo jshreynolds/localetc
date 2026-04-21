@@ -31,6 +31,5 @@
                 }    
             }
         }
-    },
-    "model": "opencode/big-pickle"
+    }
 }

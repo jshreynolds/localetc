@@ -70,13 +70,15 @@ def normalize_title(value):
 def find_note_id(title, date_str, api_key, meeting_time=None):
     """Search notes created on date_str and return the best title match.
 
-    meeting_time: optional "HH:MM" in local time (UTC assumed) — narrows the search
+    meeting_time: optional "HH:MM" in local time — narrows the search
     window to ±90 minutes around the meeting start for disambiguation.
+    The system local timezone is used to convert to UTC for the API query.
     """
     if meeting_time:
-        dt = datetime.strptime(f"{date_str}T{meeting_time}", "%Y-%m-%dT%H:%M").replace(tzinfo=timezone.utc)
-        created_after  = (dt - timedelta(minutes=90)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        created_before = (dt + timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        local_tz = datetime.now().astimezone().tzinfo
+        dt = datetime.strptime(f"{date_str}T{meeting_time}", "%Y-%m-%dT%H:%M").replace(tzinfo=local_tz)
+        created_after  = (dt - timedelta(minutes=90)).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        created_before = (dt + timedelta(hours=3)).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     else:
         day = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
         created_after  = (day - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")

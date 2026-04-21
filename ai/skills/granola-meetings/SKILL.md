@@ -199,7 +199,7 @@ Run transcript fetches in parallel where practical, but do not describe them as 
 
 After the files are written, offer the user a single batched follow-up:
 
-> "I saved the meeting summaries. If you want, I can add personal notes or TickTick tasks for any of them. Reply with the meeting name and what to add, or say skip."
+> "I saved the meeting summaries. If you want, I can add personal notes to any of them. Reply with the meeting name and what to add, or say skip."
 
 Only do per-meeting follow-up if the user opts in.
 
@@ -208,15 +208,6 @@ If the user wants custom notes, append them under:
 ```markdown
 ## My Notes
 ```
-
-If the user wants TickTick tasks:
-
-1. Collect all requested tasks across meetings first.
-2. Call `mcp__claude_ai_ticktick__list_projects` only if you need to resolve a project.
-3. Use `mcp__claude_ai_ticktick__batch_add_tasks` to create tasks in batches where possible.
-4. Confirm how many tasks were created and where.
-
-Do not force a TickTick prompt for every meeting.
 
 ### Step 9: Report results
 
