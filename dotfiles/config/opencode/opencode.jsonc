@@ -31,5 +31,12 @@
                 }    
             }
         }
+    },
+    "mcp": {
+        "granola": {
+            "type": "remote",
+            "url": "https://mcp.granola.ai/mcp",
+            "enabled": true
+        }
     }
 }
