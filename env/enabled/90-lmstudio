@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# LM Studio environment configuration
-# This file configures LM Studio CLI tools
-
-if [ -d "$HOME/.rd/bin" ]; then
-    export PATH="$PATH:$HOME/.lmstudio/bin"
-fi
