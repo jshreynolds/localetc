@@ -4,12 +4,13 @@ Build, search, and audit your model registry.
 
 Usage:
     python registry.py build
-    python registry.py search --type lora --base sdxl
+    python registry.py search --domain comfy --type lora --base sdxl
+    python registry.py search --domain llm --family qwen3
     python registry.py search --text "dreamshaperXL"
     python registry.py audit
     python registry.py audit --unused-days 90
-    python registry.py info checkpoints/sdxl/dreamshaperXL_v21.safetensors
-    python registry.py status checkpoints/sdxl/old_model.safetensors archived
+    python registry.py info comfy/checkpoints/sdxl/dreamshaperXL_v21.safetensors
+    python registry.py status comfy/checkpoints/sdxl/old_model.safetensors archived
     python registry.py stats
 """
 
@@ -17,16 +18,11 @@ import argparse, json, logging, sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger(__name__)
+from config import AI_MODELS_ROOT, MODEL_EXTENSIONS
+from config_comfy import MODEL_TYPE_FOLDERS, BASE_MODELS
+from core import load_sidecar, sidecar_path, setup_logging
 
-log.info("Loading config...")
-from config import AI_MODELS_ROOT, MODEL_TYPE_FOLDERS, BASE_MODELS, MODEL_EXTENSIONS
-log.info(f"AI_MODELS_ROOT = {AI_MODELS_ROOT}")
+log = logging.getLogger(__name__)
 
 REGISTRY_FILE = AI_MODELS_ROOT / "_registry" / "registry.json"
 
@@ -34,21 +30,28 @@ REGISTRY_FILE = AI_MODELS_ROOT / "_registry" / "registry.json"
 # ─── helpers ─────────────────────────────────────────────────────────────────
 
 def find_models(root=AI_MODELS_ROOT):
-    log.info(f"Scanning {root} for model files...")
-    log.info(f"Looking for extensions: {MODEL_EXTENSIONS}")
+    log.debug(f"Scanning {root} for model files...")
     out = []
     for ext in MODEL_EXTENSIONS:
         found = list(root.rglob(f"*{ext}"))
         if found:
-            log.info(f"  {ext}: {len(found)} files")
+            log.debug(f"  {ext}: {len(found)} files")
         out.extend(found)
     result = sorted(p for p in out if "_registry" not in p.parts)
-    log.info(f"Total model files found: {len(result)}")
+    log.debug(f"Total model files found: {len(result)}")
     return result
 
 
 def rel(p):
     return str(p.relative_to(AI_MODELS_ROOT))
+
+
+def domain_of(path_str):
+    """Return 'llm' or 'comfy' based on the top-level directory, or 'unknown'."""
+    parts = Path(path_str).parts
+    if parts and parts[0] in ("llm", "comfy"):
+        return parts[0]
+    return "unknown"
 
 
 def size_mb(p):
@@ -59,40 +62,25 @@ def fmt(mb):
     return f"{mb/1024:.1f} GB" if mb >= 1024 else f"{mb:.0f} MB"
 
 
-def sidecar_path(model_path):
-    return model_path.with_suffix(model_path.suffix + ".json")
-
-
-def load_sidecar(p):
-    sc = sidecar_path(p)
-    if sc.exists():
-        try:
-            return json.loads(sc.read_text())
-        except json.JSONDecodeError as e:
-            log.warning(f"Corrupt sidecar {sc}: {e}")
-            return None
-    return None
-
-
 def load_registry():
-    log.info(f"Loading registry from {REGISTRY_FILE}...")
+    log.debug(f"Loading registry from {REGISTRY_FILE}...")
     if REGISTRY_FILE.exists():
         try:
             reg = json.loads(REGISTRY_FILE.read_text())
-            log.info(f"Registry loaded: {len(reg.get('models', []))} models")
+            log.debug(f"Registry loaded: {len(reg.get('models', []))} models")
             return reg
         except json.JSONDecodeError as e:
             log.warning(f"Corrupt registry file: {e}")
     else:
-        log.info("No registry file found, starting empty")
+        log.debug("No registry file found, starting empty")
     return {"models": []}
 
 
 def save_registry(reg):
-    log.info(f"Saving registry to {REGISTRY_FILE}...")
+    log.debug(f"Saving registry to {REGISTRY_FILE}...")
     REGISTRY_FILE.parent.mkdir(parents=True, exist_ok=True)
     REGISTRY_FILE.write_text(json.dumps(reg, indent=2))
-    log.info("Registry saved OK")
+    log.debug("Registry saved OK")
 
 
 # ─── commands ────────────────────────────────────────────────────────────────
@@ -111,7 +99,6 @@ def cmd_build(_args):
             entry["local"] = {"status": "untracked"}
         entries.append(entry)
 
-    log.info(f"Indexed {len(entries)} models, {orphans} without sidecars")
     reg = {"models": entries, "built": datetime.now(timezone.utc).isoformat()}
     save_registry(reg)
     total = sum(e["size_mb"] for e in entries)
@@ -124,23 +111,33 @@ def cmd_search(args):
     if not results:
         sys.exit("Registry empty — run 'build' first.")
 
+    if args.domain:
+        results = [m for m in results if domain_of(m.get("path", "")) == args.domain]
     if args.type:
-        log.info(f"Filtering by type: {args.type}")
         results = [m for m in results if m.get("model", {}).get("type") == args.type]
     if args.base:
-        log.info(f"Filtering by base: {args.base}")
         results = [m for m in results if m.get("model", {}).get("base_model") == args.base]
+    if args.family:
+        results = [m for m in results if m.get("model", {}).get("family") == args.family]
     if args.tag:
-        log.info(f"Filtering by tag: {args.tag}")
         t = args.tag.lower()
         results = [m for m in results if t in [x.lower() for x in m.get("model", {}).get("tags", [])]]
     if args.status:
-        log.info(f"Filtering by status: {args.status}")
         results = [m for m in results if m.get("local", {}).get("status") == args.status]
     if args.text:
-        log.info(f"Filtering by text: {args.text}")
         t = args.text.lower()
-        results = [m for m in results if t in json.dumps(m).lower()]
+        # Search specific fields, not raw JSON
+        def text_match(m):
+            searchable = " ".join([
+                m.get("path", ""),
+                m.get("source", {}).get("repo_id", ""),
+                m.get("model", {}).get("name", ""),
+                m.get("model", {}).get("family", "") or "",
+                " ".join(m.get("model", {}).get("tags", [])),
+                m.get("local", {}).get("notes", ""),
+            ])
+            return t in searchable.lower()
+        results = [m for m in results if text_match(m)]
 
     if not results:
         print("No matches.")
@@ -148,14 +145,18 @@ def cmd_search(args):
 
     print(f"{len(results)} result(s):\n")
     for m in results:
+        d = domain_of(m.get("path", ""))
         status = m.get("local", {}).get("status", "?")
         src = m.get("source", {}).get("repo_id", "") if m.get("source") else ""
         tags = ", ".join(m.get("model", {}).get("tags", []))
-        print(f"  [{status}] {m['path']}  ({fmt(m.get('size_mb', 0))})")
+        print(f"  [{d}] [{status}] {m['path']}  ({fmt(m.get('size_mb', 0))})")
         if src:
             print(f"         source: {src}")
         if tags:
             print(f"         tags: {tags}")
+        family = m.get("model", {}).get("family")
+        if family:
+            print(f"         family: {family}")
         notes = m.get("local", {}).get("notes", "")
         if notes:
             print(f"         notes: {notes[:80]}")
@@ -169,7 +170,6 @@ def cmd_audit(args):
     cutoff = None
     if args.unused_days:
         cutoff = datetime.now(timezone.utc) - timedelta(days=args.unused_days)
-        log.info(f"Stale cutoff: unused since {cutoff.date()}")
 
     for p in models:
         s = size_mb(p)
@@ -197,7 +197,7 @@ def cmd_audit(args):
         for path, s in orphans:
             print(f"  {fmt(s):>8}  {path}")
         print(f"  Total: {fmt(sum(s for _, s in orphans))}")
-        print(f"  Fix: use dl_model.py --existing <path> to create sidecars\n")
+        print(f"  Fix: use dl_comfy.py or dl_llm.py --existing <path> to create sidecars\n")
 
     if stale:
         print(f"STALE (unused >{args.unused_days} days):")
@@ -211,31 +211,26 @@ def cmd_audit(args):
 
 def cmd_info(args):
     p = AI_MODELS_ROOT / args.path
-    log.info(f"Looking up {p}")
     if not p.exists():
-        log.error(f"File not found: {p}")
-        sys.exit(1)
+        sys.exit(f"File not found: {p}")
     sc = load_sidecar(p)
     print(f"File: {args.path}  ({fmt(size_mb(p))})\n")
     if not sc:
-        sys.exit("No sidecar. Create one with dl_model.py --existing")
+        sys.exit("No sidecar. Create one with dl_comfy.py or dl_llm.py --existing")
     print(json.dumps(sc, indent=2))
 
 
 def cmd_status(args):
     p = AI_MODELS_ROOT / args.path
     sp = sidecar_path(p)
-    log.info(f"Updating status for {p}")
     if not sp.exists():
-        log.error(f"No sidecar found at {sp}")
-        sys.exit(1)
+        sys.exit(f"No sidecar found at {sp}")
     sc = json.loads(sp.read_text())
     old = sc.get("local", {}).get("status", "?")
     sc.setdefault("local", {})["status"] = args.new_status
     if args.new_status == "archived":
         sc["local"]["keep"] = False
     sp.write_text(json.dumps(sc, indent=2))
-    log.info(f"Sidecar updated: {sp}")
     print(f"{args.path}: {old} -> {args.new_status}")
 
 
@@ -248,16 +243,30 @@ def cmd_stats(_args):
 
     print(f"Total: {len(models)} models, {fmt(total)}\n")
 
-    for label, key in [("By type", "type"), ("By base", "base_model")]:
+    # By domain
+    by_domain = {}
+    for m in models:
+        d = domain_of(m.get("path", ""))
+        by_domain.setdefault(d, []).append(m)
+    print("By domain:")
+    for k in sorted(by_domain):
+        items = by_domain[k]
+        print(f"  {k:>15}: {len(items):>3}  ({fmt(sum(m.get('size_mb',0) for m in items))})")
+    print()
+
+    for label, key in [("By type", "type"), ("By base", "base_model"), ("By family", "family")]:
         groups = {}
         for m in models:
-            v = m.get("model", {}).get(key, "unknown") or "unknown"
+            v = m.get("model", {}).get(key) or None
+            if v is None:
+                continue
             groups.setdefault(v, []).append(m)
-        print(f"{label}:")
-        for k in sorted(groups):
-            items = groups[k]
-            print(f"  {k:>15}: {len(items):>3}  ({fmt(sum(m.get('size_mb',0) for m in items))})")
-        print()
+        if groups:
+            print(f"{label}:")
+            for k in sorted(groups):
+                items = groups[k]
+                print(f"  {k:>15}: {len(items):>3}  ({fmt(sum(m.get('size_mb',0) for m in items))})")
+            print()
 
     by_status = {}
     for m in models:
@@ -272,13 +281,16 @@ def cmd_stats(_args):
 
 def main():
     p = argparse.ArgumentParser(description="Model registry.")
+    p.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("build")
 
     s = sub.add_parser("search")
+    s.add_argument("--domain", choices=["llm", "comfy"])
     s.add_argument("--type", choices=MODEL_TYPE_FOLDERS.keys())
     s.add_argument("--base", choices=BASE_MODELS)
+    s.add_argument("--family")
     s.add_argument("--tag")
     s.add_argument("--status")
     s.add_argument("--text")
@@ -296,9 +308,10 @@ def main():
     sub.add_parser("stats")
 
     args = p.parse_args()
+    setup_logging(args.verbose)
+
     if not AI_MODELS_ROOT.exists():
-        log.error(f"Models root not found: {AI_MODELS_ROOT}")
-        sys.exit(f"Set AI_MODELS_ROOT env var or edit config.py")
+        sys.exit(f"Models root not found: {AI_MODELS_ROOT}\nSet AI_MODELS_ROOT env var or edit config.py")
 
     {"build": cmd_build, "search": cmd_search, "audit": cmd_audit,
      "info": cmd_info, "status": cmd_status, "stats": cmd_stats}[args.cmd](args)

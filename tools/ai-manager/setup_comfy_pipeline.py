@@ -21,7 +21,7 @@ import textwrap
 from pathlib import Path
 
 from generate_comfy_paths import generate_yaml
-from config import AI_MODELS_ROOT
+from config_comfy import COMFY_MODELS_ROOT
 
 
 def check_env():
@@ -57,7 +57,6 @@ def main():
     args = parser.parse_args()
 
     ai_home = check_env()
-    models_dir = ai_home / "models"
     pipelines_dir = ai_home / "pipelines"
     target = pipelines_dir / args.name
 
@@ -66,7 +65,7 @@ def main():
 
     print(f"Creating pipeline: {args.name} (Python {args.python_version})")
     print(f"  Location: {target}")
-    print(f"  Models:   {models_dir}")
+    print(f"  Models:   {COMFY_MODELS_ROOT}")
     print()
 
     # ── Clone ComfyUI ────────────────────────────────────────
@@ -82,7 +81,7 @@ def main():
     # ── Generate model paths config ──────────────────────────
 
     extra_model_paths = target / "extra_model_paths.yaml"
-    extra_model_paths.write_text(generate_yaml(AI_MODELS_ROOT))
+    extra_model_paths.write_text(generate_yaml(COMFY_MODELS_ROOT))
     print(f"  → Wrote {extra_model_paths}")
 
     # ── Create run script ────────────────────────────────────

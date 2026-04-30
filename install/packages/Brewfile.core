@@ -70,7 +70,6 @@ brew 'scc'
 
 # project management
 brew 'mise'
-brew 'poetry'
 
 # ios development tools
 brew 'xcbeautify'
@@ -85,7 +84,6 @@ cask 'microsoft-edge'
 cask 'orion'
 
 # containers
-brew 'colima'
 brew 'docker'
 brew 'docker-compose'
 brew 'k9s'
@@ -109,7 +107,6 @@ cask 'zed'
 
 # mac life
 cask '1password'
-cask 'anki'
 brew 'mas'
 cask 'miro'
 cask 'obsidian'
@@ -125,7 +122,6 @@ cask 'slack'
 # app store apps
 mas 'goodnotes', id: 1444383602
 mas 'grandperspective', id: 1111570163
-mas 'ticktick', id: 966085870
 # uncomment when mas supports ipad apps
 # mas 'myscript notes', id: 1119601770
 

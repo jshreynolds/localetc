@@ -13,14 +13,10 @@ Place the output alongside ComfyUI's main.py or pass it with:
 import argparse, logging, sys
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger(__name__)
+from core import setup_logging
+from config_comfy import COMFY_MODELS_ROOT, COMFYUI_SEARCH_PATHS
 
-from config import AI_MODELS_ROOT, COMFYUI_SEARCH_PATHS
+log = logging.getLogger(__name__)
 
 
 def generate_yaml(models_root: Path) -> str:
@@ -53,13 +49,14 @@ def main():
     p.add_argument("-o", "--output", default=None, help="Output path (omit to print to stdout)")
     args = p.parse_args()
 
-    log.info(f"AI_MODELS_ROOT = {AI_MODELS_ROOT}")
+    setup_logging(False)
+    log.debug(f"COMFY_MODELS_ROOT = {COMFY_MODELS_ROOT}")
 
-    if not AI_MODELS_ROOT.exists():
-        log.error(f"Models root not found: {AI_MODELS_ROOT}")
+    if not COMFY_MODELS_ROOT.exists():
+        log.error(f"ComfyUI models root not found: {COMFY_MODELS_ROOT}")
         sys.exit(1)
 
-    yaml_content = generate_yaml(AI_MODELS_ROOT)
+    yaml_content = generate_yaml(COMFY_MODELS_ROOT)
 
     if args.output is None:
         print(yaml_content)
