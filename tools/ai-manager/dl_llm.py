@@ -6,12 +6,8 @@ Usage:
     python dl_llm.py --repo TheBloke/Llama-2-7B-GGUF \
         --file llama-2-7b.Q4_K_M.gguf
 
-    python dl_llm.py --repo TheBloke/Llama-2-7B-GGUF \
-        --file llama-2-7b.Q4_K_M.gguf \
-        --family llama2
-
     python dl_llm.py --dry-run --repo bartowski/Qwen3-30B-A3B-GGUF \
-        --file Qwen3-30B-A3B-Q4_K_M.gguf --family qwen3
+        --file Qwen3-30B-A3B-Q4_K_M.gguf
 """
 
 import argparse
@@ -45,18 +41,16 @@ def detect_quantization(filename):
     return match.group(1) if match else None
 
 
-def resolve_dest(family=None):
-    """Build destination directory under LLM models root."""
-    if family:
-        return LLM_MODELS_ROOT / family
-    return LLM_MODELS_ROOT
+def resolve_dest(repo):
+    """Build destination directory under LLM models root, mirroring HF repo structure."""
+    org, name = repo.split("/", 1)
+    return LLM_MODELS_ROOT / org / name
 
 
 def main():
     p = argparse.ArgumentParser(description="Download an LLM model from Hugging Face.")
     p.add_argument("--repo", required=True, help="HF repo (e.g. TheBloke/Llama-2-7B-GGUF)")
     p.add_argument("--file", required=True, help="Filename to download from the repo")
-    p.add_argument("--family", default=None, help="Model family (e.g. llama3, qwen3, deepseek-r1). Creates subfolder.")
     p.add_argument("--revision", default="main", help="Git branch/revision (default: main)")
     p.add_argument("--tags", default="", help="Comma-separated tags (e.g. coding,reasoning)")
     p.add_argument("--notes", default="", help="Free-text notes")
@@ -68,7 +62,7 @@ def main():
     setup_logging(args.verbose)
     ensure_hf_hub()
 
-    dest_dir = resolve_dest(args.family)
+    dest_dir = resolve_dest(args.repo)
     model_path = dest_dir / args.file if not args.existing else args.existing
     sidecar_file = model_path.with_suffix(model_path.suffix + ".json")
 
@@ -89,7 +83,6 @@ def main():
     if args.dry_run:
         print(f"Repo:        {args.repo}")
         print(f"File:        {args.file}")
-        print(f"Family:      {args.family or '(none)'}")
         print(f"Format:      {fmt or '(unknown)'}")
         print(f"Quant:       {quant or '(none)'}")
         print(f"Dest dir:    {dest_dir}")
@@ -127,7 +120,6 @@ def main():
         "source": build_source_block(args.repo, args.file, args.revision, commit_sha),
         "model": {
             "name": args.repo.split("/")[-1],
-            "family": args.family,
             "format": fmt,
             "quantization": quant,
             "tags": [t.strip() for t in args.tags.split(",") if t.strip()],
