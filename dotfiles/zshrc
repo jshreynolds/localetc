@@ -5,7 +5,4 @@ bindkey  "^E"   end-of-line
 
 source $HOME/etc/setenv
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/jreynolds/.lmstudio/bin"
-# End of LM Studio CLI section
 
