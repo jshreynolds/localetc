@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Get all events from the "Calendar" in Outlook
+osascript <<'APPLESCRIPT'
+tell application "Microsoft Outlook"
+    set cal to calendar "Calendar"
+    set evts to calendar events of cal
+
+    if (count of evts) is 0 then
+        return "No events found."
+    end if
+
+    set output to "---" & return
+    set output to output & "source: outlook_calendar" & return
+    set output to output & "calendar: Calendar" & return
+    set output to output & "total_events: " & (count of evts) & return
+    set output to output & "---" & return & return
+
+    repeat with evt in evts
+        set output to output & "- title: '" & subject of evt & "'" & return
+        set output to output & "  start: " & (start time of evt) & return
+        set output to output & "  end: " & (end time of evt) & return
+        set output to output & "  location: '" & (location of evt) & "'" & return
+        set output to output & "  category: '" & (category of evt) & "'" & return
+        set output to output & "---" & return
+    end repeat
+
+    return output
+end tell
+APPLESCRIPT

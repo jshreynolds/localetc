@@ -23,8 +23,8 @@
                 "qwen/qwen3-coder-30b": {
                     "name": "qwen3-coder-30b"
                 },
-                "mistralai/devstral-small-2-2512": {
-                    "name": "devstral-small-2"
+                "lmstudio-community/gemma-4-26B-A4B-it-GGUF": {
+                    "name": "gemma-4-26B-A4B-it-GGUF"
                 },
                 "openai/gpt-oss-20b": {
                 "name": "gpt-oss-4-32b"

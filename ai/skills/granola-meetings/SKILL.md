@@ -118,6 +118,14 @@ Create missing `minutes/` directories automatically for project and area meeting
 
 ### Step 6: Write `summary.md`
 
+Before writing, preprocess the AI-generated summary to normalize task checkboxes into plain bullet points. Apply this transformation to the summary text:
+
+```
+sed 's/^- \[[ xX]\] /- /gm'
+```
+
+This converts `- [ ]` and `- [x]` markdown task items into simple `-` bullet points.
+
 Use Obsidian Flavored Markdown with this structure:
 
 ```markdown
