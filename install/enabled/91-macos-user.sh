@@ -1,40 +1,46 @@
 #!/bin/bash
+#
+# 91-macos-user.sh - Configure user-level macOS settings
+#
 
-echo
-echo "Installing and configuring mac user specific settings..."
-echo
-echo 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
 
-echo "Opening System Security Preferences"
-echo "Please allow full disk access to Terminal in order to use 'defaults' to edit mail and safari system preferences."
-echo "Hit enter to continue..." 
+source "${INSTALL_DIR}/lib/logger.sh"
+source "${INSTALL_DIR}/lib/common.sh"
+source "${INSTALL_DIR}/lib/summary.sh"
+
+log_script_start "91-macos-user.sh"
+
+log_section "Manual permission setup"
+log_info "Opening System Security Preferences"
+log_info "Please allow full disk access to Terminal to let defaults edit Mail and Safari preferences"
+track_manual_step "Allow full disk access to Terminal"
 
 open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
-read -r
-echo
+wait_for_enter "Hit Enter to continue..."
 
-echo "Opening Keyboard Shorcuts Pane."
-echo "Select Mission Control and deselect Show Desktop."
-echo "Then select Function Keys and toggle them on and then hit Done."
-echo "Press Enter to conitnue..."
+log_info "Opening Keyboard Shortcuts pane"
+log_info "Select Mission Control and deselect Show Desktop; then select Function Keys, toggle them on, and hit Done"
+track_manual_step "Configure Mission Control and Function Keys"
 
 open "x-apple.systempreferences:com.apple.preference.keyboard?Shortcuts"
-read -r
-echo
+wait_for_enter "Press Enter to continue..."
 
-echo "Opening AirDrop and Handoff settings"
-echo "Disable AirPlay Reciever."
-echo "Hit enter to continue..."
+log_info "Opening AirDrop and Handoff settings"
+log_info "Disable AirPlay Receiver"
+track_manual_step "Disable AirPlay Receiver"
 
 open "x-apple.systempreferences:com.apple.AirDrop-Handoff-Settings.extension"
-read -r
-echo
+wait_for_enter "Hit Enter to continue..."
 
 osascript -e 'tell application "System Preferences" to quit'
 
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+log_section "Applying user-level macOS settings"
 
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -475,11 +481,12 @@ defaults write com.apple.AdLib allowApplePersonalizedAdvertising -boolean false
 ###############################################################################
 # Rmmove Security hole if you'd like                                          #
 ###############################################################################
+log_section "Manual permission cleanup"
 open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
-echo "Opening System Security Preferences"
-echo "Please remove full disk access from Terminal if you'd like better security."
-echo "Hit enter to continue..." 
-read -r
+log_info "Opening System Security Preferences"
+log_info "Please remove full disk access from Terminal if you'd like better security"
+track_manual_step "Optionally remove full disk access from Terminal"
+wait_for_enter "Hit Enter to continue..."
 
 ###############################################################################
 # Kill affected applications                                                  #
@@ -504,4 +511,6 @@ for app in "Activity Monitor" \
 	"iCal"; do
 	killall "${app}" &> /dev/null
 done
-echo "Done with mac! Note that some of these changes require a logout/restart to take effect."
+track_preference "User-level macOS preferences applied"
+log_warning "Some user-level macOS changes require a logout or restart to take effect"
+log_script_end "91-macos-user.sh"

@@ -1,12 +1,23 @@
-#! /bin/bash
+#!/bin/bash
+#
+# 02-nix.sh - Install Nix
+#
 
-echo
-echo "Installing nix..."
-echo
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Nix
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+source "${INSTALL_DIR}/lib/logger.sh"
+source "${INSTALL_DIR}/lib/common.sh"
+source "${INSTALL_DIR}/lib/summary.sh"
 
-echo
-echo "Done with nix!"
-echo
+log_script_start "02-nix.sh"
+
+log_section "Installing Nix"
+if command_exists nix; then
+  log_success "Nix already installed"
+else
+  log_command "Nix installer"
+  sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+fi
+
+log_script_end "02-nix.sh"

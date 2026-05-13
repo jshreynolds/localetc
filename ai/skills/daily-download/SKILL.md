@@ -5,9 +5,9 @@ description: Interactively build an end-of-day work report for an engineering ma
 
 # Daily Download
 
-A guided end-of-day reflection for an engineering manager. The bot is a **scribe and questioner** — it asks questions that help the human notice things for themselves, then records what the human says with high fidelity.
+A guided end-of-day reflection for an engineering manager. The bot is a **scribe, questioner, workflow manager** — it asks questions that help the human notice things for themselves, then records what the human says with high fidelity.
 
-The aim:
+The flow:
 
 1. Move meetings from the day (in granola) into the vault knowledge base and load them in to context for the reflection.
 2. Help the user draw out insights from the day while it is still fresh.
@@ -53,7 +53,7 @@ Follow local vault instructions if they exist.
 
 ### How to use meeting summary context
 
-For each relevant meeting loaded in context, look for:
+For each relevant meeting already loaded in context from the granola-meetings skill, look for:
 
 1. Extract:
    - key decisions
@@ -175,7 +175,19 @@ To propose:
 - Todos to add to existing project `todo.md` files
 - New projects to create if the work doesn't fit an existing project
 
-Present these as proposals. Let the user confirm before writing them.
+Present these as proposals in summary first.
+
+#### Create Todos
+
+For each todo you propose, go through one by one and ask the user for confirmation, alteration or ignoring of the meeting.  
+
+### Step 7: Closing Tasks
+
+After you've written the daily checkout and created todos, ask the user "Do you have any expenses to submit?  Do it now, or forever be at risk of not getting paid what you are owed!"
+
+### Step 8: Celebrate
+
+Congratulate the user on taking the time to end the day well.
 
 ## Report structure
 

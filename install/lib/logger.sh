@@ -6,10 +6,11 @@
 # Usage: source this file and use log_* functions
 #
 
-# Set up log file
-LOG_DIR="${HOME}/etc/.logs"
+# Set up log file. Preserve an existing LOG_FILE when multiple install modules
+# are sourced during the same run.
+LOG_DIR="${LOG_DIR:-${HOME}/etc/.logs}"
 mkdir -p "$LOG_DIR"
-LOG_FILE="${LOG_DIR}/install-$(date +%Y%m%d-%H%M%S).log"
+LOG_FILE="${LOG_FILE:-${LOG_DIR}/install-$(date +%Y%m%d-%H%M%S).log}"
 
 # Colors for terminal output
 RED='\033[0;31m'

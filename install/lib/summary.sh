@@ -11,13 +11,14 @@ if [[ -z "$LOG_FILE" ]]; then
     source "$(dirname "${BASH_SOURCE[0]}")/logger.sh"
 fi
 
-# Summary file location
-SUMMARY_DIR="${HOME}/etc/.logs"
+# Summary file location. Preserve an existing SUMMARY_FILE when multiple install
+# modules are sourced during the same run.
+SUMMARY_DIR="${SUMMARY_DIR:-${HOME}/etc/.logs}"
 mkdir -p "$SUMMARY_DIR"
-SUMMARY_FILE="${SUMMARY_DIR}/install-summary-$(date +%Y%m%d-%H%M%S).txt"
+SUMMARY_FILE="${SUMMARY_FILE:-${SUMMARY_DIR}/install-summary-$(date +%Y%m%d-%H%M%S).txt}"
 
 # Track start time
-INSTALL_START_TIME=$(date +%s)
+INSTALL_START_TIME="${INSTALL_START_TIME:-$(date +%s)}"
 
 # Initialize summary
 init_summary() {
@@ -140,5 +141,8 @@ show_progress() {
     log_info "Progress: [$current/$total] $percentage% - $description"
 }
 
-# Initialize summary when sourced
-init_summary
+# Initialize summary once when sourced
+if [[ -z "${SUMMARY_INITIALIZED:-}" ]]; then
+    init_summary
+    SUMMARY_INITIALIZED=true
+fi
