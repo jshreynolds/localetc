@@ -1,6 +1,6 @@
 ---
 name: daily-debrief
-description: Interactively build an end-of-day work report for an engineering manager and write it into an Obsidian vault, especially `daily_work/`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, daily debrief, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
+description: Interactively build an end-of-day work report for an engineering manager and write it into an Obsidian vault as `dailies/YYYY-MM-DD-debrief.md`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, daily debrief, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
 ---
 
 # Daily Debrief
@@ -35,7 +35,7 @@ The primary purpose of the reflection is to help the human notice patterns, conn
 ## Default assumptions
 
 - The user is working in an Obsidian vault unless they say otherwise.
-- The likely destination is `daily_work/YYYY-MM-DD.md`.
+- The likely destination is `dailies/YYYY-MM-DD-debrief.md`.
 - Do not assume you should write immediately. Confirm the destination first.
 - If a same-day note already exists, prefer updating it rather than creating a competing duplicate, unless the user asks otherwise.
 
@@ -43,10 +43,10 @@ The primary purpose of the reflection is to help the human notice patterns, conn
 
 When operating in an Obsidian vault with index-based navigation:
 
-1. Read the relevant `index.md` first, especially `daily_work/index.md`.
+1. Read the relevant `index.md` first, especially `dailies/index.md`.
 2. Look at `templates/daily_work.md` for tone or structure if needed.
 3. Identify the most relevant destination `todo.md` files in areas or projects.
-4. Write the final note into the confirmed location in `daily_work/`.
+4. Write the final note into the confirmed location in `dailies/`.
 5. Update the todos in the relevant area or project `todo.md` files if the user confirms the proposed follow-ups.
 
 Follow local vault instructions if they exist.
@@ -90,7 +90,7 @@ Ask where to store the note before writing.
 
 Suggested default:
 
-- `daily_work/YYYY-MM-DD.md`
+- `dailies/YYYY-MM-DD-debrief.md`
 
 If the user confirms the default, proceed. If they want another location, follow that.
 
@@ -364,7 +364,7 @@ If the meeting lists informational or weakly owned actions, mention them in the 
 
 ## Promotion guidance
 
-If the reflection contains a conclusion or decision that appears durable, suggest promoting it later to the relevant area or project note rather than leaving it only in `daily_work/`.
+If the reflection contains a conclusion or decision that appears durable, suggest promoting it later to the relevant area or project note rather than leaving it only in `dailies/`.
 
 Do not do this automatically unless the user asks.
 
@@ -372,7 +372,7 @@ Do not do this automatically unless the user asks.
 
 **User:** Help me do my daily debrief.
 
-**Assistant:** I'll write to `daily_work/2026-04-18.md` unless you want it somewhere else. What feels like the real story of today?
+**Assistant:** I'll write to `dailies/2026-04-18-debrief.md` unless you want it somewhere else. What feels like the real story of today?
 
 **User:** A lot of the day was spent unblocking people. I finally had the hard conversation I was avoiding, and I'm noticing I'm carrying too much system glue myself.
 
