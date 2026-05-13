@@ -26,8 +26,8 @@ else
     log_section() { echo ""; echo "=== $* ==="; }
 fi
 
-SKILLS_LIST="${ETC_DIR}/dotfiles/skills/skills.list"
-CUSTOM_SKILLS_DIR="${ETC_DIR}/dotfiles/skills"
+SKILLS_LIST="${ETC_DIR}/ai/skills/skills.list"
+CUSTOM_SKILLS_DIR="${ETC_DIR}/ai/skills"
 AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
 
 # Create a symlink to a directory, backing up any existing directory first

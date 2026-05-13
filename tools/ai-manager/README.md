@@ -39,11 +39,8 @@ python dl_comfy.py \
 python dl_llm.py \
     --repo TheBloke/Llama-2-7B-GGUF \
     --file llama-2-7b.Q4_K_M.gguf \
-    --family llama2 \
     --tags "coding,general"
 ```
-
-`--family` is optional (creates a subfolder when set). Format and quantization are auto-detected from the filename.
 
 ## Dry run
 
@@ -67,7 +64,7 @@ python dl_comfy.py --repo Lykon/DreamShaper --file DreamShaper_8_pruned.safetens
 ```bash
 python registry.py build                              # index all models
 python registry.py search --domain comfy --type lora   # ComfyUI LoRAs
-python registry.py search --domain llm --family qwen3  # LLMs by family
+python registry.py search --domain llm                 # LLMs
 python registry.py search --tag style                  # filter by tag
 python registry.py search --text "dreamshaperXL"       # free text search
 python registry.py audit                               # orphans + disk usage
