@@ -6,9 +6,11 @@
 # Dependencies: overlay_symlinks utility
 #
 
-# Get the directory of this script
+# Get the directory of this script (repo root = parent of install/)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
+ETC_DIR="$(dirname "$INSTALL_DIR")"
+DOTFILES="${ETC_DIR}/dotfiles"
 
 # Source libraries if available
 if [[ -f "${INSTALL_DIR}/lib/logger.sh" ]]; then
@@ -20,27 +22,28 @@ else
     echo "Configuring dotfiles..."
 fi
 
-# Standard config directory symlinks
+# Standard config directory symlinks (~/.config/<app> ← dotfiles/config/<app>)
 log_section "Setting up application configurations"
 ensure_directory ~/.config
-for entry in ~/etc/dotfiles/config/*; do
+shopt -s nullglob
+for entry in "${DOTFILES}/config/"*; do
     name="$(basename "$entry")"
     target="$HOME/.config/$name"
     safe_symlink "$entry" "$target"
-    track_symlink "~/etc/dotfiles/config/$name" "~/.config/$name"
+    track_symlink "${DOTFILES}/config/${name}" "${HOME}/.config/${name}"
 done
 
-
-# Home directory dotfiles symlinks (~/etc/dotfiles/* → ~/.*)
+# Home directory dotfiles (dotfiles/<name> → ~/.<name>), e.g. zshrc, gitconfig
 log_section "Setting up home directory dotfiles"
-for entry in ~/etc/dotfiles/*; do
+for entry in "${DOTFILES}/"*; do
     name="$(basename "$entry")"
     # Skip config/ - handled separately above
     [[ "$name" == "config" ]] && continue
     target="$HOME/.$name"
     safe_symlink "$entry" "$target"
-    track_symlink "~/etc/dotfiles/$name" "~/.$name"
+    track_symlink "${DOTFILES}/${name}" "${HOME}/.${name}"
 done
+shopt -u nullglob
 
 # Log completion
 if [[ -f "${INSTALL_DIR}/lib/logger.sh" ]]; then

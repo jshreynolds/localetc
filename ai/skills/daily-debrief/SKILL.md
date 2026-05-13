@@ -1,9 +1,9 @@
 ---
-name: daily-download
-description: Interactively build an end-of-day work report for an engineering manager and write it into an Obsidian vault, especially `daily_work/`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
+name: daily-debrief
+description: Interactively build an end-of-day work report for an engineering manager and write it into an Obsidian vault, especially `daily_work/`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, daily debrief, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
 ---
 
-# Daily Download
+# Daily Debrief
 
 A guided end-of-day reflection for an engineering manager. The bot is a **scribe, questioner, workflow manager** — it asks questions that help the human notice things for themselves, then records what the human says with high fidelity.
 
@@ -69,7 +69,7 @@ If the user seems to have missed something important from the day's meetings, us
 
 Examples:
 
-- "Today you had a meeting mentioning a discussion about code coverage standards. Does that belong in today's download?"
+- "Today you had a meeting mentioning a discussion about code coverage standards. Does that belong in today's debrief?"
 - "One of today's meetings had an action item around a job description. Is that part of the real story of the day?"
 
 Do this sparingly. Use the meeting context to support recall, not to override the user's judgment about what mattered.
@@ -183,7 +183,7 @@ For each todo you propose, go through one by one and ask the user for confirmati
 
 ### Step 7: Closing Tasks
 
-After you've written the daily checkout and created todos, ask the user "Do you have any expenses to submit?  Do it now, or forever be at risk of not getting paid what you are owed!"
+After you've written the daily debrief note and created todos, ask the user "Do you have any expenses to submit?  Do it now, or forever be at risk of not getting paid what you are owed!"
 
 ### Step 8: Celebrate
 
@@ -200,7 +200,7 @@ status: active
 summary: One sentence on what this day contained or why it mattered.
 ---
 
-# YYYY-MM-DD Daily Download
+# YYYY-MM-DD Daily Debrief
 
 ## Prompt
 Brief phrase or question that framed the reflection.
@@ -333,7 +333,7 @@ After the reflection, use meeting summaries and the human's reflection to propos
 
 load Agents_Tasks from `./Agents_Tasks` and use that format for all proposed tasks.
 
-**Every proposed task must include a proposed scheduled date (`⏳ YYYY-MM-DD`).** If the context implies a date (e.g., "next Monday", "in two weeks"), use that. Otherwise, follow the AGENTS_tasks.md convention: rewrite the description to begin with `Schedule...` and set `⏳` to the day after the daily download is being written. Never propose a task without a scheduled date.
+**Every proposed task must include a proposed scheduled date (`⏳ YYYY-MM-DD`).** If the context implies a date (e.g., "next Monday", "in two weeks"), use that. Otherwise, follow the AGENTS_tasks.md convention: rewrite the description to begin with `Schedule...` and set `⏳` to the day after the daily debrief note is being written. Never propose a task without a scheduled date.
 
 ### Suggest first, then place
 
@@ -370,7 +370,7 @@ Do not do this automatically unless the user asks.
 
 ## Example interaction
 
-**User:** Help me do my daily download.
+**User:** Help me do my daily debrief.
 
 **Assistant:** I'll write to `daily_work/2026-04-18.md` unless you want it somewhere else. What feels like the real story of today?
 
