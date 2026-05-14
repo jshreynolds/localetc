@@ -16,15 +16,13 @@ import re
 import sys
 from pathlib import Path
 
-from config import AI_MODELS_ROOT, LLM_EXTENSIONS
+from config import AI_MODELS_ROOT, LLM_MODELS_ROOT, LLM_EXTENSIONS
 from core import (
     setup_logging, ensure_hf_hub, verify_remote, download_file,
     handle_hf_error, fmt_size, build_source_block, write_sidecar,
 )
 
 log = logging.getLogger(__name__)
-
-LLM_MODELS_ROOT = AI_MODELS_ROOT / "llm"
 
 
 def detect_format(filename):

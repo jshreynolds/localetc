@@ -9,3 +9,4 @@ MODEL_EXTENSIONS = {".safetensors", ".ckpt", ".pt", ".pt2", ".pth", ".bin", ".pk
 
 # Subset relevant to LLM downloads
 LLM_EXTENSIONS = {".gguf", ".safetensors", ".bin"}
+LLM_MODELS_ROOT = AI_MODELS_ROOT / "llms"

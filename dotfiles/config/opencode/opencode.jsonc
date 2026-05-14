@@ -27,8 +27,11 @@
                     "name": "gemma-4-26B-A4B-it-GGUF"
                 },
                 "openai/gpt-oss-20b": {
-                "name": "gpt-oss-4-32b"
-                }    
+                    "name": "gpt-oss-4-32b"
+                },
+                "google/gemma-4-e4b-it": {
+                    "name": "gemma-4-e4b-it"
+                } 
             }
         }
     },
