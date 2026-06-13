@@ -1,4 +1,7 @@
 {
-  "model": "opus",
-  "effortLevel": "high"
+  "model": "opus[1m]",
+  "effortLevel": "high",
+  "promptSuggestionEnabled": false,
+  "awaySummaryEnabled": false,
+  "useAutoModeDuringPlan": false
 }

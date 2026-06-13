@@ -34,14 +34,12 @@ etc/
 │   ├── enabled/        # Active installation modules (numbered for order)
 │   └── disabled/       # Available but inactive modules
 ├── dotfiles/           # Configuration files to be symlinked
-│   ├── brew/           # Homebrew package lists (core, personal, work)
 │   ├── config/         # Application configurations
 │   │   ├── alacritty/  # Terminal emulator config
 │   │   ├── claude/     # Claude Code settings (.cursorrules)
 │   │   ├── gh/         # GitHub CLI config
 │   │   └── zellij/     # Terminal multiplexer config
 │   ├── docker/         # Docker settings
-│   └── shell/          # Shell configurations (zshrc, mise)
 ├── env/                # Environment setup scripts
 │   ├── enabled/        # Active environment configurations
 │   └── disabled/       # Available but inactive configurations

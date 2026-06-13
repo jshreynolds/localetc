@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-SKILLS_LIST="${HOME}/etc/dotfiles/skills/skills.list"
+SKILLS_LIST="${HOME}/etc/ai/skills/skills.list"
 
 if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'

@@ -11,5 +11,4 @@
 
         # `git diff` with difftastic.
         dft = -c diff.external=difft diff
-[user]
-	name = JR Reynolds
+

@@ -5,14 +5,13 @@ description: Extract and organize Granola meeting notes into the Obsidian work v
 
 # Granola Meetings Skill
 
-Extract meetings from Granola via MCP, classify them using metadata and summary content, and save both the AI summary and full transcript into the correct location in the Obsidian work vault.
+Extract meetings from Granola via MCP, classify them using metadata and summary content, and save the AI summary into the correct location in the Obsidian work vault.
 
 This is a user-assisted automation workflow:
 
-- Automate the repetitive file creation and transcript export steps.
+- Automate the repetitive file creation steps.
 - Use the Granola metadata, AI summary, and private notes for classification.
 - Ask the user to confirm classifications or fill gaps when metadata is incomplete.
-- Do not load transcript content into agent context.
 
 ## Vault Path
 
@@ -30,7 +29,6 @@ Do not guess a path or fall back to the current directory. All paths below are r
    - For "today", prefer the smallest supported range and then filter to the exact date.
    - For date ranges like "this week", filter to the exact requested dates after listing.
 2. For each matching meeting, fetch the summary data in parallel with `mcp__claude_ai_Granol__get_meetings`.
-3. Do not fetch transcript content through MCP or any tool that would place the transcript into model context.
 
 ### Step 2: Build meeting context
 
@@ -43,7 +41,7 @@ For each meeting, build a working record from:
 - AI summary
 - Private notes
 
-If attendees are missing or incomplete in Granola metadata, proceed with what you have. Do not try to infer speakers from transcripts.
+If attendees are missing or incomplete in Granola metadata, proceed with what you have.
 
 ### Step 3: Discover available destinations
 
@@ -104,8 +102,7 @@ For each confirmed meeting, create a datetime-stamped folder inside the destinat
 
 ```text
 {destination}/YYYY-MM-DD_HHmm_{Meeting_Title}/
-├── summary.md
-└── transcript.md
+└── summary.md
 ```
 
 Folder naming rules:
@@ -173,37 +170,7 @@ Classification tags:
 
 Do not invent attendees. If none are available, use an empty list in frontmatter and omit the inline attendee line or render it as `Unknown`.
 
-### Step 7: Write `transcript.md`
-
-Never fetch or load transcript content into agent context. Use the local helper script to write the transcript directly to disk.
-
-The helper script lives relative to this skill at `fetch_transcript.py`.
-
-It requires the `GRANOLA_API_KEY` environment variable to be set. If it is not set, tell the user:
-
-> "Please set `GRANOLA_API_KEY` in your environment (e.g. `export GRANOLA_API_KEY=grn_...`) before running this skill."
-
-For each meeting, invoke:
-
-```bash
-python3 /absolute/path/to/fetch_transcript.py \
-  "{full_destination_path}/transcript.md" \
-  "YYYY-MM-DD" \
-  "{Meeting Title}" \
-  "{Day of week}" \
-  "{granola_mcp_uuid}" \
-  "{HH:MM}"
-```
-
-Notes:
-
-- Pass the meeting start time when available. It improves note matching.
-- The script calls the Granola public API directly and writes `transcript.md` without exposing transcript content to the agent.
-- If transcript export fails for a meeting, do not discard `summary.md`. Report the meeting as partially saved and include the error.
-
-Run transcript fetches in parallel where practical, but do not describe them as fire-and-forget unless your environment actually supports background execution without losing visibility into failures. Prefer collecting success or failure for each meeting.
-
-### Step 8: Optional user additions
+### Step 7: Optional user additions
 
 After the files are written, offer the user a single batched follow-up:
 
@@ -217,7 +184,7 @@ If the user wants custom notes, append them under:
 ## My Notes
 ```
 
-### Step 9: Report results
+### Step 8: Report results
 
 After processing all meetings, present a concise summary table:
 
@@ -230,7 +197,6 @@ For each meeting, include:
 
 - Full created folder path
 - Whether `summary.md` was written
-- Whether `transcript.md` was written
 - Any meetings skipped or left unclassified
 
 ## Edge Cases
@@ -240,4 +206,3 @@ For each meeting, include:
 - Missing attendees: continue without them; ask the user only if classification depends on the missing information.
 - Unknown person or project: ask the user where to file it.
 - Missing `minutes/` subfolder: create it automatically.
-- Transcript export failure: keep the saved summary, report the failure, and include the command inputs needed for retry if useful.
