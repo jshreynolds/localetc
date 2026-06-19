@@ -12,3 +12,5 @@
         # `git diff` with difftastic.
         dft = -c diff.external=difft diff
 
+[gcrypt]
+	gpg-args = --trust-model always

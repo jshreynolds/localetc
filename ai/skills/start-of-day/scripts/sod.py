@@ -21,9 +21,35 @@ import os
 import textwrap
 from dataclasses import dataclass
 from datetime import date
+from pathlib import Path
 
-WIDTH = 72
-FINDINGS_MARKER = "_Findings:_"
+from urls import (
+    COST_ANALYSIS_URLS,
+    DATADOG_DASHBOARD_URLS,
+    GITLAB_MR_URLS,
+    INCIDENTS_URLS,
+    JIRA_BOARD_URLS,
+    SECURITY_URLS,
+    UrlEntry,
+)
+
+WIDTH: int = 72
+FINDINGS_MARKER: str = "_Findings:_"
+
+
+def _fmt_urls(label: str, entries: list[UrlEntry]) -> list[str]:
+    """Return label + indented 'name: url' lines, or a single '[url TBD]' line when empty."""
+    if not entries:
+        return [f"{label}  [url TBD]"]
+    return [label] + [f"  {e['label']}: {e['url']}" for e in entries]
+
+
+def _direct_reports() -> list[str]:
+    """Subdirectory names under areas/people_management, sorted."""
+    base = Path("areas/people_management")
+    if not base.is_dir():
+        return []
+    return sorted(p.name for p in base.iterdir() if p.is_dir())
 
 
 @dataclass(frozen=True)
@@ -34,13 +60,18 @@ class Step:
     look_at: list[str]  # concrete things to check; "[url TBD]" = wire up later
 
 
-STEPS = [
+def _build_steps() -> list[Step]:
+    people = _direct_reports()
+    people_items = people if people else ["(no direct reports found in areas/people_management)"]
+    return [
     Step(
         phase="Systems health",
         title="Social health — the people side",
         prompt="How is the team really doing? Scan for mood, energy, friction, and anything left unsaid.",
         look_at=[
-            "Reflection (no dashboard yet): anyone stuck, quiet, overloaded, or in conflict?",
+            "Think through each person:",
+            *[f"  {name}" for name in people_items],
+            "Anyone stuck, quiet, overloaded, or in conflict?",
             "Carry anything heavy forward into today's focus.",
         ],
     ),
@@ -49,8 +80,8 @@ STEPS = [
         title="Delivery health — does work flow?",
         prompt="Is work moving predictably from start to done?",
         look_at=[
-            "GitLab: open MRs awaiting review, review latency, throughput.  [url TBD]",
-            "Jira: WIP, lead time, cycle time, epic progress.  [url TBD]",
+            *_fmt_urls("GitLab: open MRs awaiting review, review latency, throughput.", GITLAB_MR_URLS),
+            *_fmt_urls("Jira: WIP, lead time, cycle time, epic progress.", JIRA_BOARD_URLS),
         ],
     ),
     Step(
@@ -58,10 +89,10 @@ STEPS = [
         title="Operational health — stable, safe, affordable?",
         prompt="Is production healthy and inside its guardrails?",
         look_at=[
-            "Datadog dashboards.  [url TBD]",
-            "Open incidents / pending RCAs.  [url TBD]",
-            "Cost analysis across tools.  [urls TBD]",
-            "Security vulnerabilities.  [url TBD]",
+            *_fmt_urls("Datadog dashboards.", DATADOG_DASHBOARD_URLS),
+            *_fmt_urls("Open incidents / pending RCAs.", INCIDENTS_URLS),
+            *_fmt_urls("Cost analysis across tools.", COST_ANALYSIS_URLS),
+            *_fmt_urls("Security vulnerabilities.", SECURITY_URLS),
         ],
     ),
     Step(
@@ -108,7 +139,10 @@ STEPS = [
             "Capture follow-ups, blockers, or risks surfaced in earlier steps before they evaporate.",
         ],
     ),
-]
+    ]
+
+
+STEPS: list[Step] = _build_steps()
 
 
 # --------------------------------------------------------------------------- #
@@ -132,7 +166,7 @@ def render_skeleton() -> list[str]:
     """The fill-in-the-blanks log: one _Findings:_ line per step, in order."""
     today = date.today().isoformat()
     lines = ["---", f"date: {today}", "type: sod-log", "---", "", f"# Start of Day — {today}"]
-    last_phase = None
+    last_phase: str | None = None
     for step in STEPS:
         if step.phase != last_phase:
             lines += ["", f"## {step.phase}"]
