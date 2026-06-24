@@ -18,7 +18,6 @@ Edit STEPS to change the routine; the order here is the run order.
 
 import argparse
 import os
-import textwrap
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -33,7 +32,6 @@ from urls import (
     UrlEntry,
 )
 
-WIDTH: int = 72
 FINDINGS_MARKER: str = "_Findings:_"
 
 
@@ -154,11 +152,11 @@ def render_prompt(step: Step, number: int) -> str:
         f"[{step.phase}]  Step {number} of {len(STEPS)}",
         "",
         step.title,
-        textwrap.fill(step.prompt, WIDTH),
+        step.prompt,
         "",
         "Look at:",
     ]
-    lines += [textwrap.fill(f"- {item}", WIDTH) for item in step.look_at]
+    lines += [f"- {item}" for item in step.look_at]
     return "\n".join(lines)
 
 
