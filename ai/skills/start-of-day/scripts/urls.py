@@ -29,7 +29,7 @@ JIRA_BOARD_URLS: Final[list[UrlEntry]] = [
 ]
 
 DATADOG_DASHBOARD_URLS: Final[list[UrlEntry]] = [
-    {"label": "Chatlayer Datadog Bot Engine Dashboard", "url": "https://app.datadoghq.eu/dashboard/2yw-9zd-nxh/nlp-genai-dashboard?fromUser=false&refresh_mode=sliding&from_ts=1781508527560&to_ts=1781512127560&live=true"},
+    {"label": "Chatlayer Datadog Bot Engine Dashboard", "url": "https://app.datadoghq.eu/dashboard/ftd-xtp-2vu/chatlayer-bot-engine-vitals?fromUser=false&refresh_mode=sliding&from_ts=1782705554332&to_ts=1782719954332&live=true"},
     {"label": "Intelligence Team NLP Dashboard", "url": "https://app.datadoghq.eu/dashboard/2yw-9zd-nxh/nlp-genai-dashboard?fromUser=false&refresh_mode=sliding&from_ts=1781508527560&to_ts=1781512127560&live=true"},
 ]
 INCIDENTS_URLS: Final[list[UrlEntry]] = [
@@ -38,6 +38,7 @@ INCIDENTS_URLS: Final[list[UrlEntry]] = [
 COST_ANALYSIS_URLS: Final[list[UrlEntry]] = [
     {"label": "Chatlayer MongoDB Billing", "url": "https://cloud.mongodb.com/v2#org/5c177fd1014b7673784050b4/billing/overview"},
     {"label": "Temporal Billing", "url": "https://cloud.temporal.io/billing/invoices"},
+    {"label": "Cloudability", "url": "https://frontdoor-eu.apptio.com/home?customer="},
 ]
 SECURITY_URLS: Final[list[UrlEntry]] = [
     {"label": "Snyk Projects", "url": "https://app.snyk.io/org/saas-chatlayer-platform/projects"},
