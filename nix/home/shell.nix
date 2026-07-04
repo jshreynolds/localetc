@@ -86,10 +86,6 @@
         # everything nix manages ends up world-readable in /nix/store.
         [ -f "$HOME/etc/secrets.zsh" ] && source "$HOME/etc/secrets.zsh"
 
-        # AI model manager functions — sourced live so edits apply without a rebuild
-        [ -f "$HOME/etc/tools/ai-manager/shell-functions.zsh" ] && \
-          source "$HOME/etc/tools/ai-manager/shell-functions.zsh"
-
         # brew, APPENDED manually — home.sessionPath entries end up in front
         # of the nix paths, and brew must lose to nix (see header comment)
         export PATH="$PATH:/opt/homebrew/bin"
@@ -122,11 +118,6 @@
 
     # java
     MAVEN_OPTS = "--enable-native-access=ALL-UNNAMED";
-
-    # AI model manager (tools/ai-manager)
-    AI_HOME = "$HOME/ai";
-    AI_MODELS_ROOT = "$HOME/ai/models";
-    AI_MGR = "$HOME/etc/tools/ai-manager";
 
     # obsidian vaults & agentic knowledge base
     WORKSIDIAN = "$HOME/worksidian";
