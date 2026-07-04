@@ -11,14 +11,19 @@
 # declared per machine in flake.nix (mkHost's casks/brews/masApps) and arrive
 # here as hostCasks/hostBrews/hostMasApps to be merged in.
 # =============================================================================
-{ hostCasks ? [ ], hostBrews ? [ ], hostMasApps ? { }, ... }:
+{
+  hostCasks ? [ ],
+  hostBrews ? [ ],
+  hostMasApps ? { },
+  ...
+}:
 {
   homebrew = {
     enable = true;
 
     onActivation = {
       autoUpdate = false; # don't `brew update` on every switch — do it deliberately
-      upgrade = false;    # don't upgrade casks on every switch either
+      upgrade = false; # don't upgrade casks on every switch either
       # What to do with brew packages NOT listed in this file:
       #   "none"      = leave them alone
       #   "uninstall" = remove them
@@ -32,12 +37,13 @@
     # CLI formulae that intentionally STAY in brew (everything else comes from
     # nixpkgs — see nix/home/packages.nix):
     brews = [
-      "mas"                # Mac App Store CLI — required by masApps below
+      "mas" # Mac App Store CLI — required by masApps below
       "xcode-build-server" # not packaged in nixpkgs
-      "dagger"             # not packaged in nixpkgs
-      "aiven-client"       # not packaged in nixpkgs
-      "zshdb"              # not packaged in nixpkgs (bashdb is; zshdb isn't)
-    ] ++ hostBrews;
+      "dagger" # not packaged in nixpkgs
+      "aiven-client" # not packaged in nixpkgs
+      "zshdb" # not packaged in nixpkgs (bashdb is; zshdb isn't)
+    ]
+    ++ hostBrews;
 
     casks = [
       # -- daily drivers --------------------------------------------------
@@ -77,7 +83,8 @@
       "microsoft-excel"
       "miro"
       "sf-symbols"
-    ] ++ hostCasks;
+    ]
+    ++ hostCasks;
 
     # Mac App Store apps. Requires being signed in to the App Store, and can
     # only install apps this Apple ID has "purchased" before. If mas acts up
@@ -85,6 +92,7 @@
     masApps = {
       "GoodNotes" = 1444383602;
       "GrandPerspective" = 1111570163;
-    } // hostMasApps;
+    }
+    // hostMasApps;
   };
 }

@@ -1,13 +1,17 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
-scriptname=kubeshell
+set -euo pipefail
 
-if [ $# -ne 2 ]
-then
+scriptname=${0##*/}
+
+if [[ $# -ne 2 ]]; then
     echo "Arguments missing!"
     echo "Usage: $scriptname podname namespace"
     echo "Example: $scriptname drone-ckyhsife drone"
     exit 1
 fi
 
-kubectl exec --stdin --tty $1 --namespace=$2 -- /bin/sh
+pod_name=$1
+namespace=$2
+
+kubectl exec --stdin --tty "$pod_name" --namespace="$namespace" -- /bin/sh

@@ -3,16 +3,20 @@
 Rename all files and folders in the vault, replacing spaces with underscores.
 Then update all wikilinks and markdown links in .md files.
 """
+import argparse
 import os
 import re
 from pathlib import Path
 
-VAULT = Path("/Users/jreynolds/Documents/vault")
 
-def get_all_items_with_spaces():
+def default_vault() -> Path:
+    return Path(os.environ.get("OBSIDIAN", "~/Documents/vault")).expanduser()
+
+
+def get_all_items_with_spaces(vault: Path):
     """Get all files and dirs with spaces, sorted deepest first."""
     items = []
-    for item in VAULT.rglob("*"):
+    for item in vault.rglob("*"):
         # Skip .obsidian and the script itself
         if ".obsidian" in item.parts:
             continue
@@ -23,6 +27,7 @@ def get_all_items_with_spaces():
     # Sort by depth (deepest first) so children are renamed before parents
     items.sort(key=lambda p: len(p.parts), reverse=True)
     return items
+
 
 def build_rename_map(items):
     """
@@ -45,34 +50,47 @@ def build_rename_map(items):
 
     return path_pairs, md_stem_map
 
-def build_path_stem_map(path_pairs):
+
+def build_path_stem_map(vault: Path, path_pairs):
     """
     Build a map for updating markdown-style path links.
     Maps old relative path fragments to new ones.
     """
     path_map = {}
     for old_path, new_path in path_pairs:
-        old_rel = str(old_path.relative_to(VAULT))
-        new_rel = str(new_path.relative_to(VAULT))
+        old_rel = str(old_path.relative_to(vault))
+        new_rel = str(new_path.relative_to(vault))
         path_map[old_rel] = new_rel
     return path_map
 
-def rename_items(path_pairs):
+
+def check_collisions(path_pairs):
+    collisions = []
+    for old_path, new_path in path_pairs:
+        if old_path != new_path and new_path.exists():
+            collisions.append((old_path, new_path))
+    return collisions
+
+
+def rename_items(vault: Path, path_pairs, dry_run: bool):
     """Rename all items, deepest first."""
     renamed = 0
     for old_path, new_path in path_pairs:
         if old_path.exists() and old_path != new_path:
-            old_path.rename(new_path)
+            if not dry_run:
+                old_path.rename(new_path)
             renamed += 1
-            print(f"  renamed: {old_path.relative_to(VAULT)}")
-            print(f"       -> {new_path.relative_to(VAULT)}")
+            action = "would rename" if dry_run else "renamed"
+            print(f"  {action}: {old_path.relative_to(vault)}")
+            print(f"          -> {new_path.relative_to(vault)}")
     return renamed
 
-def update_links(md_stem_map, path_map):
+
+def update_links(vault: Path, md_stem_map, path_map, dry_run: bool):
     """Update all wikilinks and markdown links in .md files."""
     updated_files = 0
 
-    for md_file in sorted(VAULT.rglob("*.md")):
+    for md_file in sorted(vault.rglob("*.md")):
         if ".obsidian" in md_file.parts:
             continue
         if md_file.name == "rename_spaces.py":
@@ -105,28 +123,65 @@ def update_links(md_stem_map, path_map):
             content = re.sub(old_esc, new_rel.replace("\\", "/"), content)
 
         if content != original:
-            md_file.write_text(content, encoding="utf-8")
+            if not dry_run:
+                md_file.write_text(content, encoding="utf-8")
             updated_files += 1
-            print(f"  updated links: {md_file.relative_to(VAULT)}")
+            action = "would update links" if dry_run else "updated links"
+            print(f"  {action}: {md_file.relative_to(vault)}")
 
     return updated_files
 
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Replace spaces with underscores in vault paths and links."
+    )
+    parser.add_argument(
+        "--vault",
+        type=Path,
+        default=default_vault(),
+        help="vault root (default: $OBSIDIAN or ~/Documents/vault)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="show planned renames and link updates without writing",
+    )
+    return parser
+
+
 def main():
+    args = build_parser().parse_args()
+    vault = args.vault.expanduser().resolve()
+    if not vault.is_dir():
+        raise SystemExit(f"error: vault does not exist: {vault}")
+
+    mode = "DRY RUN" if args.dry_run else "APPLY"
+    print(f"Vault: {vault}")
+    print(f"Mode:  {mode}")
+
     print("=== Step 1: Scanning for items with spaces ===")
-    items = get_all_items_with_spaces()
+    items = get_all_items_with_spaces(vault)
     print(f"Found {len(items)} items with spaces in names")
 
     print("\n=== Step 2: Building rename map ===")
     path_pairs, md_stem_map = build_rename_map(items)
-    path_map = build_path_stem_map(path_pairs)
+    collisions = check_collisions(path_pairs)
+    if collisions:
+        print("ERROR: refusing to continue because target paths already exist:")
+        for old_path, new_path in collisions:
+            print(f"  {old_path.relative_to(vault)} -> {new_path.relative_to(vault)}")
+        raise SystemExit(1)
+
+    path_map = build_path_stem_map(vault, path_pairs)
     print(f"  {len(md_stem_map)} .md file stems to update in links")
 
     print("\n=== Step 3: Renaming files and folders ===")
-    renamed = rename_items(path_pairs)
+    renamed = rename_items(vault, path_pairs, args.dry_run)
     print(f"\nRenamed {renamed} items")
 
     print("\n=== Step 4: Updating links in .md files ===")
-    updated = update_links(md_stem_map, path_map)
+    updated = update_links(vault, md_stem_map, path_map, args.dry_run)
     print(f"\nUpdated links in {updated} files")
 
     print("\n=== Done ===")

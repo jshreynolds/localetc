@@ -48,6 +48,7 @@ in
   # node_modules) never lands in this repo.
   home.file.".claude/settings.json".source = live "${etc}/dotfiles/claude/settings.json";
   xdg.configFile."gh/config.yml".source = live "${etc}/dotfiles/config/gh/config.yml";
-  xdg.configFile."opencode/opencode.jsonc".source = live "${etc}/dotfiles/config/opencode/opencode.jsonc";
+  xdg.configFile."opencode/opencode.jsonc".source =
+    live "${etc}/dotfiles/config/opencode/opencode.jsonc";
   xdg.configFile."zed/settings.json".source = live "${etc}/dotfiles/config/zed/settings.json";
 }

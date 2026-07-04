@@ -16,21 +16,21 @@
 {
   home.packages = with pkgs; [
     # -- shell & files ---------------------------------------------------------
-    bashInteractive  # bash 5 (macOS ships ancient 3.2; zsh stays the login shell)
-    coreutils        # GNU userland (ls --color, etc.)
-    fd               # friendlier find
-    duf              # friendlier df
-    dust             # friendlier du
-    mmv              # mass rename
-    ripgrep          # rg
-    rm-improved      # rip: rm with a trash can
+    bashInteractive # bash 5 (macOS ships ancient 3.2; zsh stays the login shell)
+    coreutils # GNU userland (ls --color, etc.)
+    fd # friendlier find
+    duf # friendlier df
+    dust # friendlier du
+    mmv # mass rename
+    ripgrep # rg
+    rm-improved # rip: rm with a trash can
     rsync
     silver-searcher-ng # ag (maintained fork)
     zellij
     zsh-completions
 
     # -- vcs -----------------------------------------------------------------
-    gh               # package only; its self-modifying config stays a live symlink (dotfiles.nix)
+    gh # package only; its self-modifying config stays a live symlink (dotfiles.nix)
     git-remote-gcrypt
     glab
 
@@ -41,7 +41,7 @@
     graphviz
     httpie
     jq
-    yq-go            # mikefarah's Go yq (nixpkgs `yq` is a different python tool)
+    yq-go # mikefarah's Go yq (nixpkgs `yq` is a different python tool)
     pre-commit
     shellcheck
     tokei
@@ -54,22 +54,22 @@
     k9s
 
     # -- containers & kubernetes ----------------------------------------------
-    colima           # container runtime (docker context points here)
-    docker-client    # just the docker CLI — colima provides the engine
+    colima # container runtime (docker context points here)
+    docker-client # just the docker CLI — colima provides the engine
     docker-compose
     kubectl
-    kubernetes-helm  # the `helm` CLI
+    kubernetes-helm # the `helm` CLI
     minikube
     kafkactl
     kn
 
     # -- databases -------------------------------------------------------------
-    mongodb-tools    # mongodump/mongorestore etc.
+    mongodb-tools # mongodump/mongorestore etc.
 
     # -- cloud ---------------------------------------------------------------
     awscli2
     azure-cli
-    terraform        # unfree license (BUSL) — allowed by allowUnfree in core.nix
+    terraform # unfree license (BUSL) — allowed by allowUnfree in core.nix
 
     # -- security --------------------------------------------------------------
     gnupg
@@ -98,16 +98,16 @@
     gopls
     gradle
     maven
-    nodejs_latest    # node 26.x — swap to `nodejs` for the LTS line
+    nodejs_latest # node 26.x — swap to `nodejs` for the LTS line
     pnpm
-    protobuf         # protoc
+    protobuf # protoc
     python314
     uv
     ruby_3_4
-    rustup           # rustup manages toolchains mutably in ~/.rustup
-    scala_3          # plain `scala` is still 2.13
+    rustup # rustup manages toolchains mutably in ~/.rustup
+    scala_3 # plain `scala` is still 2.13
     temporal-cli
-    temurin-bin-25   # java 25 (Eclipse Temurin)
+    temurin-bin-25 # java 25 (Eclipse Temurin)
     tilt
 
     # -- misc --------------------------------------------------------------------

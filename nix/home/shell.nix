@@ -108,9 +108,9 @@
   # Extra PATH entries — APPENDED after nix paths (see header comment).
   home.sessionPath = [
     "$HOME/etc/bin"
-    "$HOME/.local/bin"                        # cursor agent CLI et al.
-    "$HOME/.rd/bin"                           # rancher desktop (harmless if absent)
-    "$HOME/.lmstudio/bin"                     # lm studio CLI (lms)
+    "$HOME/.local/bin" # cursor agent CLI et al.
+    "$HOME/.rd/bin" # rancher desktop (harmless if absent)
+    "$HOME/.lmstudio/bin" # lm studio CLI (lms)
     "/Applications/Obsidian.app/Contents/MacOS"
     # NOTE: /opt/homebrew/bin is deliberately NOT here — sessionPath entries
     # land in front of the nix paths, and brew must come after nix. It's

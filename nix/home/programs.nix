@@ -39,7 +39,7 @@
 
   programs.delta = {
     enable = true;
-    enableGitIntegration = true;  # sets core.pager = delta in git config
+    enableGitIntegration = true; # sets core.pager = delta in git config
   };
 
   # tree explorer + `br` shell function

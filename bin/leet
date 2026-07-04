@@ -1,14 +1,20 @@
 #!/bin/bash
 
-PREFIX=$(printf "%04d" "$1")
-NAME=$2
-
-PROJECT="$PREFIX""_""$NAME"
+set -euo pipefail
 
 if [[ "$#" -ne 2 ]]; then
   echo "need two args, prefix and name"
   exit 1
 fi
 
+if [[ ! "$1" =~ ^[0-9]+$ ]]; then
+  echo "prefix must be numeric"
+  exit 1
+fi
+
+PREFIX=$(printf "%04d" "$1")
+NAME=$2
+PROJECT="${PREFIX}_${NAME}"
+
 pbj g -p "$PREFIX" -v leet -t python "$NAME"
-code "$PROJECT" "$PROJECT""/""$NAME""/main.py" "$PROJECT""/tests/test_main.py"
+code "$PROJECT" "$PROJECT/$NAME/main.py" "$PROJECT/tests/test_main.py"

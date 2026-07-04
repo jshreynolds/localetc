@@ -24,10 +24,10 @@
   system.defaults = {
     # -- global: keyboard, text, panels, scrollbars ----------------------------
     NSGlobalDomain = {
-      KeyRepeat = 2;                     # fastest key repeat
-      InitialKeyRepeat = 20;             # short delay before repeat kicks in
-      ApplePressAndHoldEnabled = false;  # hold a key = repeat it, not accent menu
-      AppleKeyboardUIMode = 3;           # full keyboard access (tab through all controls)
+      KeyRepeat = 2; # fastest key repeat
+      InitialKeyRepeat = 20; # short delay before repeat kicks in
+      ApplePressAndHoldEnabled = false; # hold a key = repeat it, not accent menu
+      AppleKeyboardUIMode = 3; # full keyboard access (tab through all controls)
       AppleShowAllExtensions = true;
       AppleShowScrollBars = "Always";
 
@@ -74,7 +74,7 @@
       _FXSortFoldersFirst = true;
       FXEnableExtensionChangeWarning = false;
       FXPreferredViewStyle = "clmv"; # column view by default
-      NewWindowTarget = "Desktop";   # new windows open at ~/Desktop
+      NewWindowTarget = "Desktop"; # new windows open at ~/Desktop
       ShowExternalHardDrivesOnDesktop = true;
       ShowHardDrivesOnDesktop = true;
       ShowMountedServersOnDesktop = true;
@@ -93,17 +93,17 @@
       mouse-over-hilite-stack = true;
       enable-spring-load-actions-on-all-items = true;
       show-process-indicators = true;
-      showhidden = true;      # hidden apps get translucent icons
+      showhidden = true; # hidden apps get translucent icons
       show-recents = false;
-      static-only = true;     # only show RUNNING apps in the dock
-      persistent-apps = [ ];  # no pinned apps
-      mru-spaces = false;     # don't rearrange Spaces by recent use
+      static-only = true; # only show RUNNING apps in the dock
+      persistent-apps = [ ]; # no pinned apps
+      mru-spaces = false; # don't rearrange Spaces by recent use
     };
 
     # -- activity monitor -----------------------------------------------------------
     ActivityMonitor = {
       OpenMainWindow = true;
-      ShowCategory = 100;     # all processes
+      ShowCategory = 100; # all processes
       SortColumn = "CPUUsage";
       SortDirection = 0;
     };

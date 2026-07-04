@@ -16,7 +16,7 @@
 #   hf-download TheBloke/Mistral-7B-GGUF --pattern "*Q4_K_M*"
 #
 
-set -e
+set -euo pipefail
 
 MODELS_DIR="${HF_MODELS_DIR:-$HOME/models}"
 
@@ -63,6 +63,10 @@ while [[ $# -gt 0 ]]; do
             usage
             ;;
         --pattern)
+            if [[ $# -lt 2 ]]; then
+                echo "Error: --pattern requires a glob"
+                usage 1
+            fi
             PATTERN="$2"
             shift 2
             ;;
@@ -79,6 +83,11 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+if [[ -n "$FILE" && -n "$PATTERN" ]]; then
+    echo "Error: use either a file argument or --pattern, not both"
+    usage 1
+fi
 
 # Validate repo argument
 if [[ -z "$REPO" ]]; then
@@ -134,7 +143,7 @@ if "${CMD[@]}"; then
     # Show downloaded files
     echo ""
     echo "Contents:"
-    ls -lh "$DEST_DIR" | head -20
+    find "$DEST_DIR" -maxdepth 1 -mindepth 1 -exec du -sh {} + | sort -h | sed -n '1,20p'
 else
     echo ""
     echo "Download failed"

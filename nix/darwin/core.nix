@@ -8,7 +8,13 @@
 # `username`, `hostname`, and `home` arrive via specialArgs — they are defined
 # exactly once, in the mkHost call in flake.nix.
 # =============================================================================
-{ pkgs, username, hostname, home, ... }:
+{
+  pkgs,
+  username,
+  hostname,
+  home,
+  ...
+}:
 {
   # CRITICAL: Determinate Nix owns the nix installation on this machine —
   # the daemon, /etc/nix/nix.conf, upgrades, and garbage collection.

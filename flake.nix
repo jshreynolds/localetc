@@ -33,8 +33,36 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nix-darwin,
+      home-manager,
+    }:
     let
+      lib = nixpkgs.lib;
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+
+      shellScripts = [
+        "ai/skill-add"
+        "ai/skill-sync"
+        "bin/hf-download"
+        "bin/kubeshell"
+        "bin/leet"
+        "bin/rando.sh"
+        "bin/show_color"
+      ];
+
+      pythonScripts = [
+        "ai/skills/biweekly-chatlayer-briefing/scripts/fetch_content.py"
+        "ai/skills/start-of-day/scripts/sod.py"
+        "ai/skills/start-of-day/scripts/test_sod.py"
+        "ai/skills/start-of-day/scripts/urls.py"
+        "bin/git_set_local_conf"
+        "bin/rename_spaces.py"
+      ];
+
       # ---- one machine = one mkHost call -----------------------------------
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
       # `username` must equal the macOS account short name (`whoami`).
@@ -43,7 +71,14 @@
       # Everything else (home directory, module wiring) is derived from these
       # facts and passed to every module via specialArgs — no other file
       # hardcodes who or where you are.
-      mkHost = { hostname, username, casks ? [ ], brews ? [ ], masApps ? { } }:
+      mkHost =
+        {
+          hostname,
+          username,
+          casks ? [ ],
+          brews ? [ ],
+          masApps ? { },
+        }:
         let
           home = "/Users/${username}";
         in
@@ -70,8 +105,8 @@
             # switch` updates system config AND user config together.
             home-manager.darwinModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;    # reuse the system nixpkgs (incl. allowUnfree)
-              home-manager.useUserPackages = true;  # install user pkgs to /etc/profiles/per-user/<username>
+              home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
+              home-manager.useUserPackages = true; # install user pkgs to /etc/profiles/per-user/<username>
               home-manager.users.${username} = import ./nix/home;
               # same idea as specialArgs, but for the home modules
               home-manager.extraSpecialArgs = { inherit username home; };
@@ -84,7 +119,76 @@
     in
     {
       # `nix fmt` formats every .nix file in the repo with the official style.
-      formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
+      formatter.aarch64-darwin = pkgs.nixfmt-tree;
+
+      checks.aarch64-darwin = {
+        nix-format =
+          pkgs.runCommand "localetc-nix-format-check"
+            {
+              nativeBuildInputs = [ pkgs.nixfmt ];
+            }
+            ''
+              cd ${self}
+              find . -name '*.nix' -print0 | xargs -0 nixfmt --check
+              touch $out
+            '';
+
+        shell-scripts =
+          pkgs.runCommand "localetc-shellcheck"
+            {
+              nativeBuildInputs = [ pkgs.shellcheck ];
+            }
+            ''
+              shellcheck ${lib.concatMapStringsSep " " (path: "${self}/${path}") shellScripts}
+              touch $out
+            '';
+
+        python-scripts =
+          pkgs.runCommand "localetc-python-checks"
+            {
+              nativeBuildInputs = [ pkgs.python314 ];
+            }
+            ''
+              cd ${self}
+              export PYTHONPYCACHEPREFIX="$TMPDIR/pycache"
+              python3 -m py_compile ${lib.concatStringsSep " " pythonScripts}
+              python3 -m unittest discover -s ai/skills/start-of-day/scripts
+              touch $out
+            '';
+
+        skill-metadata =
+          pkgs.runCommand "localetc-skill-metadata-check"
+            {
+              nativeBuildInputs = [ pkgs.python314 ];
+            }
+            ''
+              cd ${self}
+              python3 - <<'PY'
+              from pathlib import Path
+              import sys
+
+              failures = []
+              for path in sorted(Path("ai/skills").glob("*/SKILL.md")):
+                  text = path.read_text(encoding="utf-8")
+                  if not text.startswith("---\n"):
+                      failures.append(f"{path}: missing frontmatter")
+                      continue
+                  end = text.find("\n---", 4)
+                  if end == -1:
+                      failures.append(f"{path}: unclosed frontmatter")
+                      continue
+                  frontmatter = text[4:end]
+                  for key in ("name:", "description:"):
+                      if key not in frontmatter:
+                          failures.append(f"{path}: missing {key}")
+
+              if failures:
+                  print("\n".join(failures), file=sys.stderr)
+                  raise SystemExit(1)
+              PY
+              touch $out
+            '';
+      };
 
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
       # machine's hostname — so each machine needs its own line here.
@@ -98,13 +202,15 @@
           ];
         };
 
-        # next machine: add a block like the one above, e.g.
-        # "personal-mac" = mkHost {
-        #   hostname = "personal-mac";
-        #   username = "jreynolds";
-        #   casks = [ "scrivener" "lulu" ];
-        #   masApps = { "WhatsApp" = 310633997; };
-        # };
+        # personal machine
+        "playbook" = mkHost {
+          hostname = "playbook";
+          username = "jreynolds";
+          casks = [
+            "scrivener"
+            "lulu"
+          ];
+        };
       };
     };
 }
