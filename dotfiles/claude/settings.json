@@ -1,9 +1,0 @@
-{
-  "model": "claude-fable-5[1m]",
-  "effortLevel": "high",
-  "promptSuggestionEnabled": false,
-  "awaySummaryEnabled": false,
-  "tui": "fullscreen",
-  "useAutoModeDuringPlan": false,
-  "skipDangerousModePermissionPrompt": true
-}
