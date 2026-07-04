@@ -14,5 +14,4 @@ bin/helm2
 secrets.zsh
 result
 
-# agent skills area — structure TBD
-ai/skills/
+.claude

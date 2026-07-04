@@ -38,6 +38,11 @@
   # cat with wings
   programs.bat.enable = true;
 
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;  # sets core.pager = delta in git config
+  };
+
   # tree explorer + `br` shell function — replaces 80-broot
   programs.broot.enable = true;
 

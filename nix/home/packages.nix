@@ -39,7 +39,6 @@
     curlie
     d2
     difftastic
-    exercism
     graphviz
     httpie
     jq
@@ -102,7 +101,6 @@
     maven
     nodejs_latest    # node 26.x — swap to `nodejs` for the LTS line
     pnpm
-    poetry
     protobuf         # protoc
     python314
     uv

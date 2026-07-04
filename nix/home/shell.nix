@@ -21,7 +21,6 @@
       # -- navigation -------------------------------------------------------
       ".." = "cd ..";
       "..." = "cd ../..";
-      "...." = "cd ../../..";
 
       # -- convenience --------------------------------------------------------
       editalias = "nvim ~/etc/nix/home/shell.nix"; # aliases live HERE now
@@ -48,7 +47,6 @@
       grst = "git restore --staged ";
 
       # -- tools --------------------------------------------------------------
-      uvtest = "uv run pytest";
       k = "kubectl";
     };
 
