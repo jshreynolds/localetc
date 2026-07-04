@@ -12,19 +12,10 @@
 # (kept in git history). Some changes only show after logout or a
 # `killall Dock` / `killall Finder`.
 #
-# Deliberately NOT ported:
-#   - Safari (~30 settings): sandboxed — terminal writes need Full Disk Access
-#     and often silently do nothing. Configure Safari by hand.
-#   - Dashboard settings: Dashboard was removed from macOS in 10.15.
-#   - `defaults -currentHost ... ImageCapture disableHotPlug` (per-host domain,
-#     not reachable from here) and `chflags nohidden ~/Library` (not a
-#     `defaults` setting): re-run by hand on a new machine if you care.
-#
 # Manual one-time steps on a new machine (were interactive in the old script):
 #   - System Settings → Privacy & Security: grant your terminal Full Disk
 #     Access if you want to script Mail/Safari prefs
 #   - Keyboard shortcuts / Mission Control preferences
-#   - General → AirDrop & Handoff: disable AirPlay Receiver if unwanted
 # =============================================================================
 { home, ... }:
 {
@@ -151,26 +142,6 @@
           Privileges = true;
         };
       };
-
-      # Mail: no animations, address-only copies, threaded drafts, no spellcheck
-      "com.apple.mail" = {
-        DisableReplyAnimations = true;
-        DisableSendAnimations = true;
-        AddressesIncludeNameOnPasteboard = false;
-        DisableInlineAttachmentViewing = true;
-        SpellCheckingBehavior = "NoSpellCheckingEnabled";
-        DraftsViewerAttributes = {
-          DisplayInThreadedMode = "yes";
-          SortedDescending = "yes";
-        };
-      };
-
-      # Terminal.app: UTF-8 only, secure keyboard entry, no line marks
-      "com.apple.terminal" = {
-        StringEncodings = [ 4 ];
-        SecureKeyboardEntry = true;
-      };
-      "com.apple.Terminal".ShowLineMarks = 0;
 
       # Time Machine: stop offering every new disk as a backup target
       "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;

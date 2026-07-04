@@ -38,10 +38,12 @@
       # ---- one machine = one mkHost call -----------------------------------
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
       # `username` must equal the macOS account short name (`whoami`).
+      # `casks`/`brews`/`masApps` are OPTIONAL host-specific apps, merged onto
+      # the shared lists in nix/darwin/homebrew.nix.
       # Everything else (home directory, module wiring) is derived from these
-      # two facts and passed to every module via specialArgs — no other file
+      # facts and passed to every module via specialArgs — no other file
       # hardcodes who or where you are.
-      mkHost = hostname: username:
+      mkHost = { hostname, username, casks ? [ ], brews ? [ ], masApps ? { } }:
         let
           home = "/Users/${username}";
         in
@@ -49,8 +51,13 @@
           system = "aarch64-darwin";
 
           # specialArgs makes these available as arguments in every darwin
-          # module: `{ username, hostname, home, ... }:`
-          specialArgs = { inherit username hostname home; };
+          # module: `{ username, hostname, home, hostCasks, ... }:`
+          specialArgs = {
+            inherit username hostname home;
+            hostCasks = casks;
+            hostBrews = brews;
+            hostMasApps = masApps;
+          };
 
           # Each module is a file handling exactly one concern. Start reading
           # at nix/darwin/core.nix.
@@ -79,9 +86,22 @@
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
       # machine's hostname — so each machine needs its own line here.
       darwinConfigurations = {
-        "mac-nl-josrey-2" = mkHost "mac-nl-josrey-2" "josrey";
-        # next machine: add its line, e.g.
-        # "some-other-mac" = mkHost "some-other-mac" "jreynolds";
+        # work machine
+        "mac-nl-josrey-2" = mkHost {
+          hostname = "mac-nl-josrey-2";
+          username = "josrey";
+          casks = [
+            # apps only THIS machine gets (shared list: nix/darwin/homebrew.nix)
+          ];
+        };
+
+        # next machine: add a block like the one above, e.g.
+        # "personal-mac" = mkHost {
+        #   hostname = "personal-mac";
+        #   username = "jreynolds";
+        #   casks = [ "scrivener" "lulu" ];
+        #   masApps = { "WhatsApp" = 310633997; };
+        # };
       };
     };
 }

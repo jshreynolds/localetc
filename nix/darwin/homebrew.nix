@@ -6,8 +6,12 @@
 # `darwin-rebuild switch`. So: the app *list* is declarative and lives here,
 # while brew remains the installer (GUI apps from nixpkgs are unreliable on
 # macOS; casks are the pragmatic standard).
+#
+# This file holds the SHARED lists every machine gets. Host-specific apps are
+# declared per machine in flake.nix (mkHost's casks/brews/masApps) and arrive
+# here as hostCasks/hostBrews/hostMasApps to be merged in.
 # =============================================================================
-{ ... }:
+{ hostCasks ? [ ], hostBrews ? [ ], hostMasApps ? { }, ... }:
 {
   homebrew = {
     enable = true;
@@ -37,7 +41,7 @@
       "dagger"             # not packaged in nixpkgs
       "aiven-client"       # not packaged in nixpkgs
       "zshdb"              # not packaged in nixpkgs (bashdb is; zshdb isn't)
-    ];
+    ] ++ hostBrews;
 
     casks = [
       # -- daily drivers --------------------------------------------------
@@ -64,7 +68,7 @@
       "claude"
       "claude-code@latest"
       "codex"
-      "comfy" # (the old "comfyui" cask was renamed to this)
+      "comfy"
       "copilot-cli"
       "granola"
       "kitlangton-hex"
@@ -80,11 +84,10 @@
       "font-3270-nerd-font"
       "font-fira-code-nerd-font"
       # -- misc --------------------------------------------------------------
-      "anki"
       "microsoft-excel"
       "miro"
       "sf-symbols"
-    ];
+    ] ++ hostCasks;
 
     # Mac App Store apps. Requires being signed in to the App Store, and can
     # only install apps this Apple ID has "purchased" before. If mas acts up
@@ -92,9 +95,6 @@
     masApps = {
       "GoodNotes" = 1444383602;
       "GrandPerspective" = 1111570163;
-      # WhatsApp intentionally NOT here: a newer version is installed via
-      # direct download, so mas fails trying to "install" the older store
-      # build — and that failure aborts the whole activation.
-    };
+    } // hostMasApps;
   };
 }

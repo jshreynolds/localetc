@@ -81,11 +81,15 @@ lands world-readable in `/nix/store`.
    ```
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
-6. **Declare the machine** in `flake.nix` — one line, then commit:
+6. **Declare the machine** in `flake.nix` — one block, then commit:
    ```nix
-   "its-hostname" = mkHost "its-hostname" "its-username";
+   "its-hostname" = mkHost {
+     hostname = "its-hostname";   # scutil --get LocalHostName
+     username = "its-username";   # whoami
+     casks = [ ];                 # apps only this machine gets (optional,
+     masApps = { };               #  merged onto the shared homebrew.nix lists)
+   };
    ```
-   `hostname` = `scutil --get LocalHostName`, `username` = `whoami`.
 7. **Create `~/etc/secrets.zsh`** with the API keys (copy from a password
    manager, not from another machine's shell history).
 8. **First switch** (quotes matter — zsh eats the `#`):
