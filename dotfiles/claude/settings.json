@@ -4,5 +4,6 @@
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
-  "useAutoModeDuringPlan": false
+  "useAutoModeDuringPlan": false,
+  "skipDangerousModePermissionPrompt": true
 }

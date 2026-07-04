@@ -59,6 +59,8 @@
         "ai/skills/start-of-day/scripts/sod.py"
         "ai/skills/start-of-day/scripts/test_sod.py"
         "ai/skills/start-of-day/scripts/urls.py"
+        "ai/skills/vault-doctor/scripts/vault_doctor.py"
+        "ai/skills/vault-doctor/scripts/test_vault_doctor.py"
         "bin/git_set_local_conf"
         "bin/rename_spaces.py"
       ];
@@ -153,6 +155,7 @@
               export PYTHONPYCACHEPREFIX="$TMPDIR/pycache"
               python3 -m py_compile ${lib.concatStringsSep " " pythonScripts}
               python3 -m unittest discover -s ai/skills/start-of-day/scripts
+              python3 -m unittest discover -s ai/skills/vault-doctor/scripts
               touch $out
             '';
 
