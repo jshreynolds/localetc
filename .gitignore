@@ -13,3 +13,6 @@ bin/helm2
 # nix
 secrets.zsh
 result
+
+# agent skills area — structure TBD
+ai/skills/

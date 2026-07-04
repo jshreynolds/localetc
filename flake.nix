@@ -1,6 +1,6 @@
 {
   # ===========================================================================
-  # flake.nix — the front door of this machine's configuration.
+  # flake.nix — entrypoint of this machine's configuration.
   #
   # A *flake* is nix's way of saying: "here are my dependencies (inputs) and
   # here is what I produce (outputs)", with every dependency pinned to an

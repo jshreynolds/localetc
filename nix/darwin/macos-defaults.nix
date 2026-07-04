@@ -202,12 +202,6 @@
         DisablePrintPreview = true;
         PMPrintingExpandedStateForPrint2 = true;
       };
-
-      # Dash: sync settings via ~/Documents/dash
-      "com.kapeli.dashdoc" = {
-        syncFolderPath = "~/Documents/dash";
-        showInDoc = false;
-      };
     };
   };
 }

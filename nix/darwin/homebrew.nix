@@ -29,10 +29,6 @@
       cleanup = "zap";
     };
 
-    taps = [
-      "mongodb/brew" # mongodb-compass-isolated-edition lives here
-    ];
-
     # CLI formulae that intentionally STAY in brew (everything else comes from
     # nixpkgs — see nix/home/packages.nix):
     brews = [
@@ -59,8 +55,6 @@
       "microsoft-edge"
       "orion"
       # -- editors & IDEs ---------------------------------------------------
-      "cursor"
-      "emacs-app"
       "visual-studio-code"
       "zed"
       # -- AI ---------------------------------------------------------------
@@ -78,7 +72,6 @@
       "dash"
       "gcloud-cli" # cask (not nixpkgs): `gcloud components` self-updates, which the read-only nix store can't allow
       "insomnia"
-      "mongodb-compass-isolated-edition"
       "openlens"
       # -- fonts (could move to nixpkgs fonts.packages later; cosmetic) -----
       "font-3270-nerd-font"
