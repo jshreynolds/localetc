@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""vault-doctor — read-only drift report for an Obsidian work vault.
+
+Inventory should be generated, not hand-maintained. This tool measures the
+drift between what index files and agent contracts claim and what the
+filesystem actually contains. It never modifies the vault.
+
+Checks:
+  1. AGENTS*.md references to vault roots that do not exist
+  2. unresolved wikilinks inside index.md files
+  3. first-class folders missing an index.md
+  4. index.md files missing frontmatter (type / status / summary)
+  5. non-archive index.md files linking into archive/
+  6. project folders missing todo.md or summary.md
+
+Usage: vault_doctor.py [--vault PATH] [--verbose]
+  --vault    vault root (default: $WORKSIDIAN, then ~/worksidian)
+  --verbose  list every finding instead of the first few per section
+"""
+
+import argparse
+import os
+import re
+import sys
+from pathlib import Path
+
+WIKILINK = re.compile(r"!?\[\[([^\]|#^]+)")
+FRONTMATTER_KEY = re.compile(r"^([A-Za-z_][\w-]*):", re.MULTILINE)
+BACKTICKED_PATH = re.compile(r"`([a-z0-9_]+)/[^`]*`")
+DATED_FOLDER = re.compile(r"^\d{4}-\d{2}-\d{2}")
+
+REQUIRED_FRONTMATTER = ("type", "status", "summary")
+CONTENT_ROOTS = ("areas", "projects", "resources", "dailies")
+SKIP_DIRS = {".obsidian", ".trash", ".git", "assets", "templates", "Excalidraw"}
+DEFAULT_SHOWN = 15
+
+
+def iter_notes(vault):
+    """All markdown files in the vault, skipping hidden and tool dirs."""
+    for root, dirs, files in os.walk(vault):
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
+        for name in files:
+            if name.endswith(".md"):
+                yield Path(root) / name
+
+
+def link_targets(vault, notes):
+    """Lowercased keys a wikilink can resolve to: relative paths and basenames."""
+    targets = set()
+    for note in notes:
+        rel = note.relative_to(vault).as_posix()[: -len(".md")].lower()
+        targets.add(rel)
+        targets.add(rel.rsplit("/", 1)[-1])
+    return targets
+
+
+def wikilinks(text):
+    return [match.strip() for match in WIKILINK.findall(text)]
+
+
+def normalize(target):
+    target = target.strip().lower()
+    return target[: -len(".md")] if target.endswith(".md") else target
+
+
+def frontmatter_keys(text):
+    if not text.startswith("---\n"):
+        return None
+    end = text.find("\n---", 4)
+    if end == -1:
+        return None
+    return set(FRONTMATTER_KEY.findall(text[4:end]))
+
+
+def first_class_folders(vault):
+    """Roots plus their immediate child folders, minus minutes/dated folders."""
+    folders = []
+    for root_name in CONTENT_ROOTS:
+        root = vault / root_name
+        if not root.is_dir():
+            continue
+        folders.append(root)
+        for child in sorted(root.iterdir()):
+            is_content_folder = (
+                child.is_dir()
+                and child.name != "minutes"
+                and not child.name.startswith(".")
+                and not DATED_FOLDER.match(child.name)
+            )
+            if is_content_folder:
+                folders.append(child)
+    return folders
+
+
+def all_folder_names(vault):
+    names = set()
+    for root, dirs, _files in os.walk(vault):
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+        names.update(dirs)
+    return names
+
+
+def check_agents_roots(vault):
+    """Backticked `path/` references whose first segment exists nowhere in the
+    vault — names like `minutes/` that only exist as subfolders are fine."""
+    existing = all_folder_names(vault)
+    findings = []
+    for contract in sorted(vault.glob("AGENTS*.md")):
+        for root_name in set(BACKTICKED_PATH.findall(contract.read_text(encoding="utf-8"))):
+            if root_name not in existing:
+                findings.append(f"{contract.name}: references `{root_name}/` which does not exist")
+    return findings
+
+
+def check_index_links(vault, indexes, targets):
+    unresolved, archive_links = [], []
+    for index in indexes:
+        rel = index.relative_to(vault).as_posix()
+        in_archive = rel.startswith("archive/")
+        for target in wikilinks(index.read_text(encoding="utf-8")):
+            key = normalize(target)
+            if key not in targets:
+                unresolved.append(f"{rel}: [[{target}]]")
+            elif not in_archive and key.startswith("archive/"):
+                archive_links.append(f"{rel}: [[{target}]]")
+    return unresolved, archive_links
+
+
+def check_missing_indexes(folders):
+    return [
+        f"{folder}/ has no index.md" for folder in folders if not (folder / "index.md").is_file()
+    ]
+
+
+def check_frontmatter(vault, indexes):
+    findings = []
+    for index in indexes:
+        rel = index.relative_to(vault).as_posix()
+        keys = frontmatter_keys(index.read_text(encoding="utf-8"))
+        if keys is None:
+            findings.append(f"{rel}: no frontmatter")
+            continue
+        missing = [key for key in REQUIRED_FRONTMATTER if key not in keys]
+        if missing:
+            findings.append(f"{rel}: missing {', '.join(missing)}")
+    return findings
+
+
+def check_projects(vault):
+    findings = []
+    projects_root = vault / "projects"
+    if not projects_root.is_dir():
+        return findings
+    for project in sorted(projects_root.iterdir()):
+        if not project.is_dir() or project.name.startswith("."):
+            continue
+        for required in ("todo.md", "summary.md"):
+            if not (project / required).is_file():
+                findings.append(f"projects/{project.name}/ missing {required}")
+    return findings
+
+
+def report_section(title, findings, verbose):
+    print(f"\n{title}: {len(findings)}")
+    shown = findings if verbose else findings[:DEFAULT_SHOWN]
+    for finding in shown:
+        print(f"  - {finding}")
+    if len(findings) > len(shown):
+        print(f"  ... and {len(findings) - len(shown)} more (--verbose to list all)")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--vault", default=os.environ.get("WORKSIDIAN", "~/worksidian"))
+    parser.add_argument("--verbose", "-v", action="store_true")
+    args = parser.parse_args()
+
+    vault = Path(args.vault).expanduser()
+    if not vault.is_dir():
+        sys.exit(f"vault not found: {vault}")
+
+    notes = list(iter_notes(vault))
+    indexes = sorted(note for note in notes if note.name == "index.md")
+    targets = link_targets(vault, notes)
+    unresolved, archive_links = check_index_links(vault, indexes, targets)
+    relative_folders = [
+        f"{folder.relative_to(vault).as_posix()}"
+        for folder in first_class_folders(vault)
+        if not (folder / "index.md").is_file()
+    ]
+
+    print(f"Vault Doctor — {vault}")
+    print(f"{len(notes)} notes, {len(indexes)} index.md files")
+
+    report_section("Agent contract: nonexistent roots", check_agents_roots(vault), args.verbose)
+    report_section("Indexes: unresolved wikilinks", unresolved, args.verbose)
+    report_section(
+        "Indexes: archive links from active notes", archive_links, args.verbose
+    )
+    report_section(
+        "First-class folders missing index.md",
+        [f"{folder}/" for folder in relative_folders],
+        args.verbose,
+    )
+    report_section(
+        "Indexes: missing frontmatter (type/status/summary)",
+        check_frontmatter(vault, indexes),
+        args.verbose,
+    )
+    report_section("Projects: missing required files", check_projects(vault), args.verbose)
+
+
+if __name__ == "__main__":
+    main()

@@ -92,7 +92,7 @@ Use this classification order:
    - Destination: `areas/{area_name}/minutes/`
 
 6. Unclassified
-   - Destination: `daily_work/meetings/`
+   - Destination: `dailies/meetings/`
 
 Ask the user to confirm the list once, with any skips or reclassifications. Do not ask one classification question per meeting unless the user response is still ambiguous.
 
