@@ -67,13 +67,21 @@ class TestWikilinks(VaultFixture):
 
     def test_unresolved_and_archive_links_reported(self):
         self.note("archive/old_thing/summary.md")
-        index = "[[archive/old_thing/summary]] [[does_not_exist]]"
+        index = "- [[archive/old_thing/summary]]\n- [[does_not_exist]]"
         self.note("areas/team/index.md", index)
         notes = list(iter_notes(self.vault))
         indexes = [note for note in notes if note.name == "index.md"]
         unresolved, archive_links = check_index_links(self.vault, indexes, link_targets(self.vault))
         self.assertEqual(unresolved, ["areas/team/index.md: [[does_not_exist]]"])
         self.assertEqual(archive_links, ["areas/team/index.md: [[archive/old_thing/summary]]"])
+
+    def test_archive_links_in_prose_are_provenance_not_inventory(self):
+        self.note("archive/liftoff/index.md")
+        prose = "Formation was driven through the [[archive/liftoff/index|liftoff project]]."
+        self.note("areas/team/index.md", prose)
+        indexes = [self.vault / "areas/team/index.md"]
+        _, archive_links = check_index_links(self.vault, indexes, link_targets(self.vault))
+        self.assertEqual(archive_links, [])
 
 
 class TestFrontmatter(VaultFixture):
@@ -104,6 +112,15 @@ class TestStructure(VaultFixture):
         folders = first_class_folders(self.vault)
         names = [folder.relative_to(self.vault).as_posix() for folder in folders]
         self.assertEqual(names, ["areas", "areas/team"])
+
+    def test_entity_container_children_are_first_class(self):
+        self.note("areas/people_management/rafael/minutes/keep.md")
+        self.note("archive/ex_employees/deepa/notes.md")
+        names = [
+            folder.relative_to(self.vault).as_posix() for folder in first_class_folders(self.vault)
+        ]
+        self.assertIn("areas/people_management/rafael", names)
+        self.assertIn("archive/ex_employees/deepa", names)
 
     def test_projects_require_index_and_todo(self):
         self.note("projects/complete/index.md")

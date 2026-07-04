@@ -31,6 +31,9 @@ DATED_FOLDER = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 REQUIRED_FRONTMATTER = ("type", "status", "summary")
 CONTENT_ROOTS = ("areas", "projects", "resources", "dailies")
+# one folder per entity; every child must carry an index.md so `ls` + index
+# is all an agent needs to route correctly
+ENTITY_CONTAINERS = ("areas/people_management", "areas/colleagues", "archive/ex_employees")
 SKIP_DIRS = {".obsidian", ".trash", ".git", "assets", "templates", "Excalidraw"}
 DEFAULT_SHOWN = 15
 
@@ -80,23 +83,31 @@ def frontmatter_keys(text):
     return set(FRONTMATTER_KEY.findall(text[4:end]))
 
 
+def content_children(parent):
+    for child in sorted(parent.iterdir()):
+        is_content_folder = (
+            child.is_dir()
+            and child.name != "minutes"
+            and not child.name.startswith(".")
+            and not DATED_FOLDER.match(child.name)
+        )
+        if is_content_folder:
+            yield child
+
+
 def first_class_folders(vault):
-    """Roots plus their immediate child folders, minus minutes/dated folders."""
+    """Roots, their immediate child folders, and entity-container children
+    (people, ex-employees) — minus minutes/dated folders."""
     folders = []
     for root_name in CONTENT_ROOTS:
         root = vault / root_name
-        if not root.is_dir():
-            continue
-        folders.append(root)
-        for child in sorted(root.iterdir()):
-            is_content_folder = (
-                child.is_dir()
-                and child.name != "minutes"
-                and not child.name.startswith(".")
-                and not DATED_FOLDER.match(child.name)
-            )
-            if is_content_folder:
-                folders.append(child)
+        if root.is_dir():
+            folders.append(root)
+            folders.extend(content_children(root))
+    for container_name in ENTITY_CONTAINERS:
+        container = vault / container_name
+        if container.is_dir():
+            folders.extend(child for child in content_children(container) if child not in folders)
     return folders
 
 
@@ -121,16 +132,22 @@ def check_agents_roots(vault):
 
 
 def check_index_links(vault, indexes, targets):
+    """Unresolved links anywhere; archive links only when they appear in a
+    LIST item — a bullet pointing into archive/ is stale inventory, while a
+    prose reference ("driven through the [[archive/...|liftoff]]") is
+    legitimate provenance."""
     unresolved, archive_links = [], []
     for index in indexes:
         rel = index.relative_to(vault).as_posix()
         in_archive = rel.startswith("archive/")
-        for target in wikilinks(index.read_text(encoding="utf-8")):
-            key = normalize(target)
-            if key not in targets:
-                unresolved.append(f"{rel}: [[{target}]]")
-            elif not in_archive and key.startswith("archive/"):
-                archive_links.append(f"{rel}: [[{target}]]")
+        for line in index.read_text(encoding="utf-8").splitlines():
+            is_list_item = line.lstrip().startswith(("-", "*", "+"))
+            for target in wikilinks(line):
+                key = normalize(target)
+                if key not in targets:
+                    unresolved.append(f"{rel}: [[{target}]]")
+                elif is_list_item and not in_archive and key.startswith("archive/"):
+                    archive_links.append(f"{rel}: [[{target}]]")
     return unresolved, archive_links
 
 

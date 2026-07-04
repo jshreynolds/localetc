@@ -25,12 +25,14 @@ python3 scripts/vault_doctor.py --vault ~/some/other/vault
   gone or renamed. These indexes are drifted inventory; prefer removing the
   inventory list over patching each link (indexes should carry meaning, not
   inventory — see the design principle below).
-- **Indexes: archive links from active notes** — an active index still points
-  into `archive/`. Either the archival was incomplete or the index needs
-  pruning.
-- **First-class folders missing index.md** — a root or area/project folder has
-  no entry point. Add a short semantic `index.md` (what belongs here, what
-  does not) — not a file listing.
+- **Indexes: archive links from active notes** — an active index lists an
+  archived item as if current (only LIST items are flagged; prose references
+  to archived work are legitimate provenance). Either the archival was
+  incomplete or the list needs pruning.
+- **First-class folders missing index.md** — a root, area/project folder, or
+  entity folder (person, ex-employee) has no entry point. Add a short
+  semantic `index.md` (what belongs here, what does not) — not a file
+  listing.
 - **Indexes: missing frontmatter** — `type`, `status`, or `summary` absent.
   Frontmatter is what makes generated inventory possible; fill these in.
 - **Projects: missing required files** — every `projects/<name>/` needs

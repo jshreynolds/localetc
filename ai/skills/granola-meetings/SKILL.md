@@ -50,7 +50,7 @@ Before classifying meetings, inspect the Obsidian vault so the skill uses the cu
 Discover:
 
 - Direct report folders under `areas/people_management/`
-- Peer folders under `areas/people_management/peers/`
+- Colleague folders (peers, peer managers, boss) under `areas/colleagues/`
 - Area folders under `areas/`
 - Project folders under `projects/`
 
@@ -77,11 +77,11 @@ Use this classification order:
 
 2. Boss 1x1
    - If the meeting is clearly with Stefan
-   - Destination: `areas/people_management/peers/stefan/`
+   - Destination: `areas/colleagues/stefan/`
 
 3. Peer 1x1
-   - Match a metadata attendee or clear title reference to a folder under `areas/people_management/peers/{person}/`
-   - Destination: `areas/people_management/peers/{person}/`
+   - Match a metadata attendee or clear title reference to a folder under `areas/colleagues/{person}/`
+   - Destination: `areas/colleagues/{person}/`
 
 4. Project meeting
    - Match title, summary, or notes to a folder under `projects/{project_name}/`
