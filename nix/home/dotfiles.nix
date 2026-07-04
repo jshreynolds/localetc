@@ -28,7 +28,11 @@ in
 
   # ---- live symlinks (apps rewrite these themselves) -------------------------
   home.file.".claude".source = live "${etc}/dotfiles/claude"; # Claude Code rewrites settings.json
-  home.file.".agents".source = live "${etc}/dotfiles/agents";
+  # ~/.agents is a REAL directory owned by external skills tooling —
+  # ~/.agents/skills holds installed skills (handcrafted ones symlink to
+  # ~/ai/skills). Only these two repo-owned files inside it are managed here:
+  home.file.".agents/AGENTS.md".source = live "${etc}/dotfiles/agents/AGENTS.md";
+  home.file.".agents/XP.md".source = live "${etc}/dotfiles/agents/XP.md";
   home.file.".codex".source = live "${etc}/dotfiles/codex";
   home.file.".cursorrules".source = live "${etc}/dotfiles/cursorrules";
   home.file.".docker".source = live "${etc}/dotfiles/docker";
