@@ -1,8 +1,7 @@
 # =============================================================================
 # shell.nix — zsh: aliases, environment variables, PATH, startup snippets.
 #
-# home-manager generates ~/.zshrc from this file. It replaces the old
-# dotfiles/zshrc plus the whole env/enabled/ fragment system.
+# home-manager generates ~/.zshrc from this file. #
 #
 # PATH layering (important):
 #   1. nix paths come FIRST — wired in by nix-darwin's /etc/zshrc
@@ -16,7 +15,6 @@
   programs.zsh = {
     enable = true;
 
-    # Replaces the brew zsh-syntax-highlighting formula + 99-zsh-customizations.
     syntaxHighlighting.enable = true;
 
     shellAliases = {
@@ -27,14 +25,6 @@
 
       # -- convenience --------------------------------------------------------
       editalias = "nvim ~/etc/nix/home/shell.nix"; # aliases live HERE now
-      env = "env | sort";
-      more = "less -r";
-      leetme = "open https://leetcode.com/problems/random-one-question/algorithms";
-      # ls/ll/la/lt come from programs.lsd in programs.nix
-      mv = "mv -iv";
-      rmf = "rm -f";
-      rmrm = "rm -rf";
-      where = "type -all";
       xml = "xmllint --format -";
       xcrmdd = "rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*";
       zelliful = "zellij attach --create beautiful";
@@ -60,7 +50,6 @@
       # -- tools --------------------------------------------------------------
       uvtest = "uv run pytest";
       k = "kubectl";
-      codex = "codex --no-alt-screen"; # zellij workaround
     };
 
     # Startup snippets for ~/.zshrc. mkOrder controls placement: 500 ≈ "very

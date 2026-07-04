@@ -38,6 +38,7 @@ Read them in the order listed above and you've had the tour.
 | Apply config changes to the machine | `drs` (alias for `sudo darwin-rebuild switch --flake ~/etc`) |
 | Add a CLI tool | add it to `nix/home/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, `drs` |
 | Add a GUI app | add the cask to `nix/darwin/homebrew.nix`, `git add`, `drs` |
+| Update a brew-managed cask | `brew upgrade --cask <name>` (all: `brew upgrade`) — switches never upgrade casks (`onActivation.upgrade = false`), and many apps self-update anyway |
 | Add an alias / env var | edit `nix/home/shell.nix`, `drs`, open a new terminal |
 | Update everything | `cd ~/etc && nix flake update && drs` (commit the new `flake.lock`) |
 | Undo the last switch | `sudo darwin-rebuild --rollback` |
