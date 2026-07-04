@@ -69,6 +69,10 @@ Present the meetings to the user in a compact review list before writing anythin
 - Proposed destination folder
 - Confidence: `high`, `medium`, or `low`
 
+The destination table in `$WORKSIDIAN/AGENTS_meetings.md` is canonical — read
+it before classifying. If it and the list below ever disagree, the vault
+contract wins; the list below adds only the matching heuristics.
+
 Use this classification order:
 
 1. Direct report 1x1
