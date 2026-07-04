@@ -24,6 +24,7 @@ command. Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
 │       ├── programs.nix       #   tools with managed config (starship, fzf, ...)
 │       └── dotfiles.nix       #   config files: nix-managed vs live-editable
 ├── dotfiles/                  # raw config files, referenced from the nix modules
+├── ai/                        # agent instructions (AGENTS.md) + handcrafted skills
 ├── bin/                       # personal scripts (on PATH)
 └── secrets.zsh                # API keys — git-ignored, sourced by zsh
 ```
@@ -80,8 +81,7 @@ lands world-readable in `/nix/store`.
    ```
    curl -fsSL https://install.determinate.systems/nix | sh -s -- install --determinate
    ```
-3. **ssh keys**: create/copy a key; add it to GitHub (this repo) and Codeberg
-   (the `~/ai` repo).
+3. **ssh keys**: create/copy a key; add it to GitHub (this repo).
 4. **Clone this repo** (location is a hard assumption):
    ```
    git clone git@github.com:jshreynolds/localetc.git ~/etc
@@ -107,9 +107,6 @@ lands world-readable in `/nix/store`.
    ```
    - If it refuses over an existing `/etc/zshrc` (or `zshenv`/`bashrc`):
      `sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin` and re-run.
-   - The activation clones `ssh://git@codeberg.org/jshlyd/ai.git` to `~/ai`
-     (agent guidelines + handcrafted skills). If the ssh key isn't ready it
-     warns and skips — fix the key, `drs` again.
 9. **Open a new terminal.** Prompt, aliases, and tools should all be there.
    From now on it's `drs`.
 10. Optional manual passes (not scriptable): the checklist at the top of

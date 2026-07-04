@@ -73,9 +73,6 @@
       "gcloud-cli" # cask (not nixpkgs): `gcloud components` self-updates, which the read-only nix store can't allow
       "insomnia"
       "openlens"
-      # -- fonts (could move to nixpkgs fonts.packages later; cosmetic) -----
-      "font-3270-nerd-font"
-      "font-fira-code-nerd-font"
       # -- misc --------------------------------------------------------------
       "microsoft-excel"
       "miro"

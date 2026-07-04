@@ -83,6 +83,9 @@
         };
     in
     {
+      # `nix fmt` formats every .nix file in the repo with the official style.
+      formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
+
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
       # machine's hostname — so each machine needs its own line here.
       darwinConfigurations = {

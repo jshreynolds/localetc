@@ -63,11 +63,6 @@
         bindkey "^A" beginning-of-line
         bindkey "^E" end-of-line
 
-        mkcd () {
-          mkdir "$1"
-          cd "$1"
-        }
-
         # Secrets (git-ignored). API keys must NEVER go into nix config —
         # everything nix manages ends up world-readable in /nix/store.
         [ -f "$HOME/etc/secrets.zsh" ] && source "$HOME/etc/secrets.zsh"
@@ -100,6 +95,7 @@
     # opt out of tracking/telemetry
     DOTNET_CLI_TELEMETRY_OPTOUT = "true";
     NEXT_TELEMETRY_DISABLED = "1";
+    HOMEBREW_NO_ANALYTICS = "1";
 
     # java
     MAVEN_OPTS = "--enable-native-access=ALL-UNNAMED";
@@ -111,8 +107,6 @@
 
   # Extra PATH entries — APPENDED after nix paths (see header comment).
   home.sessionPath = [
-    "$HOME/bin"
-    "$HOME/bin/scripts"
     "$HOME/etc/bin"
     "$HOME/.local/bin"                        # cursor agent CLI et al.
     "$HOME/.rd/bin"                           # rancher desktop (harmless if absent)

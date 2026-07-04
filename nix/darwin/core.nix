@@ -8,7 +8,7 @@
 # `username`, `hostname`, and `home` arrive via specialArgs — they are defined
 # exactly once, in the mkHost call in flake.nix.
 # =============================================================================
-{ username, hostname, home, ... }:
+{ pkgs, username, hostname, home, ... }:
 {
   # CRITICAL: Determinate Nix owns the nix installation on this machine —
   # the daemon, /etc/nix/nix.conf, upgrades, and garbage collection.
@@ -36,6 +36,12 @@
   # nix-darwin generates /etc/zshrc so every zsh (login, ssh, scripts) gets
   # nix paths and completions wired in before the user's own ~/.zshrc runs.
   programs.zsh.enable = true;
+
+  # Fonts installed system-wide (into /Library/Fonts/Nix Fonts).
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code
+    nerd-fonts._3270
+  ];
 
   # Some packages have non-open-source licenses (terraform is BUSL, for one).
   # nixpkgs refuses to build them unless you opt in. home-manager inherits
