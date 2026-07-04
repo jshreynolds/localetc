@@ -1,146 +1,133 @@
-# macOS Development Environment Bootstrap
+# etc — declarative macOS
 
-A comprehensive, modular system for automating macOS development environment setup and configuration management.
-
-## Overview
-
-This repository provides a fully automated solution for setting up a macOS development environment from scratch. It handles everything from system preferences to development tools, using a modular architecture that makes it easy to customize and maintain.
-
-## Key Features
-
-- **🚀 One-Command Setup**: Bootstrap your entire development environment with a single command
-- **📦 Modular Architecture**: Enable/disable components based on your needs
-- **🔄 Idempotent**: Safe to run multiple times without side effects
-- **🔗 Symlink-Based**: Configurations stay version-controlled while being accessible system-wide
-- **🎯 Organized Structure**: Clear separation between different configuration types
-- **🛠️ Extensive Tool Support**: Pre-configured for modern development workflows
-
-## Quick Start
-
-```bash
-# Download and run the installer
-curl https://raw.githubusercontent.com/jshreynolds/localetc/main/install.sh > install.sh
-chmod 755 install.sh && ./install.sh YOUR_MACHINE_NAME
-
-# Follow the interactive prompts
-```
-
-## Project Structure
+This repo IS the machine. One `flake.nix` plus a handful of small nix modules
+declare everything: CLI tools, GUI apps, shell config, dotfiles, and macOS
+settings. Apply the repo to the machine with one command; roll back with one
+command. Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
+[home-manager](https://github.com/nix-community/home-manager) on top of
+[Determinate Nix](https://determinate.systems/).
 
 ```
-etc/
-├── install.sh          # Main bootstrap script
-├── install/            # Installation scripts
-│   ├── enabled/        # Active installation modules (numbered for order)
-│   └── disabled/       # Available but inactive modules
-├── dotfiles/           # Configuration files to be symlinked
-│   ├── config/         # Application configurations
-│   │   ├── alacritty/  # Terminal emulator config
-│   │   ├── claude/     # Claude Code settings (.cursorrules)
-│   │   ├── gh/         # GitHub CLI config
-│   │   └── zellij/     # Terminal multiplexer config
-│   ├── docker/         # Docker settings
-├── env/                # Environment setup scripts
-│   ├── enabled/        # Active environment configurations
-│   └── disabled/       # Available but inactive configurations
-├── bin/                # Custom utility scripts
-└── setenv              # Environment loader script
+~/etc/
+├── flake.nix                  # front door: inputs + one mkHost line per machine
+├── flake.lock                 # exact pinned versions of everything (committed)
+├── nix/
+│   ├── darwin/                # system-level (applies to the whole Mac)
+│   │   ├── core.nix           #   machine identity, nix/Determinate handshake
+│   │   ├── homebrew.nix       #   GUI apps (casks) + App Store apps, declared
+│   │   └── macos-defaults.nix #   Finder/Dock/keyboard/etc settings
+│   └── home/                  # user-level (applies to $USER)
+│       ├── default.nix        #   entry point, imports the rest
+│       ├── packages.nix       #   every CLI tool & language runtime
+│       ├── shell.nix          #   zsh: aliases, env vars, PATH
+│       ├── git.nix            #   git + jujutsu
+│       ├── programs.nix       #   tools with managed config (starship, fzf, ...)
+│       └── dotfiles.nix       #   config files: nix-managed vs live-editable
+├── dotfiles/                  # raw config files, referenced from the nix modules
+├── bin/                       # personal scripts (on PATH)
+└── secrets.zsh                # API keys — git-ignored, sourced by zsh
 ```
 
-## Installation Process
+Every `.nix` file opens with a comment explaining the nix concept it uses.
+Read them in the order listed above and you've had the tour.
 
-### 1. Bootstrap Phase (`install.sh`)
-- Validates prerequisites and sets up SSH keys
-- Installs Xcode Command Line Tools
-- Clones this repository to `~/etc`
-- Executes all scripts in `install/enabled/`
+## Daily operations
 
-### 2. Installation Modules (`install/enabled/`)
-Scripts are numbered to control execution order:
+| I want to… | Command |
+|---|---|
+| Apply config changes to the machine | `drs` (alias for `sudo darwin-rebuild switch --flake ~/etc`) |
+| Add a CLI tool | add it to `nix/home/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, `drs` |
+| Add a GUI app | add the cask to `nix/darwin/homebrew.nix`, `git add`, `drs` |
+| Add an alias / env var | edit `nix/home/shell.nix`, `drs`, open a new terminal |
+| Update everything | `cd ~/etc && nix flake update && drs` (commit the new `flake.lock`) |
+| Undo the last switch | `sudo darwin-rebuild --rollback` |
+| See switch history | `darwin-rebuild --list-generations` |
+| Free disk space | `sudo determinate-nixd gc` |
 
-- **00-rosetta.sh**: Apple Silicon compatibility layer
-- **01-brew.sh**: Homebrew and packages (core + optional personal/work)
-- **60-dotfiles.sh**: Symlinks all configuration files
-- **90-92-macos-*.sh**: System preferences and UI customization
-- **93-xcode.sh**: Additional Xcode tools
-- **96-mise.sh**: Development environment manager
-- **97-zsh.sh**: Shell setup and configuration
-- **98-manual.sh**: Instructions for manual steps
-- **99-welcome.sh**: Post-installation summary
+**The golden rule:** nix only sees files git knows about. After creating a new
+file, `git add` it or the build fails with a misleading "path does not exist".
 
-### 3. Configuration Deployment
-- Creates symlinks from `~/etc/dotfiles/*` to appropriate system locations
-- Sets up development tools via mise (Node.js, Python, Go, etc.)
-- Configures shell environment with modular scripts
+### Editing config files
 
-## Key Components
+Two flavors, declared in `nix/home/dotfiles.nix`:
 
-### Package Management
-- **Homebrew**: System packages, GUI applications, and fonts
-- **mise**: Language runtimes and development tools
-- Modular Brewfiles for different use cases (core/personal/work)
+- **Nix-managed** (starship, alacritty, ghostty, zellij, git, jj): edit the
+  file in `~/etc/dotfiles/` (or the `.nix` module), then `drs` to apply.
+  The live copy is a read-only symlink into the nix store.
+- **Live** (claude, gh, codex, opencode, cursorrules, docker): symlinked
+  straight back into `~/etc/dotfiles/` — edits (by you or by the app itself)
+  apply instantly, and show up as git diffs here.
 
-### Development Tools
-Automatically installs and manages:
-- Languages: Node.js, Python, Go, Rust, Java, Ruby, etc.
-- Tools: Docker, Kubernetes tools, Terraform, AWS CLI
-- Databases: PostgreSQL, Redis, Kafka
-- And many more via mise configuration
+### Secrets
 
-### Shell Environment
-- Minimal `.zshrc` that sources modular environment scripts
-- Organized environment configurations in `env/enabled/`
-- Custom PATH management and useful aliases
-- Integration with modern CLI tools (starship, zoxide, fzf)
+API keys live in `~/etc/secrets.zsh` (git-ignored, `chmod 600`), sourced by
+zsh at startup. Never put a secret in any `.nix` file — everything nix touches
+lands world-readable in `/nix/store`.
 
-### Application Configurations
-Pre-configured settings for:
-- Alacritty (terminal emulator)
-- Zellij (terminal multiplexer)
-- GitHub CLI
-- Docker
-- Cheat (command cheatsheets)
+## Setting up a new machine
 
-## Customization
+1. **macOS basics**: sign in to iCloud/App Store; `xcode-select --install`.
+2. **Install Determinate Nix**:
+   ```
+   curl -fsSL https://install.determinate.systems/nix | sh -s -- install --determinate
+   ```
+3. **ssh keys**: create/copy a key; add it to GitHub (this repo) and Codeberg
+   (the `~/ai` repo).
+4. **Clone this repo** (location is a hard assumption):
+   ```
+   git clone git@github.com:jshreynolds/localetc.git ~/etc
+   ```
+5. **Install Homebrew** (nix-darwin drives it but doesn't install it):
+   ```
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+6. **Declare the machine** in `flake.nix` — one line, then commit:
+   ```nix
+   "its-hostname" = mkHost "its-hostname" "its-username";
+   ```
+   `hostname` = `scutil --get LocalHostName`, `username` = `whoami`.
+7. **Create `~/etc/secrets.zsh`** with the API keys (copy from a password
+   manager, not from another machine's shell history).
+8. **First switch** (quotes matter — zsh eats the `#`):
+   ```
+   sudo nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake ~/etc
+   ```
+   - If it refuses over an existing `/etc/zshrc` (or `zshenv`/`bashrc`):
+     `sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin` and re-run.
+   - The activation clones `ssh://git@codeberg.org/jshlyd/ai.git` to `~/ai`
+     (agent guidelines + handcrafted skills). If the ssh key isn't ready it
+     warns and skips — fix the key, `drs` again.
+9. **Open a new terminal.** Prompt, aliases, and tools should all be there.
+   From now on it's `drs`.
+10. Optional manual passes (not scriptable): the checklist at the top of
+    `nix/darwin/macos-defaults.nix`, and Safari preferences.
 
-### Enabling/Disabling Components
-Move scripts between `enabled/` and `disabled/` directories:
-```bash
-# Disable a component
-mv install/enabled/93-xcode.sh install/disabled/
+## The Determinate Nix arrangement
 
-# Enable an environment configuration
-mv env/disabled/10_python.sh env/enabled/
-```
+Determinate Nix owns the nix installation itself; nix-darwin is told hands-off
+(`nix.enable = false` in `core.nix`). Practical consequences:
 
-### Adding New Tools
-1. For Homebrew packages: Edit `dotfiles/brew/Brewfile.*`
-2. For development runtimes: Add to `dotfiles/shell/mise`
-3. For custom scripts: Add to `bin/`
-4. For environment configs: Create numbered scripts in `env/enabled/`
+- nix settings (extra substituters, trusted users) go in
+  `/etc/nix/nix.custom.conf` by hand — not in nix-darwin options.
+- Upgrade nix itself: `sudo determinate-nixd upgrade`
+- Garbage-collect: `sudo determinate-nixd gc`
 
-## Manual Steps Required
+## Homebrew's remaining job
 
-Some configurations cannot be automated and require _some_ manual intervention:
-- App Store applications
-- System security settings requiring user approval
-- Application-specific login/authentication
+Homebrew handles only what nixpkgs can't: GUI apps (casks), Mac App Store
+apps (via `mas`), and five formulae that aren't packaged in nixpkgs. The full
+list lives in `nix/darwin/homebrew.nix` with `cleanup = "zap"` — anything
+brew-installed that isn't declared there gets uninstalled on the next `drs`.
+So: to try something quickly, `brew install foo` works, but declare it or
+lose it.
 
-These are documented in the installation output.
+## Troubleshooting
 
-## General Maintenance
-
-```bash
-# Update all Homebrew packages
-brew update && brew upgrade
-
-# Update development tools
-mise upgrade
-
-# Pull latest configuration changes
-cd ~/etc && git pull
-```
-
-## Contributing
-
-Feel free to fork and customize for your own use. The modular structure makes it easy to add or remove components based on your needs.
+- **"path ... does not exist" during build** → you forgot `git add`.
+- **A tool resolves to the wrong version** → `which -a <tool>`; nix paths
+  (`/etc/profiles/per-user/...`) must come before `/opt/homebrew/bin`.
+- **Something broke after an update** → `sudo darwin-rebuild --rollback`,
+  then investigate at leisure. Generations are the safety net.
+- **Home-manager refuses to overwrite a file** → something created a real
+  file where it wants a symlink. Move it aside, or check for `*.hm-backup`
+  leftovers from the automatic backup.

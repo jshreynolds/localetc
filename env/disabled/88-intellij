@@ -1,6 +1,0 @@
-#! /bin/bash
-
-export INTELLIJ_HOME=/Applications/IntelliJ\ IDEA.app
-
-export PATH="$INTELLIJ_HOME/Contents/MacOS:$PATH"
-

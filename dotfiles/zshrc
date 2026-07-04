@@ -1,9 +1,0 @@
-test -e "/Library/Application Support/Sinch/profile.zsh" && source "/Library/Application Support/Sinch/profile.zsh"
-setopt extendedglob
-
-bindkey  "^A"   beginning-of-line
-bindkey  "^E"   end-of-line
-
-source $HOME/etc/setenv
-
-

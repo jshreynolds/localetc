@@ -19,11 +19,10 @@
       #   "none"      = leave them alone
       #   "uninstall" = remove them
       #   "zap"       = remove them AND purge their config/caches
-      #
-      # MIGRATION NOTE: keep "none" until every old brew formula has a
-      # verified nix replacement (see MIGRATION.md phase 5), then flip to
-      # "zap" so brew can never drift from this file again.
-      cleanup = "none";
+      # "zap" means brew can never drift from this file: `brew install foo`
+      # works for a quick experiment, but declare it here or the next drs
+      # removes it. Dependencies of declared items are kept automatically.
+      cleanup = "zap";
     };
 
     taps = [

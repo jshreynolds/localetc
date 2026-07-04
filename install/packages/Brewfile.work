@@ -1,5 +1,0 @@
-# crapulent windows tooling
-cask 'microsoft-excel'
-cask 'microsoft-word'
-cask 'microsoft-teams'
-cask 'onedrive'

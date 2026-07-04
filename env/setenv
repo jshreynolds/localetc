@@ -1,5 +1,0 @@
-#!/bin/sh
-
-source source_folder enabled
-
-HOSTNAME=`hostname`

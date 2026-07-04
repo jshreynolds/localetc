@@ -17,11 +17,13 @@
 {
   home.packages = with pkgs; [
     # -- shell & files ---------------------------------------------------------
+    bashInteractive  # bash 5 (macOS ships ancient 3.2; zsh stays the login shell)
     coreutils        # GNU userland (ls --color, etc.)
     fd               # friendlier find
     duf              # friendlier df
     dust             # friendlier du
     mmv              # mass rename
+    ripgrep          # rg
     rm-improved      # rip: rm with a trash can
     rsync
     silver-searcher-ng # ag (maintained fork; brew name: the_silver_searcher)
@@ -62,6 +64,9 @@
     minikube
     kafkactl
     kn
+
+    # -- databases -------------------------------------------------------------
+    mongodb-tools    # mongodump/mongorestore etc. (brew name: mongodb-database-tools)
 
     # -- cloud ---------------------------------------------------------------
     awscli2
