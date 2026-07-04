@@ -4,8 +4,11 @@
 # Nix concept: a *module* is just a function from `{ ... }` (things nix hands
 # you, like `pkgs` or `config`) to an attribute set of option values. nix-darwin
 # merges all modules together and builds the system from the result.
+#
+# `username`, `hostname`, and `home` arrive via specialArgs — they are defined
+# exactly once, in the mkHost call in flake.nix.
 # =============================================================================
-{ ... }:
+{ username, hostname, home, ... }:
 {
   # CRITICAL: Determinate Nix owns the nix installation on this machine —
   # the daemon, /etc/nix/nix.conf, upgrades, and garbage collection.
@@ -22,13 +25,13 @@
 
   # nix-darwin needs to know which user owns user-scoped things
   # (homebrew, system.defaults user domains, home-manager).
-  system.primaryUser = "josrey";
-  users.users.josrey.home = "/Users/josrey";
+  system.primaryUser = username;
+  users.users.${username}.home = home;
 
   # Machine name — replaces the scutil calls in the old 90-macos-system.sh.
-  networking.hostName = "mac-nl-josrey-2";
-  networking.computerName = "mac-nl-josrey-2";
-  networking.localHostName = "mac-nl-josrey-2";
+  networking.hostName = hostname;
+  networking.computerName = hostname;
+  networking.localHostName = hostname;
 
   # nix-darwin generates /etc/zshrc so every zsh (login, ssh, scripts) gets
   # nix paths and completions wired in before the user's own ~/.zshrc runs.

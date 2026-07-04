@@ -6,13 +6,16 @@
   # here is what I produce (outputs)", with every dependency pinned to an
   # exact commit in flake.lock. Same lock file = same system, every time.
   #
+  # This repo is assumed to live at ~/etc on every machine (the live dotfile
+  # symlinks and the drs alias depend on that).
+  #
   # Daily driver commands:
   #   sudo darwin-rebuild switch --flake ~/etc     # apply config changes (alias: drs)
   #   nix flake update                             # update all pinned inputs, then drs
   #   darwin-rebuild --list-generations            # see history; every switch is undoable
   # ===========================================================================
 
-  description = "josrey's mac: nix-darwin + home-manager";
+  description = "declarative macOS: nix-darwin + home-manager";
 
   inputs = {
     # The nix package collection. "nixpkgs-unstable" is the rolling branch —
@@ -30,31 +33,55 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager }: {
-    # `darwin-rebuild switch --flake ~/etc` looks up the attribute named after
-    # this machine's hostname — so this MUST stay equal to `scutil --get LocalHostName`.
-    darwinConfigurations."mac-nl-josrey-2" = nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
+  outputs = { self, nixpkgs, nix-darwin, home-manager }:
+    let
+      # ---- one machine = one mkHost call -----------------------------------
+      # `hostname` must equal `scutil --get LocalHostName` on that machine.
+      # `username` must equal the macOS account short name (`whoami`).
+      # Everything else (home directory, module wiring) is derived from these
+      # two facts and passed to every module via specialArgs — no other file
+      # hardcodes who or where you are.
+      mkHost = hostname: username:
+        let
+          home = "/Users/${username}";
+        in
+        nix-darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
 
-      # Each module is a file handling exactly one concern. Start reading at
-      # nix/darwin/core.nix.
-      modules = [
-        ./nix/darwin/core.nix
-        ./nix/darwin/homebrew.nix
-        ./nix/darwin/macos-defaults.nix
+          # specialArgs makes these available as arguments in every darwin
+          # module: `{ username, hostname, home, ... }:`
+          specialArgs = { inherit username hostname home; };
 
-        # home-manager runs as a nix-darwin module so ONE `darwin-rebuild switch`
-        # updates system config AND user config together.
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;    # reuse the system nixpkgs (incl. allowUnfree)
-          home-manager.useUserPackages = true;  # install user pkgs to /etc/profiles/per-user/josrey
-          home-manager.users.josrey = import ./nix/home;
-          # If a real file already sits where home-manager wants to place a
-          # symlink, rename it to *.hm-backup instead of aborting activation.
-          home-manager.backupFileExtension = "hm-backup";
-        }
-      ];
+          # Each module is a file handling exactly one concern. Start reading
+          # at nix/darwin/core.nix.
+          modules = [
+            ./nix/darwin/core.nix
+            ./nix/darwin/homebrew.nix
+            ./nix/darwin/macos-defaults.nix
+
+            # home-manager runs as a nix-darwin module so ONE `darwin-rebuild
+            # switch` updates system config AND user config together.
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;    # reuse the system nixpkgs (incl. allowUnfree)
+              home-manager.useUserPackages = true;  # install user pkgs to /etc/profiles/per-user/<username>
+              home-manager.users.${username} = import ./nix/home;
+              # same idea as specialArgs, but for the home modules
+              home-manager.extraSpecialArgs = { inherit username home; };
+              # If a real file already sits where home-manager wants to place a
+              # symlink, rename it to *.hm-backup instead of aborting activation.
+              home-manager.backupFileExtension = "hm-backup";
+            }
+          ];
+        };
+    in
+    {
+      # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
+      # machine's hostname — so each machine needs its own line here.
+      darwinConfigurations = {
+        "mac-nl-josrey-2" = mkHost "mac-nl-josrey-2" "josrey";
+        # next machine: add its line, e.g.
+        # "some-other-mac" = mkHost "some-other-mac" "jreynolds";
+      };
     };
-  };
 }

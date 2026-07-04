@@ -2,7 +2,7 @@
 # packages.nix — every CLI tool and language runtime, from nixpkgs.
 #
 # Nix concept: `home.packages` is just a list of packages to put on PATH
-# (via /etc/profiles/per-user/josrey/bin). Add a line, run `drs`, done.
+# (via /etc/profiles/per-user/<username>/bin). Add a line, run `drs`, done.
 # Find package names with:  nix search nixpkgs <thing>
 #
 # Replaces: ~70 brew formulae and all mise-managed global runtimes.

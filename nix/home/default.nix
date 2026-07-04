@@ -4,8 +4,11 @@
 # Nix concept: importing a directory loads its default.nix. flake.nix points
 # home-manager at this folder; `imports` below pulls in the sibling files,
 # each of which handles one concern.
+#
+# `username` and `home` arrive via extraSpecialArgs — defined once, in
+# the mkHost call in flake.nix.
 # =============================================================================
-{ ... }:
+{ username, home, ... }:
 {
   imports = [
     ./packages.nix # every CLI tool and language runtime
@@ -15,8 +18,8 @@
     ./dotfiles.nix # config files: nix-managed vs live-editable symlinks
   ];
 
-  home.username = "josrey";
-  home.homeDirectory = "/Users/josrey";
+  home.username = username;
+  home.homeDirectory = home;
 
   # Compatibility marker recording which home-manager release first managed
   # this home. Set once, then NEVER changed — it is not a version selector.

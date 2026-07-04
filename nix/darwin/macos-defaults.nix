@@ -15,7 +15,7 @@
 # silently do nothing. Configure Safari by hand (old script kept in git
 # history: install/enabled/91-macos-user.sh, "Safari & WebKit" section).
 # =============================================================================
-{ ... }:
+{ home, ... }:
 {
   system.defaults = {
     # -- keyboard ------------------------------------------------------------
@@ -31,7 +31,7 @@
 
     # -- screenshots -----------------------------------------------------------
     screencapture = {
-      location = "/Users/josrey/Desktop";
+      location = "${home}/Desktop";
       type = "png";
       disable-shadow = true;
     };
