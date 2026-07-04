@@ -11,7 +11,7 @@
 #    (Claude Code rewrites settings.json; gh writes hosts.yml). The cost:
 #    nix can't guarantee their content — git shows the drift instead.
 # =============================================================================
-{ config, ... }:
+{ config, lib, pkgs, ... }:
 let
   # Absolute repo path AS A STRING. A nix path literal (../../dotfiles/claude)
   # would be copied into the read-only store — exactly what live configs must avoid.
@@ -40,4 +40,21 @@ in
   home.file.".docker".source = live "${etc}/dotfiles/docker";
   xdg.configFile."gh".source = live "${etc}/dotfiles/config/gh"; # gh writes hosts.yml
   xdg.configFile."opencode".source = live "${etc}/dotfiles/config/opencode";
+
+  # ---- external ~/ai repo (agent guidelines, handcrafted skills, ai-manager) --
+  # The ~/.agents pointers above depend on ~/ai existing. On a fresh machine
+  # this clones it once during activation; after that git owns it — nix never
+  # touches its contents. Requires a codeberg ssh key, so on a brand-new
+  # machine this may warn on the first switch and succeed on the next.
+  #
+  # Nix concept: home.activation adds a step to the script that runs on every
+  # `drs`; the dag entry orders it after home-manager has written its files.
+  home.activation.cloneAiRepo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ ! -e "${ai}" ]; then
+      run ${pkgs.git}/bin/git clone "ssh://git@codeberg.org/jshlyd/ai.git" "${ai}" \
+        || echo "WARNING: could not clone ~/ai (missing ssh key or network?) — clone it manually"
+    elif [ ! -d "${ai}/.git" ]; then
+      echo "WARNING: ${ai} exists but is not a git repo — expected a clone of codeberg.org/jshlyd/ai"
+    fi
+  '';
 }
