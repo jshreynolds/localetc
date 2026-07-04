@@ -111,7 +111,6 @@
     # obsidian vaults & agentic knowledge base
     WORKSIDIAN = "$HOME/worksidian";
     OBSIDIAN = "$HOME/Documents/vault";
-    AGENTIC_KB = "$HOME/Dropbox/agentic-kb";
   };
 
   # Extra PATH entries — APPENDED after nix paths (see header comment).

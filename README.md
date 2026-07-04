@@ -50,14 +50,22 @@ file, `git add` it or the build fails with a misleading "path does not exist".
 
 ### Editing config files
 
-Two flavors, declared in `nix/home/dotfiles.nix`:
+Two flavors, declared in `nix/home/dotfiles.nix`. `dotfiles/` mirrors the
+target structure minus the leading dot (`dotfiles/claude/settings.json` →
+`~/.claude/settings.json`).
 
-- **Nix-managed** (starship, alacritty, ghostty, zellij, git, jj): edit the
-  file in `~/etc/dotfiles/` (or the `.nix` module), then `drs` to apply.
+- **Nix-managed** (starship, alacritty, ghostty, zellij, git, jj prefs): edit
+  the file in `~/etc/dotfiles/` (or the `.nix` module), then `drs` to apply.
   The live copy is a read-only symlink into the nix store.
-- **Live** (claude, gh, codex, opencode, cursorrules, docker): symlinked
-  straight back into `~/etc/dotfiles/` — edits (by you or by the app itself)
-  apply instantly, and show up as git diffs here.
+- **Live** (claude settings, gh config, opencode.jsonc, zed settings, and
+  `ai/AGENTS.md` — the base instructions every agent tool gets): symlinked
+  straight back into `~/etc` — edits (by you or by the app itself) apply
+  instantly and show up as git diffs here.
+
+Tool runtime homes (`~/.claude`, `~/.codex`, `~/.config/opencode`, …) are
+real directories owned by their tools; only the config files above are
+linked into them. Identity (git/jj user + email) is machine-local, never
+in this repo.
 
 ### Secrets
 

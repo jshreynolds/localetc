@@ -1,8 +1,7 @@
 # =============================================================================
 # git.nix — git and jujutsu, fully nix-managed.
 #
-# programs.git writes ~/.config/git/config (git's XDG location); the old
-# hand-written dotfiles/gitconfig is retired. Note: NO global user identity is
+# programs.git writes ~/.config/git/config (git's XDG location); Note: NO global user identity is
 # set here, on purpose — identity stays per-repo, as before.
 # =============================================================================
 { ... }:
@@ -34,12 +33,10 @@
 
   programs.jujutsu = {
     enable = true;
-    # jj's config, straight from the old dotfiles/config/jj/config.toml
+    # Preferences only — user identity deliberately does NOT live in this
+    # repo (same policy as git above). Set it machine-locally in
+    # ~/.config/jj/conf.d/user.toml, which jj loads alongside this config.
     settings = {
-      user = {
-        name = "Joshua Reynolds";
-        email = "jreynolds@electrichand.com";
-      };
       ui.default-command = "log";
     };
   };
