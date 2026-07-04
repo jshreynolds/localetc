@@ -12,6 +12,10 @@
 # (kept in git history). Some changes only show after logout or a
 # `killall Dock` / `killall Finder`.
 #
+# NOT ported on purpose — Safari, Contacts, Calendar (and Mail) preference
+# domains are TCC-protected: `defaults write` to them either fails and ABORTS
+# the activation, or silently does nothing. Configure those apps by hand.
+#
 # Manual one-time steps on a new machine (were interactive in the old script):
 #   - System Settings → Privacy & Security: grant your terminal Full Disk
 #     Access if you want to script Mail/Safari prefs
@@ -147,8 +151,9 @@
       "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
 
       # debug menus
-      "com.apple.addressbook".ABShowDebugMenu = true;
-      "com.apple.iCal".IncludeDebugMenu = true;
+      # (Contacts and Calendar debug menus NOT ported — com.apple.addressbook
+      # and com.apple.iCal are TCC-protected like Safari; writing them without
+      # Full Disk Access aborts the whole activation)
       "com.apple.DiskUtility" = {
         DUDebugMenuEnabled = true;
         advanced-image-options = true;
