@@ -16,6 +16,7 @@ let
   # Absolute repo path AS A STRING. A nix path literal (../../dotfiles/claude)
   # would be copied into the read-only store — exactly what live configs must avoid.
   etc = "${config.home.homeDirectory}/etc";
+  ai = "${config.home.homeDirectory}/ai"; # external AI/skills area (not in this repo)
   live = config.lib.file.mkOutOfStoreSymlink;
 in
 {
@@ -30,9 +31,10 @@ in
   home.file.".claude".source = live "${etc}/dotfiles/claude"; # Claude Code rewrites settings.json
   # ~/.agents is a REAL directory owned by external skills tooling —
   # ~/.agents/skills holds installed skills (handcrafted ones symlink to
-  # ~/ai/skills). Only these two repo-owned files inside it are managed here:
-  home.file.".agents/AGENTS.md".source = live "${etc}/dotfiles/agents/AGENTS.md";
-  home.file.".agents/XP.md".source = live "${etc}/dotfiles/agents/XP.md";
+  # ~/ai/skills). The guideline files live in ~/ai too; nix just guarantees
+  # the pointers exist (CLAUDE.md imports ~/.agents/AGENTS.md):
+  home.file.".agents/AGENTS.md".source = live "${ai}/AGENTS.md";
+  home.file.".agents/XP.md".source = live "${ai}/XP.md";
   home.file.".codex".source = live "${etc}/dotfiles/codex";
   home.file.".cursorrules".source = live "${etc}/dotfiles/cursorrules";
   home.file.".docker".source = live "${etc}/dotfiles/docker";
