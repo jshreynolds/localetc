@@ -11,7 +11,7 @@ Checks:
   3. first-class folders missing an index.md
   4. index.md files missing frontmatter (type / status / summary)
   5. non-archive index.md files linking into archive/
-  6. project folders missing todo.md or summary.md
+  6. project folders missing index.md or todo.md
 
 Usage: vault_doctor.py [--vault PATH] [--verbose]
   --vault    vault root (default: $WORKSIDIAN, then ~/worksidian)
@@ -44,13 +44,21 @@ def iter_notes(vault):
                 yield Path(root) / name
 
 
-def link_targets(vault, notes):
-    """Lowercased keys a wikilink can resolve to: relative paths and basenames."""
+def link_targets(vault):
+    """Lowercased keys a wikilink can resolve to: relative paths and basenames.
+    Markdown links omit the .md extension; links to any other file type
+    (.canvas, .base, .pdf, images) keep theirs. Unlike iter_notes, this walks
+    ALL non-hidden folders — templates and assets are valid link targets even
+    though we don't analyze their contents."""
     targets = set()
-    for note in notes:
-        rel = note.relative_to(vault).as_posix()[: -len(".md")].lower()
-        targets.add(rel)
-        targets.add(rel.rsplit("/", 1)[-1])
+    for root, dirs, files in os.walk(vault):
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+        for name in files:
+            rel = (Path(root) / name).relative_to(vault).as_posix().lower()
+            if rel.endswith(".md"):
+                rel = rel[: -len(".md")]
+            targets.add(rel)
+            targets.add(rel.rsplit("/", 1)[-1])
     return targets
 
 
@@ -154,7 +162,7 @@ def check_projects(vault):
     for project in sorted(projects_root.iterdir()):
         if not project.is_dir() or project.name.startswith("."):
             continue
-        for required in ("todo.md", "summary.md"):
+        for required in ("index.md", "todo.md"):
             if not (project / required).is_file():
                 findings.append(f"projects/{project.name}/ missing {required}")
     return findings
@@ -181,7 +189,7 @@ def main():
 
     notes = list(iter_notes(vault))
     indexes = sorted(note for note in notes if note.name == "index.md")
-    targets = link_targets(vault, notes)
+    targets = link_targets(vault)
     unresolved, archive_links = check_index_links(vault, indexes, targets)
     relative_folders = [
         f"{folder.relative_to(vault).as_posix()}"

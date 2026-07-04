@@ -49,9 +49,21 @@ class TestWikilinks(VaultFixture):
     def test_resolves_by_relative_path_and_by_basename(self):
         self.note("areas/team/index.md")
         self.note("areas/team/roadmap.md")
-        targets = link_targets(self.vault, iter_notes(self.vault))
+        targets = link_targets(self.vault)
         self.assertIn("areas/team/roadmap", targets)
         self.assertIn("roadmap", targets)
+
+    def test_skipped_analysis_dirs_still_resolve_as_targets(self):
+        self.note("templates/feedback.md")
+        self.assertIn("templates/feedback", link_targets(self.vault))
+
+    def test_non_markdown_files_resolve_with_extension(self):
+        self.note("resources/views/active_projects.base")
+        self.note("matrix.canvas")
+        targets = link_targets(self.vault)
+        self.assertIn("resources/views/active_projects.base", targets)
+        self.assertIn("active_projects.base", targets)
+        self.assertIn("matrix.canvas", targets)
 
     def test_unresolved_and_archive_links_reported(self):
         self.note("archive/old_thing/summary.md")
@@ -59,9 +71,7 @@ class TestWikilinks(VaultFixture):
         self.note("areas/team/index.md", index)
         notes = list(iter_notes(self.vault))
         indexes = [note for note in notes if note.name == "index.md"]
-        unresolved, archive_links = check_index_links(
-            self.vault, indexes, link_targets(self.vault, notes)
-        )
+        unresolved, archive_links = check_index_links(self.vault, indexes, link_targets(self.vault))
         self.assertEqual(unresolved, ["areas/team/index.md: [[does_not_exist]]"])
         self.assertEqual(archive_links, ["areas/team/index.md: [[archive/old_thing/summary]]"])
 
@@ -95,13 +105,13 @@ class TestStructure(VaultFixture):
         names = [folder.relative_to(self.vault).as_posix() for folder in folders]
         self.assertEqual(names, ["areas", "areas/team"])
 
-    def test_projects_require_todo_and_summary(self):
+    def test_projects_require_index_and_todo(self):
+        self.note("projects/complete/index.md")
         self.note("projects/complete/todo.md")
-        self.note("projects/complete/summary.md")
-        self.note("projects/bare/index.md")
+        self.note("projects/bare/summary.md")
         self.assertEqual(
             check_projects(self.vault),
-            ["projects/bare/ missing todo.md", "projects/bare/ missing summary.md"],
+            ["projects/bare/ missing index.md", "projects/bare/ missing todo.md"],
         )
 
     def test_agents_contract_roots(self):
