@@ -1,0 +1,101 @@
+# =============================================================================
+# homebrew.nix — GUI apps (casks) and App Store apps, declared in nix.
+#
+# nix-darwin does NOT install Homebrew — it *drives* the existing install at
+# /opt/homebrew by generating a Brewfile and running `brew bundle` on every
+# `darwin-rebuild switch`. So: the app *list* is declarative and lives here,
+# while brew remains the installer (GUI apps from nixpkgs are unreliable on
+# macOS; casks are the pragmatic standard).
+# =============================================================================
+{ ... }:
+{
+  homebrew = {
+    enable = true;
+
+    onActivation = {
+      autoUpdate = false; # don't `brew update` on every switch — do it deliberately
+      upgrade = false;    # don't upgrade casks on every switch either
+      # What to do with brew packages NOT listed in this file:
+      #   "none"      = leave them alone
+      #   "uninstall" = remove them
+      #   "zap"       = remove them AND purge their config/caches
+      #
+      # MIGRATION NOTE: keep "none" until every old brew formula has a
+      # verified nix replacement (see MIGRATION.md phase 5), then flip to
+      # "zap" so brew can never drift from this file again.
+      cleanup = "none";
+    };
+
+    taps = [
+      "mongodb/brew" # mongodb-compass-isolated-edition lives here
+    ];
+
+    # CLI formulae that intentionally STAY in brew (everything else comes from
+    # nixpkgs — see nix/home/packages.nix):
+    brews = [
+      "mas"                # Mac App Store CLI — required by masApps below
+      "xcode-build-server" # not packaged in nixpkgs
+      "dagger"             # not packaged in nixpkgs
+      "aiven-client"       # not packaged in nixpkgs
+      "zshdb"              # not packaged in nixpkgs (bashdb is; zshdb isn't)
+    ];
+
+    casks = [
+      # -- daily drivers --------------------------------------------------
+      "1password"
+      "alacritty"
+      "ghostty"
+      "obsidian"
+      "rectangle"
+      "slack"
+      "zoom"
+      # -- browsers -------------------------------------------------------
+      "brave-browser"
+      "firefox"
+      "google-chrome"
+      "microsoft-edge"
+      "orion"
+      # -- editors & IDEs ---------------------------------------------------
+      "cursor"
+      "emacs-app"
+      "visual-studio-code"
+      "zed"
+      # -- AI ---------------------------------------------------------------
+      "chatgpt"
+      "claude"
+      "claude-code@latest"
+      "codex"
+      "comfy" # (the old "comfyui" cask was renamed to this)
+      "copilot-cli"
+      "granola"
+      "kitlangton-hex"
+      "lm-studio"
+      "ollama-app"
+      # -- dev tools ----------------------------------------------------------
+      "dash"
+      "gcloud-cli" # cask (not nixpkgs): `gcloud components` self-updates, which the read-only nix store can't allow
+      "insomnia"
+      "mongodb-compass-isolated-edition"
+      "openlens"
+      # -- fonts (could move to nixpkgs fonts.packages later; cosmetic) -----
+      "font-3270-nerd-font"
+      "font-fira-code-nerd-font"
+      # -- misc --------------------------------------------------------------
+      "anki"
+      "microsoft-excel"
+      "miro"
+      "sf-symbols"
+    ];
+
+    # Mac App Store apps. Requires being signed in to the App Store, and can
+    # only install apps this Apple ID has "purchased" before. If mas acts up
+    # after a macOS update, treat failures here as non-fatal.
+    masApps = {
+      "GoodNotes" = 1444383602;
+      "GrandPerspective" = 1111570163;
+      # WhatsApp intentionally NOT here: a newer version is installed via
+      # direct download, so mas fails trying to "install" the older store
+      # build — and that failure aborts the whole activation.
+    };
+  };
+}
