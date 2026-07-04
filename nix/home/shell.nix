@@ -1,7 +1,7 @@
 # =============================================================================
 # shell.nix — zsh: aliases, environment variables, PATH, startup snippets.
 #
-# home-manager generates ~/.zshrc from this file. #
+# home-manager generates ~/.zshrc from this file.
 #
 # PATH layering (important):
 #   1. nix paths come FIRST — wired in by nix-darwin's /etc/zshrc
@@ -40,8 +40,7 @@
       gpu = "git pull";
       gp = "git push";
       gst = "git status";
-      # single quotes in the old alias file meant this evaluated at shell
-      # startup (a bug); here it correctly evaluates when you run it
+      # evaluates the branch name when you RUN it, not at shell startup
       gpsup = "git push -u origin $(git branch --show-current)";
       grs = "git restore -- ";
       grst = "git restore --staged ";
@@ -51,8 +50,8 @@
     };
 
     # Startup snippets for ~/.zshrc. mkOrder controls placement: 500 ≈ "very
-    # early" — the corporate profile must load before everything else, exactly
-    # as it did at the top of the old zshrc. (Only mkOrder in this repo.)
+    # early" — the corporate profile must load before everything else.
+    # (Only mkOrder in this repo.)
     initContent = lib.mkMerge [
       (lib.mkOrder 500 ''
         # Sinch corporate profile — must stay first
@@ -91,9 +90,8 @@
   };
 
   # Environment variables, set once per login session.
-  # (EDITOR is set by programs.neovim.defaultEditor in programs.nix.
-  #  STARSHIP_CONFIG is gone — starship's config now lives at the default
-  #  ~/.config/starship.toml, managed in programs.nix.)
+  # (EDITOR is set by programs.neovim.defaultEditor in programs.nix;
+  #  starship's config lives at ~/.config/starship.toml via programs.nix.)
   home.sessionVariables = {
     MANWIDTH = "80";
     RSYNC_RSH = "/usr/bin/ssh";

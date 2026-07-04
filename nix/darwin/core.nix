@@ -28,7 +28,7 @@
   system.primaryUser = username;
   users.users.${username}.home = home;
 
-  # Machine name — replaces the scutil calls in the old 90-macos-system.sh.
+  # Machine name (ComputerName, LocalHostName, HostName in one place).
   networking.hostName = hostname;
   networking.computerName = hostname;
   networking.localHostName = hostname;

@@ -8,15 +8,13 @@
 #   2. `system.defaults.CustomUserPreferences.<domain>.<key>` — a thin
 #      declarative wrapper over raw `defaults write` for everything else.
 #
-# Ported from the old install/enabled/91-macos-user.sh + 92-macos-additional.sh
-# (kept in git history). Some changes only show after logout or a
-# `killall Dock` / `killall Finder`.
+# Some changes only show after logout or a `killall Dock` / `killall Finder`.
 #
-# NOT ported on purpose — Safari, Contacts, Calendar (and Mail) preference
-# domains are TCC-protected: `defaults write` to them either fails and ABORTS
-# the activation, or silently does nothing. Configure those apps by hand.
+# NOT managed here — Safari, Contacts, Calendar, and Mail preference domains
+# are TCC-protected: `defaults write` to them either fails and ABORTS the
+# activation, or silently does nothing. Configure those apps by hand.
 #
-# Manual one-time steps on a new machine (were interactive in the old script):
+# Manual one-time steps on a new machine:
 #   - System Settings → Privacy & Security: grant your terminal Full Disk
 #     Access if you want to script Mail/Safari prefs
 #   - Keyboard shortcuts / Mission Control preferences
@@ -105,7 +103,7 @@
     # -- activity monitor -----------------------------------------------------------
     ActivityMonitor = {
       OpenMainWindow = true;
-      ShowCategory = 100;     # all processes (old script wrote 0; 100 is the valid "all")
+      ShowCategory = 100;     # all processes
       SortColumn = "CPUUsage";
       SortDirection = 0;
     };
@@ -150,10 +148,7 @@
       # Time Machine: stop offering every new disk as a backup target
       "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
 
-      # debug menus
-      # (Contacts and Calendar debug menus NOT ported — com.apple.addressbook
-      # and com.apple.iCal are TCC-protected like Safari; writing them without
-      # Full Disk Access aborts the whole activation)
+      # debug menus (Contacts/Calendar excluded — TCC-protected, see header)
       "com.apple.DiskUtility" = {
         DUDebugMenuEnabled = true;
         advanced-image-options = true;

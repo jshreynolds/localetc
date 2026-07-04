@@ -5,8 +5,7 @@
 # (via /etc/profiles/per-user/<username>/bin). Add a line, run `drs`, done.
 # Find package names with:  nix search nixpkgs <thing>
 #
-# Replaces: ~70 brew formulae and all mise-managed global runtimes.
-# A few tools intentionally stay in brew because nixpkgs doesn't carry them —
+# A few tools intentionally live in brew because nixpkgs doesn't carry them —
 # see the `brews` list in nix/darwin/homebrew.nix.
 #
 # Tools where home-manager also manages config/shell-wiring (git, starship,
@@ -26,7 +25,7 @@
     ripgrep          # rg
     rm-improved      # rip: rm with a trash can
     rsync
-    silver-searcher-ng # ag (maintained fork; brew name: the_silver_searcher)
+    silver-searcher-ng # ag (maintained fork)
     zellij
     zsh-completions
 
@@ -59,13 +58,13 @@
     docker-client    # just the docker CLI — colima provides the engine
     docker-compose
     kubectl
-    kubernetes-helm  # brew name: helm
+    kubernetes-helm  # the `helm` CLI
     minikube
     kafkactl
     kn
 
     # -- databases -------------------------------------------------------------
-    mongodb-tools    # mongodump/mongorestore etc. (brew name: mongodb-database-tools)
+    mongodb-tools    # mongodump/mongorestore etc.
 
     # -- cloud ---------------------------------------------------------------
     awscli2
@@ -89,7 +88,7 @@
     xcbeautify
     xcodegen
 
-    # -- language runtimes (global defaults; replaces mise) ---------------------
+    # -- language runtimes (global defaults) -------------------------------------
     # Per-project versions: use a flake devshell + direnv (programs.nix
     # enables direnv + nix-direnv already).
     clojure
@@ -105,10 +104,10 @@
     python314
     uv
     ruby_3_4
-    rustup           # rustup manages toolchains mutably in ~/.rustup, like before
+    rustup           # rustup manages toolchains mutably in ~/.rustup
     scala_3          # plain `scala` is still 2.13
     temporal-cli
-    temurin-bin-25   # java 25 (Eclipse Temurin, same line mise installed)
+    temurin-bin-25   # java 25 (Eclipse Temurin)
     tilt
 
     # -- misc --------------------------------------------------------------------

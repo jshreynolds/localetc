@@ -1,8 +1,8 @@
 # =============================================================================
 # git.nix — git and jujutsu, fully nix-managed.
 #
-# programs.git writes ~/.config/git/config (git's XDG location); Note: NO global user identity is
-# set here, on purpose — identity stays per-repo, as before.
+# programs.git writes ~/.config/git/config (git's XDG location). NO global
+# user identity is set here, on purpose — identity stays per-repo.
 # =============================================================================
 { ... }:
 {
