@@ -12,10 +12,11 @@
 {
   imports = [
     ./packages.nix # every CLI tool and language runtime
-    ./shell.nix    # zsh: aliases, environment variables, PATH
-    ./git.nix      # git and jujutsu
+    ./shell.nix # zsh: aliases, environment variables, PATH
+    ./git.nix # git and jujutsu
     ./programs.nix # tools where home-manager wires config + shell integration
     ./dotfiles.nix # config files: nix-managed vs live-editable symlinks
+    ./skills.nix # agent skills: ~/.agents/skills, mirrored to claude/codex
   ];
 
   home.username = username;

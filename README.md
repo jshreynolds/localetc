@@ -68,6 +68,19 @@ real directories owned by their tools; only the config files above are
 linked into them. Identity (git/jj user + email) is machine-local, never
 in this repo.
 
+### Agent skills
+
+`~/.agents/skills` is the one skills directory (wired in `nix/home/skills.nix`):
+
+- **Repo skills** live in `ai/skills/<name>/` — each is live-linked into
+  `~/.agents/skills`. Edits apply instantly; a NEW skill needs `git add` + `drs`.
+- **External skills**: `~/etc/ai/skill-add <org/repo> [skill]` installs into
+  `~/.agents/skills` and records the source in `ai/external-skills.list`.
+
+Codex reads `~/.agents/skills` natively. Claude Code only reads
+`~/.claude/skills` (flat, per-skill symlinks), so `ai/skill-sync` mirrors the
+directory there — automatically on every `drs` and after every `skill-add`.
+
 ### Secrets
 
 API keys live in `~/etc/secrets.zsh` (git-ignored, `chmod 600`), sourced by

@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# skill-sync — mirror ~/.agents/skills into ~/.claude/skills as per-skill symlinks.
+#
+# ~/.agents/skills is the canonical skills directory (the cross-tool "agents
+# standard"). Codex reads it natively; Claude Code only reads ~/.claude/skills,
+# flat, one symlink per skill — a whole-dir symlink is unsupported (claude
+# writes .system metadata through it, polluting the shared directory).
+#
+# Runs on every `drs` (home-manager activation hook in nix/home/skills.nix)
+# and after every skill-add. Idempotent; prunes links it created whose skill
+# is gone; never touches real dirs or links it doesn't own.
+
+set -euo pipefail
+
+src="${HOME}/.agents/skills"
+dst="${HOME}/.claude/skills"
+
+mkdir -p "${src}" "${dst}"
+
+# link every skill (hidden entries like .system are not matched by the glob)
+for skill in "${src}"/*/; do
+    [ -e "${skill}" ] || continue # glob matched nothing
+    name="$(basename "${skill}")"
+    ln -sfn "${src}/${name}" "${dst}/${name}"
+done
+
+# prune dangling symlinks that point into ~/.agents/skills (skill removed)
+for link in "${dst}"/*; do
+    [ -L "${link}" ] || continue
+    case "$(readlink "${link}")" in
+    "${src}"/*) [ -e "${link}" ] || rm "${link}" ;;
+    esac
+done
