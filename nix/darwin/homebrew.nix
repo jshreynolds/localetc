@@ -59,7 +59,6 @@
       "firefox"
       "google-chrome"
       "microsoft-edge"
-      "orion"
       # -- editors & IDEs ---------------------------------------------------
       "visual-studio-code"
       "zed"
@@ -77,12 +76,10 @@
       # -- dev tools ----------------------------------------------------------
       "dash"
       "gcloud-cli" # cask (not nixpkgs): `gcloud components` self-updates, which the read-only nix store can't allow
-      "insomnia"
       "openlens"
       # -- misc --------------------------------------------------------------
-      "microsoft-excel"
+      "dropbox"
       "miro"
-      "sf-symbols"
     ]
     ++ hostCasks;
 

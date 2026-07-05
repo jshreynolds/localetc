@@ -197,6 +197,15 @@
       # machine's hostname — so each machine needs its own line here.
       darwinConfigurations = {
         # work machine
+        "mac-nl-josrey" = mkHost {
+          hostname = "mac-nl-josrey";
+          username = "josrey";
+          casks = [
+            # apps only THIS machine gets (shared list: nix/darwin/homebrew.nix)
+          ];
+        };
+
+         # work machine
         "mac-nl-josrey-2" = mkHost {
           hostname = "mac-nl-josrey-2";
           username = "josrey";
