@@ -88,26 +88,19 @@
     xcbeautify
     xcodegen
 
-    # -- language runtimes (global defaults) -------------------------------------
-    # Per-project versions: use a flake devshell + direnv (programs.nix
-    # enables direnv + nix-direnv already).
-    clojure
-    deno
-    dotnet-sdk_10
+    # -- language runtimes (deliberately lean) -----------------------------------
+    # Only runtimes used ad-hoc at a shell prompt or for system scripting live
+    # here. Project-specific toolchains (JVM, .NET, Ruby, ...) belong in a
+    # per-project flake devshell + direnv (both enabled in programs.nix) — see
+    # templates/ for ready-to-copy starters.
     go
     gopls
-    gradle
-    maven
-    nodejs_latest # node 26.x — swap to `nodejs` for the LTS line
+    nodejs # LTS line (was nodejs_latest: avoids silent major jumps on flake update)
     pnpm
     protobuf # protoc
-    python314
+    python314 # also load-bearing: flake `checks` compile/test the skills with this
     uv
-    ruby_3_4
-    rustup # rustup manages toolchains mutably in ~/.rustup
-    scala_3 # plain `scala` is still 2.13
     temporal-cli
-    temurin-bin-25 # java 25 (Eclipse Temurin)
     tilt
 
     # -- misc --------------------------------------------------------------------
