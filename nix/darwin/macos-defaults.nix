@@ -17,7 +17,8 @@
 # Manual one-time steps on a new machine:
 #   - System Settings → Privacy & Security: grant your terminal Full Disk
 #     Access if you want to script Mail/Safari prefs
-#   - Keyboard shortcuts / Mission Control preferences
+#   - Mission Control preferences (keyboard shortcuts are partially managed —
+#     see com.apple.symbolichotkeys in CustomUserPreferences below)
 # =============================================================================
 { home, ... }:
 {
@@ -43,6 +44,13 @@
       NSAutomaticPeriodSubstitutionEnabled = false;
       NSAutomaticQuoteSubstitutionEnabled = false;
       NSAutomaticSpellingCorrectionEnabled = false;
+
+      # silence everything: notification sounds (Outlook's ding included) play
+      # at alert volume, so zeroing it mutes them all system-wide. Outlook's
+      # own sound checkboxes are cloud-synced with no defaults key — this is
+      # the reliable lever. Takes effect after logout.
+      "com.apple.sound.beep.volume" = 0.0; # alert + notification sounds
+      "com.apple.sound.beep.feedback" = 0; # no beep when changing volume
 
       "com.apple.mouse.tapBehavior" = 1; # tap to click
       "com.apple.springing.enabled" = true;
@@ -138,8 +146,9 @@
       # help viewer in normal (non-floating) windows
       "com.apple.helpviewer".DevMode = true;
 
-      # locale & units
+      # locale & units, plus untyped sound bits
       NSGlobalDomain = {
+        "com.apple.sound.uiaudio.enabled" = 0; # no UI sound effects (Trash, screenshot, ...)
         AppleLanguages = [ "en" ];
         AppleLocale = "en_US@currency=USD";
         AppleMeasurementUnits = "Centimeters";
@@ -197,8 +206,30 @@
         allowIdentifierForAdvertising = false;
         allowApplePersonalizedAdvertising = false;
       };
+
+      # keyboard shortcuts (System Settings → Keyboard → Keyboard Shortcuts).
+      # CAUTION: this replaces the whole AppleSymbolicHotKeys dict — IDs listed
+      # here are authoritative, unlisted IDs fall back to macOS defaults, and
+      # manual tweaks in System Settings are overwritten on the next drs.
+      # Takes effect after logout. ID reference:
+      # https://web.archive.org/web/2024/https://gist.github.com/mkhl/455002
+      # Kept on purpose: Spotlight (64/65), Space navigation (79–82),
+      # screenshots (28–31) — unlisted IDs stay at macOS defaults.
+      "com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+        "32".enabled = false; # ⌃↑ — Mission Control
+        "33".enabled = false; # ⌃↓ — Application Windows
+        "34".enabled = false; # Mission Control (modifier variant)
+        "35".enabled = false; # Application Windows (modifier variant)
+        "36".enabled = false; # F11 — Show Desktop
+        "37".enabled = false; # Show Desktop (modifier variant)
+        "52".enabled = false; # ⌥⌘D — turn Dock hiding on/off
+        "160".enabled = false; # Show Launchpad
+      };
     };
   };
+
+  # no startup chime (nvram StartupMute — survives reinstalls, per-machine)
+  system.startup.chime = false;
 
   # Caps Lock → Escape at the OS level (Rectangle/vim-friendly home-row Escape)
   system.keyboard = {
