@@ -4,13 +4,8 @@ Rename all files and folders in the vault, replacing spaces with underscores.
 Then update all wikilinks and markdown links in .md files.
 """
 import argparse
-import os
 import re
 from pathlib import Path
-
-
-def default_vault() -> Path:
-    return Path(os.environ.get("OBSIDIAN", "~/Documents/vault")).expanduser()
 
 
 def get_all_items_with_spaces(vault: Path):
@@ -139,8 +134,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--vault",
         type=Path,
-        default=default_vault(),
-        help="vault root (default: $OBSIDIAN or ~/Documents/vault)",
+        default=Path("."),
+        help="vault root (default: current directory)",
     )
     parser.add_argument(
         "--dry-run",

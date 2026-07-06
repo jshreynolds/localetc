@@ -100,9 +100,8 @@
     # java
     MAVEN_OPTS = "--enable-native-access=ALL-UNNAMED";
 
-    # obsidian vaults & agentic knowledge base
-    WORKSIDIAN = "$HOME/worksidian";
-    OBSIDIAN = "$HOME/Documents/vault";
+    # NOTE: no vault path env vars here. The Obsidian skills run from the
+    # vault root (cwd) and complain if it isn't one — see ai/skills/*.
   };
 
   # Extra PATH entries — APPENDED after nix paths (see header comment).

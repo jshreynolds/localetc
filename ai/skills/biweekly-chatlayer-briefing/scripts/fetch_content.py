@@ -24,7 +24,6 @@ date prefix from each path.
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import subprocess
 import sys
@@ -64,11 +63,11 @@ DATE_PREFIX_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})")
 
 
 def find_vault() -> Path:
-    candidate = Path(os.environ.get("VAULT", os.getcwd())).resolve()
+    candidate = Path.cwd().resolve()
     if not (candidate / "areas").is_dir() or not (candidate / "dailies").is_dir():
         sys.exit(
-            f"error: {candidate} does not look like the worksidian vault "
-            "(missing areas/ or dailies/). Run from the vault root or set $VAULT."
+            f"error: {candidate} does not look like an Obsidian work vault "
+            "(missing areas/ or dailies/). Run this from the vault root."
         )
     return candidate
 

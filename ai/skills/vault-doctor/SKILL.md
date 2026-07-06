@@ -1,6 +1,6 @@
 ---
 name: vault-doctor
-description: Read-only drift report for the work Obsidian vault (WORKSIDIAN). Measures the gap between what index files and AGENTS contracts claim and what the filesystem contains — unresolved index wikilinks, folders missing index.md, missing frontmatter, active indexes linking into archive/, projects missing index.md/todo.md, and AGENTS references to nonexistent roots. Use when the user asks for a vault health check, vault doctor, drift report, "is my vault consistent", stale link check, or before any vault reorganization or index cleanup. Never modifies the vault.
+description: Read-only drift report for the work Obsidian vault. Measures the gap between what index files and AGENTS contracts claim and what the filesystem contains — unresolved index wikilinks, folders missing index.md, missing frontmatter, active indexes linking into archive/, projects missing index.md/todo.md, and AGENTS references to nonexistent roots. Use when the user asks for a vault health check, vault doctor, drift report, "is my vault consistent", stale link check, or before any vault reorganization or index cleanup. Never modifies the vault.
 ---
 
 # Vault Doctor
@@ -10,8 +10,12 @@ reorganization; use its output to drive cleanup, never guesses.
 
 ## Usage
 
+Run this from the root of the Obsidian work vault. The script refuses to run if
+the current directory has no `areas/` and `dailies/` (i.e. it isn't a vault
+root); point it elsewhere with `--vault`.
+
 ```bash
-python3 scripts/vault_doctor.py            # vault from $WORKSIDIAN (default ~/worksidian)
+python3 scripts/vault_doctor.py            # vault = current directory
 python3 scripts/vault_doctor.py --verbose  # list every finding
 python3 scripts/vault_doctor.py --vault ~/some/other/vault
 ```

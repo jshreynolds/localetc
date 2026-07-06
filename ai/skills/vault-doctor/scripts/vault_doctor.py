@@ -13,8 +13,11 @@ Checks:
   5. non-archive index.md files linking into archive/
   6. project folders missing index.md or todo.md
 
+Run this from the root of an Obsidian work vault (the default), or point it at
+one with --vault.
+
 Usage: vault_doctor.py [--vault PATH] [--verbose]
-  --vault    vault root (default: $WORKSIDIAN, then ~/worksidian)
+  --vault    vault root (default: current directory)
   --verbose  list every finding instead of the first few per section
 """
 
@@ -196,13 +199,16 @@ def report_section(title, findings, verbose):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--vault", default=os.environ.get("WORKSIDIAN", "~/worksidian"))
+    parser.add_argument("--vault", default=".")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
 
-    vault = Path(args.vault).expanduser()
-    if not vault.is_dir():
-        sys.exit(f"vault not found: {vault}")
+    vault = Path(args.vault).expanduser().resolve()
+    if not (vault / "areas").is_dir() or not (vault / "dailies").is_dir():
+        sys.exit(
+            f"error: {vault} does not look like an Obsidian work vault "
+            "(missing areas/ or dailies/). Run this from the vault root."
+        )
 
     notes = list(iter_notes(vault))
     indexes = sorted(note for note in notes if note.name == "index.md")

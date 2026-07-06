@@ -15,11 +15,11 @@ This is a user-assisted automation workflow:
 
 ## Vault Path
 
-The vault root is set by the environment variable `WORKSIDIAN`. If `WORKSIDIAN` is not set, stop immediately and tell the user:
+This skill runs from the root of the Obsidian work vault — the current working directory. Before doing anything, confirm the cwd looks like the vault root by checking that `areas/` and `dailies/` both exist. If they don't, stop immediately and tell the user:
 
-> "The `WORKSIDIAN` environment variable is not set. Please set it to your Obsidian vault path before running this skill (e.g. `export WORKSIDIAN=/path/to/vault`)."
+> "This doesn't look like the root of your Obsidian work vault (no `areas/` or `dailies/` here). Please `cd` into the vault root and run this skill again."
 
-Do not guess a path or fall back to the current directory. All paths below are relative to `$WORKSIDIAN`.
+Do not guess a path or search other directories. All paths below are relative to the vault root (the current directory).
 
 ## Workflow
 
@@ -69,7 +69,7 @@ Present the meetings to the user in a compact review list before writing anythin
 - Proposed destination folder
 - Confidence: `high`, `medium`, or `low`
 
-The destination table in `$WORKSIDIAN/AGENTS_meetings.md` is canonical — read
+The destination table in `AGENTS_meetings.md` at the vault root is canonical — read
 it before classifying. If it and the list below ever disagree, the vault
 contract wins; the list below adds only the matching heuristics.
 

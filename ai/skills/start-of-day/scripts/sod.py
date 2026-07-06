@@ -18,6 +18,7 @@ Edit STEPS to change the routine; the order here is the run order.
 
 import argparse
 import os
+import sys
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -255,7 +256,17 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def require_vault_root() -> None:
+    """Refuse to run outside an Obsidian work vault root (cwd)."""
+    if not Path("areas").is_dir() or not Path("dailies").is_dir():
+        sys.exit(
+            f"error: {Path.cwd()} does not look like an Obsidian work vault "
+            "(missing areas/ or dailies/). Run this from the vault root."
+        )
+
+
 def main() -> None:
+    require_vault_root()
     args = build_parser().parse_args()
     print(args.run(args))
 

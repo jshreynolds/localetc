@@ -8,7 +8,7 @@ description: Interactive start-of-day walkthrough that guides the user step-by-s
 An interactive walkthrough of the user's morning routine. The steps live in the
 bundled script so they're shown verbatim, and each step's findings are written
 straight to `dailies/<today>-sod-log.md` as you go. **Run this from the root of
-the worksidian vault (`~/worksidian`).**
+the Obsidian work vault** — the script refuses to run anywhere that isn't one.
 
 Script: `python3 ~/etc/ai/skills/start-of-day/scripts/sod.py <subcommand>`
 
