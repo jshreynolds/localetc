@@ -17,6 +17,7 @@
   home.packages = with pkgs; [
     # -- shell & files ---------------------------------------------------------
     bashInteractive # bash 5 (macOS ships ancient 3.2; zsh stays the login shell)
+    bat # plain package, not programs.bat — see programs.nix
     coreutils # GNU userland (ls --color, etc.)
     fd # friendlier find
     duf # friendlier df

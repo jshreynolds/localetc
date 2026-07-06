@@ -35,7 +35,8 @@
   };
 
   # cat with wings
-  programs.bat.enable = true;
+  # bat lives in packages.nix — programs.bat.enable adds a noisy `bat cache
+  # --build` activation step on every switch, and we manage no bat config.
 
   programs.delta = {
     enable = true;
