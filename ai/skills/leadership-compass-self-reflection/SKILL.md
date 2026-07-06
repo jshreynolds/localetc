@@ -69,7 +69,7 @@ Ask three quick questions (these can be batched):
    the previous assessment handy (or find it, if working in their vault) so growth since last
    time can be tracked.
 3. Where should the output file go? If working inside the Obsidian work vault, suggest
-   `projects/operationalize_leadership_compass/checkins/YYYY-MM-DD_<name>_compass.md`
+   `areas/engineering_management/compass_checkins/YYYY-MM-DD_<name>_compass.md`
    (create the folder if needed) — otherwise ask for a path. Confirm before writing.
 
 If it's a first run, give a 3–4 sentence orientation: what the compass is, that it's a

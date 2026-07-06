@@ -95,6 +95,7 @@
     # templates/ for ready-to-copy starters.
     go
     gopls
+    nil # nix language server (zed's nix extension wants it)
     nodejs # LTS line (was nodejs_latest: avoids silent major jumps on flake update)
     pnpm
     protobuf # protoc

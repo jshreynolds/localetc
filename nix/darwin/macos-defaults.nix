@@ -47,6 +47,11 @@
       "com.apple.mouse.tapBehavior" = 1; # tap to click
       "com.apple.springing.enabled" = true;
       "com.apple.springing.delay" = 0.0; # spring-loaded folders, no delay
+
+      # no-frills: kill window animations, instant dialog resize, dense sidebars
+      NSAutomaticWindowAnimationsEnabled = false;
+      NSWindowResizeTime = 0.001;
+      NSTableViewDefaultSizeMode = 1; # small sidebar icons
     };
 
     # -- trackpad ----------------------------------------------------------------
@@ -60,7 +65,7 @@
 
     # -- screenshots ---------------------------------------------------------------
     screencapture = {
-      location = "${home}/Desktop";
+      location = "${home}/Downloads"; # desktop icons are hidden, Desktop would swallow these
       type = "png";
       disable-shadow = true;
     };
@@ -74,15 +79,13 @@
       _FXSortFoldersFirst = true;
       FXEnableExtensionChangeWarning = false;
       FXPreferredViewStyle = "clmv"; # column view by default
-      NewWindowTarget = "Desktop"; # new windows open at ~/Desktop
-      ShowExternalHardDrivesOnDesktop = true;
-      ShowHardDrivesOnDesktop = true;
-      ShowMountedServersOnDesktop = true;
-      ShowRemovableMediaOnDesktop = true;
+      NewWindowTarget = "Home"; # new windows open at ~
+      CreateDesktop = false; # fully empty desktop — no icons, ever
     };
 
     # -- dock --------------------------------------------------------------------
     dock = {
+      orientation = "left";
       autohide = true;
       autohide-delay = 0.0;
       autohide-time-modifier = 0.0;
@@ -90,14 +93,30 @@
       launchanim = false;
       mineffect = "scale";
       minimize-to-application = true;
-      mouse-over-hilite-stack = true;
-      enable-spring-load-actions-on-all-items = true;
       show-process-indicators = true;
       showhidden = true; # hidden apps get translucent icons
       show-recents = false;
       static-only = true; # only show RUNNING apps in the dock
       persistent-apps = [ ]; # no pinned apps
       mru-spaces = false; # don't rearrange Spaces by recent use
+
+      # hot corners disabled — no accidental mouse-triggered UI
+      wvous-tl-corner = 1;
+      wvous-tr-corner = 1;
+      wvous-bl-corner = 1;
+      wvous-br-corner = 1;
+    };
+
+    # -- window manager ----------------------------------------------------------
+    WindowManager = {
+      EnableStandardClickToShowDesktop = false; # clicking wallpaper doesn't hide windows
+
+      # native tiling off — Rectangle owns window tiling; edge-drag snapping
+      # from macOS would fight Rectangle's own snap areas
+      EnableTilingByEdgeDrag = false;
+      EnableTopTilingByEdgeDrag = false;
+      EnableTilingOptionAccelerator = false;
+      EnableTiledWindowMargins = false; # if native tiling is ever used: no gaps
     };
 
     # -- activity monitor -----------------------------------------------------------
@@ -126,6 +145,7 @@
         AppleMeasurementUnits = "Centimeters";
         AppleMetricUnits = true;
         WebKitDeveloperExtras = true; # web inspector in every WebKit view
+        NSUseAnimatedFocusRing = false; # no focus-ring animation when tabbing
       };
 
       # don't litter .DS_Store on network shares and USB drives
@@ -148,12 +168,6 @@
       # Time Machine: stop offering every new disk as a backup target
       "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
 
-      # debug menus (Contacts/Calendar excluded — TCC-protected, see header)
-      "com.apple.DiskUtility" = {
-        DUDebugMenuEnabled = true;
-        advanced-image-options = true;
-      };
-
       # TextEdit: plain text, UTF-8
       "com.apple.TextEdit" = {
         RichText = 0;
@@ -163,8 +177,6 @@
 
       # App Store & software updates: check daily, auto-install security bits
       "com.apple.appstore" = {
-        WebKitDeveloperExtras = true;
-        ShowDebugMenu = true;
         AutoPlayVideoSetting = "off";
         UserSetAutoPlayVideoSetting = true;
       };
@@ -180,23 +192,17 @@
         AutoUpdateRestartRequired = true;
       };
 
-      # Messages: no smart quotes, no spellcheck
-      "com.apple.messageshelper.MessageController".SOInputLineSettings = {
-        automaticQuoteSubstitutionEnabled = false;
-        continuousSpellCheckingEnabled = false;
-      };
-
       # advertising: no personalized ads
       "com.apple.AdLib" = {
         allowIdentifierForAdvertising = false;
         allowApplePersonalizedAdvertising = false;
       };
-
-      # Chrome: native print dialog, expanded
-      "com.google.Chrome" = {
-        DisablePrintPreview = true;
-        PMPrintingExpandedStateForPrint2 = true;
-      };
     };
+  };
+
+  # Caps Lock → Escape at the OS level (Rectangle/vim-friendly home-row Escape)
+  system.keyboard = {
+    enableKeyMapping = true;
+    remapCapsLockToEscape = true;
   };
 }
