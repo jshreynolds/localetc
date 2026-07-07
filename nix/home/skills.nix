@@ -8,6 +8,10 @@
 #     skill apply instantly (live links, no rebuild).
 #   - external skills are installed next to them by ai/skill-add
 #     (`npx skills add -g` targets ~/.agents/skills already).
+#   - external skill REPOS (e.g. work's mgmt_agent_skills) are linked in by
+#     ai/skill-sync at activation time, not here: `drs` evaluates the flake
+#     purely, so nix can't readDir outside this repo — and activation-time
+#     linking means a missing repo just warns instead of failing the build.
 #
 # Who reads what (verified against docs + codex source, 2026-07):
 #   - codex reads ~/.agents/skills natively — nothing to wire.
@@ -21,6 +25,10 @@ let
   etc = "${config.home.homeDirectory}/etc";
   live = config.lib.file.mkOutOfStoreSymlink;
   repoSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../ai/skills);
+  # external skill repos, linked by skill-sync at activation (see header)
+  skillRepos = [
+    "${config.home.homeDirectory}/tech/engineering_mgmt/mgmt_agent_skills"
+  ];
 in
 {
   # ~/.agents/skills/<name> → ~/etc/ai/skills/<name>, one link per repo skill.
@@ -32,8 +40,9 @@ in
     }
   ) repoSkills;
 
-  # Mirror into ~/.claude/skills once the links above exist.
+  # Link external skill repos into ~/.agents/skills, then mirror everything
+  # into ~/.claude/skills, once the links above exist.
   home.activation.skillSync = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    run ${etc}/ai/skill-sync
+    run ${etc}/ai/skill-sync ${lib.escapeShellArgs skillRepos}
   '';
 }

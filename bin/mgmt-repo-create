@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Create a GitLab repo in the engineering management group.
+# Usage: mgmt-repo-create [project-name]
+# With no argument, uses the current directory's name.
+set -euo pipefail
+
+GROUP="sinch/sinch-projects/applications/teams/saas_eng_mgmt_conversations"
+
+if [[ "${1:-}" == -* ]]; then
+  echo "Usage: mgmt-repo-create [project-name]  (defaults to current directory name)" >&2
+  exit 1
+fi
+
+name="${1:-$(basename "$PWD")}"
+
+echo "Creating ${GROUP}/${name}"
+glab repo create --group "$GROUP" --name "$name"
