@@ -23,8 +23,8 @@
                 "qwen/qwen3-coder-30b": {
                     "name": "qwen3-coder-30b"
                 },
-                "lmstudio-community/gemma-4-26B-A4B-it-GGUF": {
-                    "name": "gemma-4-26B-A4B-it-GGUF"
+                "google/gemma-4-12B-qat": {
+                    "name": "google/gemma-4-12b-qat"
                 },
                 "openai/gpt-oss-20b": {
                     "name": "gpt-oss-4-32b"

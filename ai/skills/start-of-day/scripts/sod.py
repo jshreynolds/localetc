@@ -43,12 +43,28 @@ def _fmt_urls(label: str, entries: list[UrlEntry]) -> list[str]:
     return [label] + [f"  {e['label']}: {e['url']}" for e in entries]
 
 
-def _direct_reports() -> list[str]:
-    """Subdirectory names under areas/people_management, sorted."""
-    base = Path("areas/people_management")
+def _people_in(group: str) -> list[str]:
+    """Person folder names under areas/people_management/<group>, sorted."""
+    base = Path("areas/people_management") / group
     if not base.is_dir():
         return []
-    return sorted(p.name for p in base.iterdir() if p.is_dir())
+    return sorted(
+        p.name for p in base.iterdir() if p.is_dir() and (p / "index.md").exists()
+    )
+
+
+def _people_items() -> list[str]:
+    """Grouped roster lines: direct reports first, then the wider domain staff."""
+    direct = _people_in("direct_reports")
+    domain = _people_in("domain_staff")
+    items: list[str] = []
+    if direct:
+        items.append("Direct reports:")
+        items += [f"  {name}" for name in direct]
+    if domain:
+        items.append("Domain staff (in my org, not direct reports):")
+        items += [f"  {name}" for name in domain]
+    return items
 
 
 @dataclass(frozen=True)
@@ -60,8 +76,9 @@ class Step:
 
 
 def _build_steps() -> list[Step]:
-    people = _direct_reports()
-    people_items = people if people else ["(no direct reports found in areas/people_management)"]
+    people_items = _people_items() or [
+        "(no people found in areas/people_management/{direct_reports,domain_staff})"
+    ]
     return [
     Step(
         phase="Systems health",
