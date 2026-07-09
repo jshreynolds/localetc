@@ -31,6 +31,7 @@
       AppleKeyboardUIMode = 3; # full keyboard access (tab through all controls)
       AppleShowAllExtensions = true;
       AppleShowScrollBars = "Always";
+      AppleICUForceISO8601DateFormat = true; # force YYYY-MM-DD dates system-wide
 
       # expanded save & print dialogs by default
       NSNavPanelExpandedStateForSaveMode = true;
