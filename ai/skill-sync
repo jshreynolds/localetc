@@ -21,6 +21,12 @@ set -euo pipefail
 src="${HOME}/.agents/skills"
 dst="${HOME}/.claude/skills"
 
+# legacy scheme: ~/.claude/skills as a whole-dir symlink — with dst == src the
+# mirror loop would clobber the very links it mirrors; replace with a real dir
+if [ -L "${dst}" ]; then
+    rm "${dst}"
+fi
+
 mkdir -p "${src}" "${dst}"
 
 # link skills from extra repos into ~/.agents/skills
