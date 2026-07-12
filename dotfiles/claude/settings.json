@@ -1,0 +1,33 @@
+{
+  "model": "opus",
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Predicting the next token",
+      "Hallucinating plausibly",
+      "Sampling from distributions",
+      "Averaging the internet",
+      "Guessing confidently",
+      "Interpolating your intent",
+      "Compressing human knowledge",
+      "Doing math on vibes",
+      "Retrieving approximate truths",
+      "Stochastically parroting",
+      "Calculating probable words",
+      "Pattern-matching your request",
+      "Fabricating with high confidence",
+      "Softmaxing the possibilities",
+      "Reducing perplexity",
+      "Attending to your tokens",
+      "Generating without guarantees",
+      "Consulting 1.7 trillion parameters",
+      "Producing a likely output",
+      "Making things up (probably correctly)",
+      "Weighing attention heads",
+      "Regurgitating training data",
+      "Producing statistically reasonable text",
+      "Running a very large autocomplete",
+      "Committing to no ground truth"
+    ]
+  }
+}

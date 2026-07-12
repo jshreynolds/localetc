@@ -4,8 +4,17 @@
 # programs.git writes ~/.config/git/config (git's XDG location). NO global
 # user identity is set here, on purpose — identity stays per-repo.
 # =============================================================================
-{ ... }:
+{ pkgs, ... }:
 {
+  # gpg-agent for gcrypt: pinentry path is pinned to the nix store and
+  # regenerated on every `drs`, so it never goes stale (was hardcoded to a
+  # dead /opt/homebrew path after the brew→nix migration).
+  home.file.".gnupg/gpg-agent.conf".text = ''
+    default-cache-ttl 600
+    max-cache-ttl 7200
+    pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac
+  '';
+
   programs.git = {
     enable = true;
     lfs.enable = true;

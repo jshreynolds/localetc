@@ -50,4 +50,8 @@ in
   xdg.configFile."opencode/opencode.jsonc".source =
     live "${etc}/dotfiles/config/opencode/opencode.jsonc";
   xdg.configFile."zed/settings.json".source = live "${etc}/dotfiles/config/zed/settings.json";
+
+  # Claude Code writes `model` back on every /model switch — a live link keeps
+  # that working and lets git show the drift (rest of ~/.claude stays real).
+  home.file.".claude/settings.json".source = live "${etc}/dotfiles/claude/settings.json";
 }

@@ -74,7 +74,8 @@
 
     # -- security --------------------------------------------------------------
     gnupg
-    pinentry_mac
+    # pinentry_mac is pulled into the closure by git.nix's gpg-agent.conf
+    # (pinentry-program references its store path directly).
 
     # -- AI CLIs ---------------------------------------------------------------
     # NOTE: nixpkgs can lag fast-moving AI tools by days-to-weeks, and their

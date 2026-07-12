@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# skill-restore — reinstall every skill registered in external-skills.list
+#
+# Usage: skill-restore
+#
+# Reads external-skills.list (the registry maintained by skill-add) and
+# reinstalls each entry via skill-add. Use on a new machine or after wiping
+# ~/.agents/skills to restore the recorded skill set.
+#
+# skill-add is idempotent against the list, so re-running is safe; it also
+# runs skill-sync after each install, so no separate sync step is needed.
+#
+
+set -euo pipefail
+
+SKILLS_LIST="${HOME}/etc/ai/external-skills.list"
+
+if [[ $# -gt 0 ]]; then
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        sed -n '3,11p' "$0" | sed 's/^# \{0,1\}//'
+        exit 0
+    fi
+    echo "Error: skill-restore takes no arguments"
+    exit 1
+fi
+
+if [[ ! -f "${SKILLS_LIST}" ]]; then
+    echo "Error: ${SKILLS_LIST} not found"
+    exit 1
+fi
+
+failed=0
+while read -r skill_source skill_name; do
+    # </dev/null keeps npx (via skill-add) from eating the rest of the list
+    if ! "$(dirname "$0")/skill-add" "${skill_source}" ${skill_name:+"${skill_name}"} </dev/null; then
+        echo "skill-restore: failed to install: ${skill_source} ${skill_name}" >&2
+        failed=1
+    fi
+done < <(grep -Ev '^[[:space:]]*(#|$)' "${SKILLS_LIST}")
+
+exit "${failed}"
