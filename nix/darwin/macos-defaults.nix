@@ -31,7 +31,6 @@
       AppleKeyboardUIMode = 3; # full keyboard access (tab through all controls)
       AppleShowAllExtensions = true;
       AppleShowScrollBars = "Always";
-      AppleICUForceISO8601DateFormat = true; # force YYYY-MM-DD dates system-wide
 
       # expanded save & print dialogs by default
       NSNavPanelExpandedStateForSaveMode = true;
@@ -149,6 +148,7 @@
 
       # locale & units, plus untyped sound bits
       NSGlobalDomain = {
+        AppleICUForceISO8601DateFormat = true; # YYYY-MM-DD dates; untyped (not a nix-darwin option in this pin)
         "com.apple.sound.uiaudio.enabled" = 0; # no UI sound effects (Trash, screenshot, ...)
         AppleLanguages = [ "en" ];
         AppleLocale = "en_US@currency=USD";

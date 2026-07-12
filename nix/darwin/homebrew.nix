@@ -74,10 +74,12 @@
       "lm-studio"
       "ollama-app"
       # -- dev tools ----------------------------------------------------------
-      "dash"
       "gcloud-cli" # cask (not nixpkgs): `gcloud components` self-updates, which the read-only nix store can't allow
       "openlens"
       # -- misc --------------------------------------------------------------
+      "adobe-creative-cloud"
+      "chromium"
+      "discord"
       "dropbox"
       "miro"
     ]

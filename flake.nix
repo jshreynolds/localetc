@@ -219,8 +219,9 @@
           hostname = "playbook";
           username = "jreynolds";
           casks = [
-            "scrivener"
             "lulu"
+            "scrivener"
+            "thinkorswim"
           ];
         };
       };
