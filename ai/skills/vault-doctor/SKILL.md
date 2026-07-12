@@ -41,6 +41,16 @@ python3 scripts/vault_doctor.py --vault ~/some/other/vault
   Frontmatter is what makes generated inventory possible; fill these in.
 - **Projects: missing required files** — every `projects/<name>/` needs
   `index.md` (with frontmatter) and `todo.md` per `AGENTS_projects.md`.
+- **Lens: missing/illegal/disagreeing declarations** — every project/area
+  `index.md` must declare `lens: work | personal | both`, and its `todo.md`
+  must declare the same one (task queries read the todo file's own
+  frontmatter). Fix the frontmatter.
+- **Taskmaster: dashboard drift** — `taskmaster_work.md` and
+  `taskmaster_personal.md` must be identical apart from frontmatter and must
+  match `taskmaster.md`'s stable sections (above the `# scratchpad` line).
+  Edit the master, then re-copy the stable region to the siblings.
+- **Lens: both-lens items** — informational, not drift. `both` is legal but
+  should stay rare; if this list grows, lenses are blurring.
 
 ## Design principle
 

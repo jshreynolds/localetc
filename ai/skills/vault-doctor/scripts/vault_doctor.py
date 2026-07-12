@@ -12,6 +12,12 @@ Checks:
   4. index.md files missing frontmatter (type / status / summary)
   5. non-archive index.md files linking into archive/
   6. project folders missing index.md or todo.md
+  7. lens declarations: every project/area index.md needs a legal lens
+     (work | personal | both); todo.md must agree with its index.md
+  8. taskmaster dashboards: taskmaster_work.md and taskmaster_personal.md
+     must be identical apart from frontmatter, and match taskmaster.md's
+     stable sections (everything above the scratchpad)
+  9. informational: which items carry lens: both (creep alarm)
 
 Run this from the root of an Obsidian work vault (the default), or point it at
 one with --vault.
@@ -174,6 +180,80 @@ def check_frontmatter(vault, indexes):
     return findings
 
 
+LENS_VALUES = {"work", "personal", "both"}
+LENS_LINE = re.compile(r"^lens:\s*(\S+)\s*$", re.MULTILINE)
+SCRATCHPAD_MARKER = "\n# scratchpad"
+
+
+def read_lens(path):
+    """The lens declared in a file's frontmatter, or None."""
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return None
+    end = text.find("\n---", 4)
+    if end == -1:
+        return None
+    match = LENS_LINE.search(text[4:end])
+    return match.group(1) if match else None
+
+
+def check_lens(vault):
+    """Every project/area declares a legal lens; todo.md agrees with index.md.
+    Also collects lens: both items — legal, but creep should stay visible."""
+    findings, both_items = [], []
+    for root_name in ("projects", "areas"):
+        root = vault / root_name
+        if not root.is_dir():
+            continue
+        for folder in sorted(root.iterdir()):
+            if not folder.is_dir() or folder.name.startswith("."):
+                continue
+            rel = f"{root_name}/{folder.name}"
+            index_lens = read_lens(folder / "index.md") if (folder / "index.md").is_file() else None
+            if index_lens is None:
+                findings.append(f"{rel}/index.md: no lens declared")
+            elif index_lens not in LENS_VALUES:
+                findings.append(f"{rel}/index.md: illegal lens '{index_lens}'")
+            elif index_lens == "both":
+                both_items.append(rel)
+            todo = folder / "todo.md"
+            if todo.is_file():
+                todo_lens = read_lens(todo)
+                if todo_lens is None:
+                    findings.append(f"{rel}/todo.md: no lens declared")
+                elif todo_lens != index_lens:
+                    findings.append(
+                        f"{rel}/todo.md: lens '{todo_lens}' disagrees with index.md '{index_lens}'"
+                    )
+    return findings, both_items
+
+
+def strip_frontmatter(text):
+    if not text.startswith("---\n"):
+        return text
+    end = text.find("\n---\n", 4)
+    return text[end + len("\n---\n"):] if end != -1 else text
+
+
+def check_taskmaster(vault):
+    """The lens dashboards must be clones: taskmaster_work.md and
+    taskmaster_personal.md identical apart from frontmatter, and both equal to
+    taskmaster.md's stable region (everything above the scratchpad marker)."""
+    findings = []
+    paths = {name: vault / f"{name}.md" for name in ("taskmaster", "taskmaster_work", "taskmaster_personal")}
+    missing = [f"{path.name} is missing" for path in paths.values() if not path.is_file()]
+    if missing:
+        return missing
+    bodies = {name: strip_frontmatter(path.read_text(encoding="utf-8")) for name, path in paths.items()}
+    stable = bodies["taskmaster"].split(SCRATCHPAD_MARKER)[0].rstrip().removesuffix("---").rstrip()
+    if bodies["taskmaster_work"].rstrip() != bodies["taskmaster_personal"].rstrip():
+        findings.append("taskmaster_work.md and taskmaster_personal.md differ outside frontmatter")
+    for sibling in ("taskmaster_work", "taskmaster_personal"):
+        if bodies[sibling].rstrip() != stable:
+            findings.append(f"{sibling}.md does not match taskmaster.md's stable sections")
+    return findings
+
+
 def check_projects(vault):
     findings = []
     projects_root = vault / "projects"
@@ -239,6 +319,11 @@ def main():
         args.verbose,
     )
     report_section("Projects: missing required files", check_projects(vault), args.verbose)
+
+    lens_findings, both_items = check_lens(vault)
+    report_section("Lens: missing/illegal/disagreeing declarations", lens_findings, args.verbose)
+    report_section("Taskmaster: dashboard drift", check_taskmaster(vault), args.verbose)
+    report_section("Lens: both-lens items (informational, not drift)", both_items, args.verbose)
 
 
 if __name__ == "__main__":

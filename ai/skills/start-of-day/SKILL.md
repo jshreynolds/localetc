@@ -1,6 +1,6 @@
 ---
 name: start-of-day
-description: Interactive start-of-day walkthrough that guides the user step-by-step through a fixed morning routine — sociotechnical systems health (social, delivery, operational), the day's meeting work, an Eisenhower-matrix project review, taskmaster alignment, and setting a single daily focus. Shows ONE step at a time, captures findings per step, and writes them to a dated log. Use when the user wants to start the day, run the morning routine, says "start my day", "morning checklist", "begin start of day", "let's start the day", or invokes /start-of-day.
+description: Interactive start-of-day walkthrough that guides the user step-by-step through a fixed morning routine — sociotechnical systems health (social, delivery, operational, personal), the day's meeting work, an Eisenhower-matrix project review, taskmaster alignment, and setting a single daily focus. Shows ONE step at a time, captures findings per step, and writes them to a dated log. Use when the user wants to start the day, run the morning routine, says "start my day", "morning checklist", "begin start of day", "let's start the day", or invokes /start-of-day.
 ---
 
 # Start of Day

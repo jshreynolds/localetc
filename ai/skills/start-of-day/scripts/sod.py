@@ -112,6 +112,16 @@ def _build_steps() -> list[Step]:
         ],
     ),
     Step(
+        phase="Systems health",
+        title="Personal health — the life side",
+        prompt="How are you really doing, outside the org chart? Free-form — one honest sentence beats a checklist.",
+        look_at=[
+            "Healthy Mind Platter — which have been fed lately, which are starving?",
+            "  sleep time / physical time / focus time / connecting time / play time / down time / time-in",
+            "Any personal project or life admin quietly becoming urgent?",
+        ],
+    ),
+    Step(
         phase="The day ahead",
         title="Meeting work for today",
         prompt="What does each of today's meetings actually need from you?",
@@ -126,6 +136,7 @@ def _build_steps() -> list[Step]:
         prompt="Where is your attention going versus where it should go?",
         look_at=[
             "Place projects on urgent x important.",
+            "Work and personal share the canvas (blue work, green personal, purple both, red urgent) — let them compete honestly.",
             "Watch for urgent-not-important work crowding out important-not-urgent work.",
         ],
     ),
@@ -134,7 +145,7 @@ def _build_steps() -> list[Step]:
         title="Taskmaster alignment",
         prompt="Are you working on what you actually intend to?",
         look_at=[
-            "Open taskmaster.md in Obsidian.",
+            "Open taskmaster.md in Obsidian (everything; taskmaster_work.md / taskmaster_personal.md narrow it).",
             "Do the queued projects match where you want your energy this week?",
         ],
     ),

@@ -1,6 +1,6 @@
 ---
 name: daily-debrief
-description: Interactively build an end-of-day work report for an engineering manager and write it into an Obsidian vault as `dailies/YYYY-MM-DD-debrief.md`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, daily debrief, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
+description: Interactively build an end-of-day report covering the whole day — work and personal — and write it into an Obsidian vault as `dailies/YYYY-MM-DD-debrief.md`. Use this whenever the user wants to do an end-of-day reflection, work report, manager debrief, leadership journal, daily wrap-up, daily debrief, or capture what happened today for later review and analysis, even if they ask casually. The skill should coach lightly, ask only a small number of questions, confirm where the note should be written before saving, and produce a structured daily note that supports both reflection and later pattern analysis.
 ---
 
 # Daily Debrief
@@ -131,6 +131,9 @@ The questions are not "anything else?" prompts. Each one should force a specific
 - "What's one thing you want tomorrow-you to remember?"
 - "What pattern is repeating that you want to call out?"
 - "If you could undo or redo one thing from today, what would it be?"
+
+**Beyond work**
+- "Did anything outside work move today — home, health, family — that belongs in the record?"
 
 **Meeting-grounded (use 1 per session when meeting context supports it)**
 - Reference a specific same-day meeting and ask a pointed question about how it landed, what's actually settled, or what the user thinks but didn't say. Example: "You and X talked about Y today — does it feel like it's actually landing, or is it still theater?"
