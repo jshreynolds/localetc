@@ -34,14 +34,16 @@ skill_name="${2:-}"
 
 mkdir -p "${HOME}/.agents/skills"
 
-# Install via npx skills
+# Install via npx skills. -a universal writes once to ~/.agents/skills (the
+# canonical dir) instead of fanning out to every detected agent — without it,
+# the CLI targets agents like PromptScript that reject global installs.
 if [[ -n "${skill_name}" ]]; then
     echo "Installing skill '${skill_name}' from ${skill_source}..."
-    npx --yes skills add "${skill_source}" -g -y -s "${skill_name}"
+    npx --yes skills add "${skill_source}" -g -y -a universal -s "${skill_name}"
     entry="${skill_source} ${skill_name}"
 else
     echo "Installing all skills from ${skill_source}..."
-    npx --yes skills add "${skill_source}" -g -y
+    npx --yes skills add "${skill_source}" -g -y -a universal
     entry="${skill_source}"
 fi
 
