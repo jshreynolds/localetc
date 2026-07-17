@@ -29,5 +29,7 @@
       "Running a very large autocomplete",
       "Committing to no ground truth"
     ]
-  }
+  },
+  "effortLevel": "high",
+  "tui": "default"
 }

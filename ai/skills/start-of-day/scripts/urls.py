@@ -11,6 +11,9 @@ class UrlEntry(TypedDict):
     label: str
     url: str
 
+MASTER_DASHBOARD_URLS: Final[list[UrlEntry]] = [
+    {"label": "Chatlayer Master Dashboard", "url": "http://localhost:5173"},
+]
 
 GITLAB_MR_URLS: Final[list[UrlEntry]] = [
     {"label": "Chatlayer Monorepo",                  "url": "https://gitlab.com/sinch/sinch-projects/applications/teams/chatlayer/chatlayer/-/merge_requests"},

@@ -29,6 +29,7 @@ from urls import (
     GITLAB_MR_URLS,
     INCIDENTS_URLS,
     JIRA_BOARD_URLS,
+    MASTER_DASHBOARD_URLS,
     SECURITY_URLS,
     UrlEntry,
 )
@@ -81,6 +82,35 @@ def _build_steps() -> list[Step]:
     ]
     return [
     Step(
+        phase="The day ahead",
+        title="Meeting work for today",
+        prompt="What does each of today's meetings actually need from you?",
+        look_at=[
+            "Per meeting: prep, decisions to drive, materials to bring.",
+            "Flag any meeting you're not yet ready for.",
+        ],
+    ),
+    Step(
+        phase="The day ahead",
+        title="Taskmaster alignment",
+        prompt="Are you working on what you actually intend to?",
+        look_at=[
+            "Open taskmaster.md in Obsidian (everything; taskmaster_work.md / taskmaster_personal.md narrow it)." +
+            "Add any blocks necessary to execute to your calendar for the day.",
+            "Do the queued projects match where you want your energy this week?",
+        ],
+    ),
+    Step(
+        phase="The day ahead",
+        title="Eisenhower review",
+        prompt="Where is your attention going versus where it should go?",
+        look_at=[
+            "Place projects on urgent x important.",
+            "Work and personal share the canvas (blue work, green personal, purple both, red urgent) — let them compete honestly.",
+            "Watch for urgent-not-important work crowding out important-not-urgent work.",
+        ],
+    ),
+    Step(
         phase="Systems health",
         title="Social health — the people side",
         prompt="How is the team really doing? Scan for mood, energy, friction, and anything left unsaid.",
@@ -89,6 +119,14 @@ def _build_steps() -> list[Step]:
             *[f"  {name}" for name in people_items],
             "Anyone stuck, quiet, overloaded, or in conflict?",
             "Carry anything heavy forward into today's focus.",
+        ],
+    ),
+    Step(
+        phase="Systems health",
+        title="General Systems Dashboard?",
+        prompt="How do things look at a high level?",
+        look_at=[
+            *_fmt_urls("Engineering Beacon Dashboard", MASTER_DASHBOARD_URLS),
         ],
     ),
     Step(
@@ -119,34 +157,6 @@ def _build_steps() -> list[Step]:
             "Healthy Mind Platter — which have been fed lately, which are starving?",
             "  sleep time / physical time / focus time / connecting time / play time / down time / time-in",
             "Any personal project or life admin quietly becoming urgent?",
-        ],
-    ),
-    Step(
-        phase="The day ahead",
-        title="Meeting work for today",
-        prompt="What does each of today's meetings actually need from you?",
-        look_at=[
-            "Per meeting: prep, decisions to drive, materials to bring.",
-            "Flag any meeting you're not yet ready for.",
-        ],
-    ),
-    Step(
-        phase="The day ahead",
-        title="Eisenhower review",
-        prompt="Where is your attention going versus where it should go?",
-        look_at=[
-            "Place projects on urgent x important.",
-            "Work and personal share the canvas (blue work, green personal, purple both, red urgent) — let them compete honestly.",
-            "Watch for urgent-not-important work crowding out important-not-urgent work.",
-        ],
-    ),
-    Step(
-        phase="The day ahead",
-        title="Taskmaster alignment",
-        prompt="Are you working on what you actually intend to?",
-        look_at=[
-            "Open taskmaster.md in Obsidian (everything; taskmaster_work.md / taskmaster_personal.md narrow it).",
-            "Do the queued projects match where you want your energy this week?",
         ],
     ),
     Step(

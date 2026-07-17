@@ -149,6 +149,7 @@
       # locale & units, plus untyped sound bits
       NSGlobalDomain = {
         AppleICUForceISO8601DateFormat = true; # YYYY-MM-DD dates; untyped (not a nix-darwin option in this pin)
+        AppleICUForce24HourTime = true; # 24-hour clock everywhere, ignoring the locale's AM/PM default
         "com.apple.sound.uiaudio.enabled" = 0; # no UI sound effects (Trash, screenshot, ...)
         AppleLanguages = [ "en" ];
         AppleLocale = "en_US@currency=USD";
@@ -209,14 +210,16 @@
       };
 
       # keyboard shortcuts (System Settings → Keyboard → Keyboard Shortcuts).
-      # CAUTION: this replaces the whole AppleSymbolicHotKeys dict — IDs listed
-      # here are authoritative, unlisted IDs fall back to macOS defaults, and
-      # manual tweaks in System Settings are overwritten on the next drs.
+      # These are merged (via `defaults write`), not a full-dict replace: only
+      # the IDs listed below are managed and re-asserted on each drs. Unlisted
+      # IDs — including Spotlight (64/65) — are left untouched.
       # Takes effect after logout. ID reference:
       # https://web.archive.org/web/2024/https://gist.github.com/mkhl/455002
-      # Kept on purpose: Spotlight (64/65), Space navigation (79–82),
-      # screenshots (28–31) — unlisted IDs stay at macOS defaults.
       "com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+        # 60/61 default to ⌃Space / ⌃⌥Space; adding a 2nd input source re-enables
+        # them and ⌃Space then shadows Spotlight — keep them off.
+        "60".enabled = false; # ⌃Space — Select the previous input source
+        "61".enabled = false; # ⌃⌥Space — Select next source in Input menu
         "32".enabled = false; # ⌃↑ — Mission Control
         "33".enabled = false; # ⌃↓ — Application Windows
         "34".enabled = false; # Mission Control (modifier variant)

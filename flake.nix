@@ -102,6 +102,7 @@
             ./nix/darwin/core.nix
             ./nix/darwin/homebrew.nix
             ./nix/darwin/macos-defaults.nix
+            ./nix/darwin/login-items.nix
 
             # home-manager runs as a nix-darwin module so ONE `darwin-rebuild
             # switch` updates system config AND user config together.
