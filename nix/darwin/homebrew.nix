@@ -56,6 +56,7 @@
       "zoom"
       # -- browsers -------------------------------------------------------
       "brave-browser"
+      "chromium"
       "firefox"
       "google-chrome"
       "microsoft-edge"
@@ -78,7 +79,6 @@
       "openlens"
       # -- misc --------------------------------------------------------------
       "adobe-creative-cloud"
-      "chromium"
       "discord"
       "dropbox"
       "miro"

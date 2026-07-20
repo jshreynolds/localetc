@@ -222,6 +222,7 @@
           casks = [
             "lulu"
             "scrivener"
+	    "surfshark"
             "thinkorswim"
           ];
         };
