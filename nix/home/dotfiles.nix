@@ -40,7 +40,7 @@ in
   home.file.".claude/CLAUDE.md".source = live "${etc}/ai/AGENTS.md";
   home.file.".codex/AGENTS.md".source = live "${etc}/ai/AGENTS.md";
   home.file.".agents/AGENTS.md".source = live "${etc}/ai/AGENTS.md";
-  home.file.".agents/XP.md".source = live "${etc}/ai/XP.md";
+  # (XP.md merged into the `codemode` skill; skills are wired in skills.nix)
 
   # ---- live tool configs (apps write through these) --------------------------
   # Only the config FILE is linked — the surrounding directory stays real so
