@@ -54,4 +54,9 @@ in
   # Claude Code writes `model` back on every /model switch — a live link keeps
   # that working and lets git show the drift (rest of ~/.claude stays real).
   home.file.".claude/settings.json".source = live "${etc}/dotfiles/claude/settings.json";
+
+  # Status-line script referenced by settings.json's statusLine.command. Live
+  # link so the executable bit on the repo file carries through and edits apply
+  # instantly (Claude only executes it, never writes it).
+  home.file.".claude/statusline.sh".source = live "${etc}/dotfiles/claude/statusline.sh";
 }
