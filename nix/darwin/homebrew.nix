@@ -42,6 +42,7 @@
       "dagger" # not packaged in nixpkgs
       "aiven-client" # not packaged in nixpkgs
       "zshdb" # not packaged in nixpkgs (bashdb is; zshdb isn't)
+      "container" # Apple container runtime
     ]
     ++ hostBrews;
 
