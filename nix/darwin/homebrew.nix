@@ -94,6 +94,7 @@
       "GoodNotes" = 1444383602;
       "GrandPerspective" = 1111570163;
       "focus bug" = 6746090405;
+      "Xcode" = 497799835;
     }
     // hostMasApps;
   };
