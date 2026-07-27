@@ -9,7 +9,7 @@ A guided end-of-day reflection for an engineering manager. The bot is a **scribe
 
 The flow:
 
-1. Move meetings from the day (in granola) into the vault knowledge base and load them in to context for the reflection.
+1. Move meetings from the day (in Muesli) into the vault knowledge base and load them in to context for the reflection.
 2. Help the user draw out insights from the day while it is still fresh.
 3. Record what the user actually said — their words, their framing, their observations.
 4. Use same-day meeting summaries as context to propose todos and surface work that needs tracking.
@@ -53,7 +53,7 @@ Follow local vault instructions if they exist.
 
 ### How to use meeting summary context
 
-For each relevant meeting already loaded in context from the granola-meetings skill, look for:
+For each relevant meeting already loaded in context from the ingest-meetings skill, look for:
 
 1. Extract:
    - key decisions
@@ -80,9 +80,9 @@ Use this default sequence, but compress it when the user has already provided ma
 
 ### Step 0: Ingest meetings
 
-Load and run the granola-meetings located at `./granola-meetings` to save the summaries and load them in to your context window.  Finish that entire skill and then move to the next step.  
+Run phase 1 (ingest) of the `ingest-meetings` skill to pull today's completed meetings into `inbox/meetings_outgest/`, then load each new meeting's `notes.md` into context. Phase 2 (filing) is not required for the reflection — leave staged meetings where they are.
 
-If the meetings have already been ingested, load the summaries into context and then move to the next step.
+If today's meetings have already been ingested (staged or already filed), just load the relevant `notes.md` content into context and move to the next step.
 
 ### Step 1: Confirm destination
 

@@ -18,8 +18,7 @@
         "Rectangle"
         "1Password"
         "Dropbox"
-        "Granola"
-        "Hex"
+        "Muesli"
         "LM Studio"
       ];
       mkLoginItem = app: {

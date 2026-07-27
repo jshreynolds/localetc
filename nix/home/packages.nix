@@ -85,6 +85,7 @@
     gemini-cli
     llm
     opencode
+    pi-coding-agent # `pi` from pi.dev (@earendil-works) — self-update won't work (read-only store)
 
     # -- apple dev ---------------------------------------------------------------
     xcbeautify

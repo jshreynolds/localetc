@@ -37,4 +37,16 @@
     "light": "One Light",
     "dark": "Colorizer Pro",
   },
+  "languages": {
+    "Nix": {
+      "language_servers": ["nixd", "!nil"],
+      "formatter": {
+        "external": {
+          "command": "nixfmt",
+          "arguments": []
+        }
+      },
+      "format_on_save": "on"
+    }
+  }
 }

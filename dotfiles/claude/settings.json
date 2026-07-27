@@ -1,6 +1,4 @@
 {
-  "model": "opus",
-  "showThinkingSummaries": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -36,5 +34,6 @@
     ]
   },
   "effortLevel": "high",
-  "tui": "default"
+  "tui": "default",
+  "showThinkingSummaries": true
 }
