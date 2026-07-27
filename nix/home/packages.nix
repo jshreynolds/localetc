@@ -83,6 +83,7 @@
     # hurts, move the offender to `brews` in homebrew.nix (one-line change).
     aichat
     gemini-cli
+    python313Packages.huggingface-hub # `hf` CLI (was: pip install huggingface_hub)
     llm
     opencode
     pi-coding-agent # `pi` from pi.dev (@earendil-works) — self-update won't work (read-only store)
@@ -106,6 +107,10 @@
     uv
     temporal-cli
     tilt
+
+    # -- media -------------------------------------------------------------------
+    ffmpeg # default build carries afftdn + arnndn (native filters, no extra libs)
+    # arnndn needs a .rnnn model at runtime — pinned in rnnoise-models.nix ($RNNOISE_MODEL)
 
     # -- misc --------------------------------------------------------------------
     cheat

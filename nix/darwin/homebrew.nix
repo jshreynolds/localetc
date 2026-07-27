@@ -82,6 +82,7 @@
       "adobe-creative-cloud"
       "discord"
       "dropbox"
+      "kdenlive"
       "miro"
       "muesli"
     ]
