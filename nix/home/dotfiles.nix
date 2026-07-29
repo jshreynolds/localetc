@@ -23,7 +23,7 @@
 # ai/AGENTS.md is the single source of base instructions for ALL agents;
 # each tool's expected filename is just another pointer to it.
 # =============================================================================
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 let
   etc = "${config.home.homeDirectory}/etc";
   live = config.lib.file.mkOutOfStoreSymlink;
@@ -59,29 +59,4 @@ in
   # link so the executable bit on the repo file carries through and edits apply
   # instantly (Claude only executes it, never writes it).
   home.file.".claude/statusline.sh".source = live "${etc}/dotfiles/claude/statusline.sh";
-
-  # Kdenlive keeps custom keyboard shortcuts in the <ActionProperties> block of
-  # its kxmlgui rc; the rest of that file (menu/toolbar tree, version=) churns on
-  # every app upgrade, so we don't track it. Instead, splice only the tracked
-  # shortcuts block into the live rc on each `drs`. Skips when Kdenlive is running
-  # (it rewrites the whole rc on quit, discarding our edit). Atomic temp+mv.
-  home.activation.kdenliveShortcuts =
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      rc="$HOME/Library/Application Support/kxmlgui5/kdenlive/kdenliveui.rc"
-      src="${etc}/dotfiles/kdenlive/kdenlive-shortcuts.xml"
-      if [ ! -f "$rc" ]; then
-        echo "kdenlive: no kdenliveui.rc yet — skip shortcut sync"
-      elif ${pkgs.procps}/bin/pgrep -qi kdenlive >/dev/null 2>&1; then
-        echo "kdenlive: running — skip shortcut sync (it rewrites the rc on quit)"
-      else
-        tmp="$(mktemp)"
-        ${pkgs.gawk}/bin/awk -v blk="$src" '
-          /<ActionProperties/ { skip=1 }
-          skip { if (/<\/ActionProperties>/) skip=0; next }
-          /<\/kpartgui>/ { while ((getline l < blk) > 0) print l; print; next }
-          { print }
-        ' "$rc" > "$tmp" && mv "$tmp" "$rc" \
-          && echo "kdenlive: synced shortcuts into kdenliveui.rc"
-      fi
-    '';
 }

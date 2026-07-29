@@ -1,0 +1,50 @@
+# Runs this repo's checks in CI by calling the Dagger module, which runs the
+# very same ci/run-checks.sh that `nix flake check` runs on the machine.
+# Dagger is the portability layer: the pipeline is defined once, in .dagger/,
+# and this file only decides WHEN it fires. Nothing about what a check does
+# lives here — that is the point.
+#
+# SCOPE, deliberately: linux containers, so this validates the shell scripts,
+# python tests, nix formatting and skill metadata. It does NOT build
+# `darwinConfigurations` — that needs a macOS runner plus nix-darwin. Green
+# here means "the code in this repo is sound", NOT "this config switches
+# cleanly on a mac".
+
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push makes an in-flight run irrelevant.
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Default fetch-depth of 1 is enough: run-checks.sh scopes itself with
+        # `git ls-files`, which reads the index, not history.
+
+      - name: Install Dagger CLI
+        # Version is read from dagger.json rather than pinned here, so this
+        # workflow cannot drift from the engine the module was built against
+        # — the same reason the checks discover their own inputs.
+        run: |
+          version="$(jq -r .engineVersion dagger.json | tr -d v)"
+          echo "installing dagger ${version}"
+          curl -fsSL https://dl.dagger.io/dagger/install.sh \
+            | DAGGER_VERSION="${version}" BIN_DIR=/usr/local/bin sudo -E sh
+          dagger version
+
+      - name: Run checks
+        run: dagger call all --source=.
+        env:
+          # Optional. Uploads traces to Dagger Cloud when the secret exists;
+          # an empty value is simply ignored, so forks work without it.
+          DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}

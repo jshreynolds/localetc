@@ -58,9 +58,9 @@
     colima # container runtime (docker context points here)
     docker-client # just the docker CLI — colima provides the engine
     docker-compose
-    kubectl
+    (lib.hiPrio kubectl) # win the /bin/kubectl collision against minikube's bundled copy
     kubernetes-helm # the `helm` CLI
-    minikube
+    minikube # ships its own kubectl; kubectl above takes precedence
     kafkactl
     kn
 

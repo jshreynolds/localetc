@@ -27,7 +27,13 @@
         # lowercased, spaces stripped → launchd label / plist filename
         name = builtins.replaceStrings [ " " ] [ "" ] (lib.toLower app);
         value.serviceConfig = {
-          ProgramArguments = [ "/usr/bin/open" "-g" "-j" "-a" app ];
+          ProgramArguments = [
+            "/usr/bin/open"
+            "-g"
+            "-j"
+            "-a"
+            app
+          ];
           RunAtLoad = true;
           KeepAlive = false;
         };

@@ -18,6 +18,7 @@
     ./dotfiles.nix # config files: nix-managed vs live-editable symlinks
     ./skills.nix # agent skills: ~/.agents/skills, mirrored to claude/codex
     ./rnnoise-models.nix # pinned .rnnn models for ffmpeg's arnndn filter
+    ./openshell.nix # NVIDIA OpenShell, pinned to a release (skips curl|sh installer)
   ];
 
   home.username = username;

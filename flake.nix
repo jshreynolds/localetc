@@ -41,29 +41,22 @@
       home-manager,
     }:
     let
-      lib = nixpkgs.lib;
       pkgs = nixpkgs.legacyPackages.aarch64-darwin;
 
-      shellScripts = [
-        "ai/skill-add"
-        "ai/skill-sync"
-        "bin/hf-download"
-        "bin/kubeshell"
-        "bin/leet"
-        "bin/rando.sh"
-        "bin/show_color"
-      ];
-
-      pythonScripts = [
-        "ai/skills/biweekly-chatlayer-briefing/scripts/fetch_content.py"
-        "ai/skills/start-of-day/scripts/sod.py"
-        "ai/skills/start-of-day/scripts/test_sod.py"
-        "ai/skills/start-of-day/scripts/urls.py"
-        "ai/skills/vault-doctor/scripts/vault_doctor.py"
-        "ai/skills/vault-doctor/scripts/test_vault_doctor.py"
-        "bin/git_set_local_conf"
-        "bin/rename_spaces.py"
-      ];
+      # Every check is `ci/run-checks.sh <subcommand>`. The script discovers
+      # what to check by shebang, so nothing is listed here and nothing drifts
+      # — the two hand-maintained lists that used to live at this spot had gone
+      # stale (3 shell scripts and all 6 ingest-meetings python files, incl. 53
+      # tests, were silently unchecked). The same script is what .dagger runs,
+      # so container CI and `nix flake check` cannot disagree.
+      mkCheck =
+        name: tools:
+        pkgs.runCommand "localetc-${name}" { nativeBuildInputs = tools; } ''
+          cd ${self}
+          export PYTHONPYCACHEPREFIX="$TMPDIR/pycache"
+          bash ci/run-checks.sh ${name}
+          touch $out
+        '';
 
       # ---- one machine = one mkHost call -----------------------------------
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
@@ -124,74 +117,15 @@
       # `nix fmt` formats every .nix file in the repo with the official style.
       formatter.aarch64-darwin = pkgs.nixfmt-tree;
 
+      # Attribute names match the subcommand they run, so `nix build
+      # .#checks.aarch64-darwin.python` and `ci/run-checks.sh python` are the
+      # same thing. Each stays its own derivation: they run in parallel and
+      # cache independently.
       checks.aarch64-darwin = {
-        nix-format =
-          pkgs.runCommand "localetc-nix-format-check"
-            {
-              nativeBuildInputs = [ pkgs.nixfmt ];
-            }
-            ''
-              cd ${self}
-              find . -name '*.nix' -print0 | xargs -0 nixfmt --check
-              touch $out
-            '';
-
-        shell-scripts =
-          pkgs.runCommand "localetc-shellcheck"
-            {
-              nativeBuildInputs = [ pkgs.shellcheck ];
-            }
-            ''
-              shellcheck ${lib.concatMapStringsSep " " (path: "${self}/${path}") shellScripts}
-              touch $out
-            '';
-
-        python-scripts =
-          pkgs.runCommand "localetc-python-checks"
-            {
-              nativeBuildInputs = [ pkgs.python314 ];
-            }
-            ''
-              cd ${self}
-              export PYTHONPYCACHEPREFIX="$TMPDIR/pycache"
-              python3 -m py_compile ${lib.concatStringsSep " " pythonScripts}
-              python3 -m unittest discover -s ai/skills/start-of-day/scripts
-              python3 -m unittest discover -s ai/skills/vault-doctor/scripts
-              touch $out
-            '';
-
-        skill-metadata =
-          pkgs.runCommand "localetc-skill-metadata-check"
-            {
-              nativeBuildInputs = [ pkgs.python314 ];
-            }
-            ''
-              cd ${self}
-              python3 - <<'PY'
-              from pathlib import Path
-              import sys
-
-              failures = []
-              for path in sorted(Path("ai/skills").glob("*/SKILL.md")):
-                  text = path.read_text(encoding="utf-8")
-                  if not text.startswith("---\n"):
-                      failures.append(f"{path}: missing frontmatter")
-                      continue
-                  end = text.find("\n---", 4)
-                  if end == -1:
-                      failures.append(f"{path}: unclosed frontmatter")
-                      continue
-                  frontmatter = text[4:end]
-                  for key in ("name:", "description:"):
-                      if key not in frontmatter:
-                          failures.append(f"{path}: missing {key}")
-
-              if failures:
-                  print("\n".join(failures), file=sys.stderr)
-                  raise SystemExit(1)
-              PY
-              touch $out
-            '';
+        nixfmt = mkCheck "nixfmt" [ pkgs.nixfmt ];
+        shell = mkCheck "shell" [ pkgs.shellcheck ];
+        python = mkCheck "python" [ pkgs.python314 ];
+        skills = mkCheck "skills" [ pkgs.python314 ];
       };
 
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
@@ -206,7 +140,7 @@
           ];
         };
 
-         # work machine
+        # work machine
         "mac-nl-josrey-2" = mkHost {
           hostname = "mac-nl-josrey-2";
           username = "josrey";
@@ -222,7 +156,7 @@
           casks = [
             "lulu"
             "scrivener"
-	    "surfshark"
+            "surfshark"
             "thinkorswim"
           ];
         };
