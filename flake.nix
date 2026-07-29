@@ -42,6 +42,28 @@
     }:
     let
       pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      lib = nixpkgs.lib;
+
+      # ci/checks.list is the registry: one line per check, `<name> <tools>...`.
+      # Parsed here at eval time (pure — just readFile) so this file never
+      # carries its own copy of the list, and `nix flake check` cannot disagree
+      # with `dagger call all` about which checks exist.
+      checkRegistry =
+        let
+          fieldsOf = line: builtins.filter (f: f != "") (lib.splitString " " line);
+          isEntry = fields: fields != [ ] && !(lib.hasPrefix "#" (builtins.head fields));
+          entries = builtins.filter isEntry (
+            map fieldsOf (lib.splitString "\n" (builtins.readFile ./ci/checks.list))
+          );
+        in
+        builtins.listToAttrs (
+          map (fields: {
+            name = builtins.head fields;
+            # Tools are nixpkgs attribute names, so the same column that feeds
+            # `<pinned-nixpkgs>#<attr>` in the container feeds pkgs.<attr> here.
+            value = map (attr: pkgs.${attr}) (builtins.tail fields);
+          }) entries
+        );
 
       # Every check is `ci/run-checks.sh <subcommand>`. The script discovers
       # what to check by shebang, so nothing is listed here and nothing drifts
@@ -117,16 +139,11 @@
       # `nix fmt` formats every .nix file in the repo with the official style.
       formatter.aarch64-darwin = pkgs.nixfmt-tree;
 
-      # Attribute names match the subcommand they run, so `nix build
+      # One derivation per line of ci/checks.list, so `nix build
       # .#checks.aarch64-darwin.python` and `ci/run-checks.sh python` are the
       # same thing. Each stays its own derivation: they run in parallel and
-      # cache independently.
-      checks.aarch64-darwin = {
-        nixfmt = mkCheck "nixfmt" [ pkgs.nixfmt ];
-        shell = mkCheck "shell" [ pkgs.shellcheck ];
-        python = mkCheck "python" [ pkgs.python314 ];
-        skills = mkCheck "skills" [ pkgs.python314 ];
-      };
+      # cache independently. Adding a check here means adding a line there.
+      checks.aarch64-darwin = lib.mapAttrs mkCheck checkRegistry;
 
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
       # machine's hostname — so each machine needs its own line here.

@@ -108,7 +108,11 @@
   home.sessionPath = [
     "$HOME/etc/bin"
     "$HOME/.local/bin" # cursor agent CLI et al.
-    "$HOME/.rd/bin" # rancher desktop (harmless if absent)
+    # NOTE: no $HOME/.rd/bin. Rancher Desktop's copies of docker/nerdctl sat
+    # ahead of the nix profile and shadowed the declared docker-client, so the
+    # binary in use was an undeclared, unpinned artifact — while the engine
+    # behind it was colima all along. Container tooling comes from
+    # nix/home/packages.nix only.
     "$HOME/.lmstudio/bin" # lm studio CLI (lms)
     "/Applications/Muesli.app/Contents/MacOS"
     "/Applications/Obsidian.app/Contents/MacOS"

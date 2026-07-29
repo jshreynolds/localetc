@@ -1,0 +1,23 @@
+# ci/checks.list — the registry: which checks exist, and what each one needs.
+#
+# Format:  <name> <nixpkgs attr>...
+#   name  a `check_<name>` function in ci/run-checks.sh
+#   attrs the tools that function shells out to, by nixpkgs attribute name
+#
+# One line per check, read by all three callers, so adding a check means
+# editing this file and writing one function — never touching three lists:
+#   flake.nix           one derivation per line   (`nix flake check`)
+#   .dagger/src/checks  one container per line    (`dagger call all`)
+#   ci/run-checks.sh    the names `all` runs      (`run-checks.sh list`)
+#
+# The attrs are nixpkgs attribute names in both directions — `pkgs.<attr>` in
+# the flake, `<pinned-nixpkgs>#<attr>` in the container — which is what lets
+# one column feed both. A check needing no tools beyond bash/coreutils lists
+# none.
+#
+# Order is the order `all` runs them: cheapest and most likely to fail first.
+discovery
+nixfmt     nixfmt
+shell      shellcheck
+python     python314
+skills     python314

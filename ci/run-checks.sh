@@ -3,15 +3,20 @@
 # run-checks.sh — this repo's checks, in one place, with nothing hand-listed.
 #
 # Three callers share this script so a check is never defined twice:
-#   nix     flake.nix `checks` — one derivation per subcommand (`nix flake check`)
-#   dagger  .dagger/src/localetc — the same run, containerised (`dagger call check`)
+#   nix     flake.nix `checks` — one derivation per check (`nix flake check`)
+#   dagger  .dagger/src/checks — the same run, containerised (`dagger call all`)
 #   you     ci/run-checks.sh all
+#
+# WHICH checks exist is ci/checks.list, read by all three callers. WHAT each
+# one does is a `check_<name>` function below. There is no third list: this
+# script dispatches on the function's existence, so a name can never drift
+# from an implementation.
 #
 # Scripts are discovered by SHEBANG, never by a maintained list: a new script
 # is covered the moment it is committed. The flake source is git-tracked files
 # only, so untracked scratch files are never picked up.
 #
-# Usage: run-checks.sh [nixfmt|shell|python|skills|all]   (default: all)
+# Usage: run-checks.sh [<name>|all|list]   (default: all)
 
 set -euo pipefail
 
@@ -30,23 +35,46 @@ export PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-${TMPDIR:-/tmp}/pycache}"
 # construction (they are gitignored) and is exactly the set the flake copies to
 # the store, so a local run and `nix flake check` agree on scope.
 #
-# The nix store and a .git-less mount have no work tree, hence the fallback.
-# Its exclusion list is the sort of hand-maintained list this script exists to
-# avoid — acceptable only because the contexts that reach it already contain
-# tracked files only, so it never actually has to catch anything.
+# There are two branches, and BOTH are live — the comment that used to sit here
+# claimed the fallback "never actually has to catch anything", which was wrong:
+#   git   dagger mounts .git, so the container takes this branch
+#   find  `nix flake check` copies the repo to the store WITHOUT .git, so the
+#         store build takes this one
+# Two implementations of "the universe" is how the two CI paths would drift
+# apart unnoticed, so check_discovery below asserts they agree.
+#
+# Set REPO_FILES_MODE=git|find to pin a branch (check_discovery uses this to
+# run both; it is also the escape hatch when git refuses a tree it considers
+# unsafe, which otherwise degrades to `find` silently).
+REPO_FILES_MODE="${REPO_FILES_MODE:-auto}"
+
+_repo_files_git() { git ls-files; }
+
+# The exclusion list is the sort of hand-maintained list this script exists to
+# avoid. It is tolerable only because check_discovery proves it drops nothing
+# that git tracks.
+_repo_files_find() {
+    find . -type f \
+        ! -path './.git/*' \
+        ! -path '*/.venv/*' \
+        ! -path '*/venv/*' \
+        ! -path '*/node_modules/*' \
+        ! -path '*/__pycache__/*' \
+        ! -path './result/*' |
+        sed 's|^\./||'
+}
+
 repo_files() {
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        git ls-files
-    else
-        find . -type f \
-            ! -path './.git/*' \
-            ! -path '*/.venv/*' \
-            ! -path '*/venv/*' \
-            ! -path '*/node_modules/*' \
-            ! -path '*/__pycache__/*' \
-            ! -path './result/*' |
-            sed 's|^\./||'
-    fi | sort
+    local mode=$REPO_FILES_MODE
+    if [ "$mode" = auto ]; then
+        # Quoted so shellcheck reads these as strings, not `$(git)`/`$(find)`.
+        if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            mode="git"
+        else
+            mode="find"
+        fi
+    fi
+    "_repo_files_$mode" | sort
 }
 
 # Repo files whose first line is a shebang matching $1.
@@ -79,6 +107,12 @@ test_dirs() {
     repo_files | grep '/test_[^/]*\.py$' | sed 's|/[^/]*$||' | sort -u
 }
 
+# Every .nix file. Drawn from repo_files like everything else: a bare `find`
+# here would check untracked scratch .nix files that no other check can see.
+nix_files() {
+    repo_files | grep '\.nix$' || true
+}
+
 # ---------------------------------------------------------------------------
 # Checks
 #
@@ -103,9 +137,49 @@ _require_found() {
     fi
 }
 
+# The two repo_files branches must describe the same repo.
+#
+# Asserted in one direction only: every file git tracks must also be found by
+# the `find` branch. The reverse does not hold and should not — a working tree
+# legitimately holds untracked scratch that git ignores, while the two contexts
+# that actually run `find` (the nix store copy, a .git-less mount) contain
+# tracked files only.
+#
+# What this catches is the drift that matters: an exclusion pattern or a
+# missing tool quietly shrinking the file set `nix flake check` sees, so it
+# checks less than dagger does while both still report OK.
+check_discovery() {
+    echo "==> discovery"
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "    skip: no work tree here, so only the find branch is reachable"
+        return 0
+    fi
+
+    local tracked missing count
+    tracked=$(REPO_FILES_MODE="git" repo_files)
+    count=$(printf '%s\n' "$tracked" | grep -c . || true)
+    echo "    ${count} tracked files, both branches agree"
+    _require_found "discovery" "$count"
+
+    missing=$(comm -23 <(printf '%s\n' "$tracked") <(REPO_FILES_MODE="find" repo_files))
+    if [ -n "$missing" ]; then
+        echo "error: the find branch misses files that git tracks:" >&2
+        printf '%s\n' "$missing" | sed 's/^/       /' >&2
+        echo "       \`nix flake check\` uses that branch, so it would check less" >&2
+        echo "       than dagger does and still report OK." >&2
+        return 1
+    fi
+}
+
+# No `xargs`: with an empty list GNU xargs still runs `nixfmt --check`, which
+# reads (empty) stdin and exits 0 — a vacuous pass. BSD xargs skips instead, so
+# the old pipeline also disagreed between macOS and the linux container.
 check_nixfmt() {
-    echo "==> nixfmt --check"
-    find . -name '*.nix' ! -path './.git/*' -print0 | xargs -0 nixfmt --check
+    local files=() line
+    while IFS= read -r line; do files+=("$line"); done < <(nix_files)
+    echo "==> nixfmt --check (${#files[@]} files)"
+    _require_found "nixfmt" "${#files[@]}"
+    nixfmt --check "${files[@]}"
 }
 
 check_shell() {
@@ -135,57 +209,68 @@ check_python() {
 
 check_skills() {
     echo "==> skill metadata"
-    python3 - <<'PY'
-from pathlib import Path
-import sys
-
-failures = []
-skills = sorted(Path("ai/skills").glob("*/SKILL.md"))
-for path in skills:
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---\n"):
-        failures.append(f"{path}: missing frontmatter")
-        continue
-    end = text.find("\n---", 4)
-    if end == -1:
-        failures.append(f"{path}: unclosed frontmatter")
-        continue
-    frontmatter = text[4:end]
-    for key in ("name:", "description:"):
-        if key not in frontmatter:
-            failures.append(f"{path}: missing {key}")
-
-print(f"    {len(skills)} SKILL.md files")
-if not skills:
-    # same vacuous-pass guard as _require_found
-    print("error: no SKILL.md files found under ai/skills", file=sys.stderr)
-    raise SystemExit(1)
-if failures:
-    print("\n".join(failures), file=sys.stderr)
-    raise SystemExit(1)
-PY
+    python3 ci/check_skills.py
 }
 
 # ---------------------------------------------------------------------------
 
+# Every check runs even after one fails, then the roll-up decides the exit.
+#
+# Fail-fast would mean this and the dagger fan-out (one container per check)
+# disagree about how much a single run tells you: the first failure would mask
+# the other four here but not there. One trip, every answer, both places.
+run_all() {
+    local name failed=()
+    while IFS= read -r name; do
+        if ! "check_$name"; then
+            failed+=("$name")
+        fi
+        echo
+    done < <(check_names)
+
+    if [ "${#failed[@]}" -gt 0 ]; then
+        echo "FAILED: ${failed[*]}" >&2
+        exit 1
+    fi
+    echo "OK"
+}
+
+# The registry, read from ci/checks.list — never a list in this file.
+# Resolved against this script's own location so callers need not cd first.
+MANIFEST="$(dirname "${BASH_SOURCE[0]}")/checks.list"
+
+# Parsed with `read` rather than awk/cut: the nixos/nix image ships coreutils
+# but no gawk, and the registry parser is the one thing that must work before
+# any tool has been installed.
+check_names() {
+    local name rest
+    while read -r name rest; do
+        case "$name" in
+        '' | \#*) continue ;;
+        esac
+        printf '%s\n' "$name"
+    done <"$MANIFEST"
+}
+
 main() {
-    case "${1:-all}" in
-    nixfmt) check_nixfmt ;;
-    shell) check_shell ;;
-    python) check_python ;;
-    skills) check_skills ;;
-    all)
-        check_nixfmt
-        check_shell
-        check_python
-        check_skills
-        ;;
+    local name="${1:-all}"
+
+    case "$name" in
+    all) run_all ;;
+    list) check_names ;;
     *)
-        echo "usage: run-checks.sh [nixfmt|shell|python|skills|all]" >&2
-        exit 2
+        # Dispatch on the function, not on a list of names: an entry in
+        # checks.list with no check_<name> function fails loudly here rather
+        # than silently doing nothing.
+        if ! declare -F "check_$name" >/dev/null; then
+            echo "usage: run-checks.sh [<name>|all|list]" >&2
+            echo "checks: $(check_names | tr '\n' ' ')" >&2
+            exit 2
+        fi
+        "check_$name"
+        echo "OK"
         ;;
     esac
-    echo "OK"
 }
 
 # Only dispatch when executed. Sourcing gives you the discovery functions

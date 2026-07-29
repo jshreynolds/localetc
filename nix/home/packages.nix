@@ -43,6 +43,7 @@
     httpie
     jq
     yq-go # mikefarah's Go yq (nixpkgs `yq` is a different python tool)
+    nixfmt # load-bearing: `ci/run-checks.sh nixfmt` shells out to this
     pre-commit
     shellcheck
     tokei
@@ -58,6 +59,10 @@
     colima # container runtime (docker context points here)
     docker-client # just the docker CLI — colima provides the engine
     docker-compose
+    # ~/.docker/config.json sets credsStore=osxkeychain, and docker-client does
+    # not ship the helper. It used to arrive undeclared via Rancher Desktop's
+    # ~/.rd/bin; without it every registry pull fails to resolve credentials.
+    docker-credential-helpers
     (lib.hiPrio kubectl) # win the /bin/kubectl collision against minikube's bundled copy
     kubernetes-helm # the `helm` CLI
     minikube # ships its own kubectl; kubectl above takes precedence
