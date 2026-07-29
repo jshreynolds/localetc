@@ -38,10 +38,11 @@
     # nixpkgs — see nix/home/packages.nix):
     brews = [
       "mas" # Mac App Store CLI — required by masApps below
-      "xcode-build-server" # not packaged in nixpkgs
-      "dagger" # not packaged in nixpkgs
-      "aiven-client" # not packaged in nixpkgs
-      "zshdb" # not packaged in nixpkgs (bashdb is; zshdb isn't)
+      "xcode-build-server"
+      "dagger"
+      "herdr"
+      "aiven-client"
+      "zshdb"
       "container" # Apple container runtime
     ]
     ++ hostBrews;
@@ -49,7 +50,6 @@
     casks = [
       # -- daily drivers --------------------------------------------------
       "1password"
-      "alacritty"
       "ghostty"
       "obsidian"
       "rectangle"
@@ -71,8 +71,6 @@
       "codex"
       "comfy"
       "copilot-cli"
-      "granola"
-      "kitlangton-hex"
       "lm-studio"
       "ollama-app"
       # -- dev tools ----------------------------------------------------------

@@ -75,23 +75,63 @@ def _title_words(title):
     return set(WORD.findall(title.lower())) - STOPWORDS
 
 
+def _resolve_person(matches, title_words):
+    """Pick one colleague from the slugs that matched an attendee.
+
+    When several slugs share a first name (e.g. ``tom_d`` and ``tom_m`` both
+    prefix-matched the token "tom"), the bare first name can't disambiguate
+    them, so use the last-initial / extra slug parts corroborated by the
+    meeting title ("Tom M x Josh" -> ``tom_m``). Falls back to the first match
+    for genuinely distinct people (a multi-person meeting), preserving the
+    original behaviour there.
+
+    Returns ``(slug, path, confidence)``.
+    """
+    if len(matches) == 1:
+        slug, path = matches[0]
+        return slug, path, "high"
+
+    if len({slug.split("_")[0] for slug, _ in matches}) > 1:
+        # Distinct first names — group/multi-person meeting, not an ambiguous
+        # 1:1. Keep deterministic first-match behaviour.
+        slug, path = matches[0]
+        return slug, path, "high"
+
+    scored = sorted(
+        (
+            (sum(1 for part in slug.split("_")[1:] if part in title_words), slug, path)
+            for slug, path in matches
+        ),
+        key=lambda s: (-s[0], s[1]),
+    )
+    top_score, slug, path = scored[0]
+    unique = top_score > 0 and (len(scored) == 1 or scored[1][0] < top_score)
+    return slug, path, "high" if unique else "low"
+
+
 def classify_meeting(title, attendees, candidates):
     tokens = _attendee_tokens(attendees)
+    title_words = _title_words(title)
 
     for bucket, kind in (
         ("colleagues", "peer"),
         ("direct_reports", "direct_report"),
         ("domain_staff", "domain_staff"),
     ):
-        for slug, path in candidates[bucket].items():
-            if _person_matches(slug, tokens):
-                actual_kind = "boss" if bucket == "colleagues" and slug == "stefan" else kind
-                return {
-                    "type": actual_kind,
-                    "person": slug,
-                    "destination_path": path,
-                    "confidence": "high",
-                }
+        matches = [
+            (slug, path)
+            for slug, path in candidates[bucket].items()
+            if _person_matches(slug, tokens)
+        ]
+        if matches:
+            slug, path, confidence = _resolve_person(matches, title_words)
+            actual_kind = "boss" if bucket == "colleagues" and slug == "stefan" else kind
+            return {
+                "type": actual_kind,
+                "person": slug,
+                "destination_path": path,
+                "confidence": confidence,
+            }
 
     words = _title_words(title)
     for bucket, kind in (("projects", "project"), ("areas", "area")):

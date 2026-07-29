@@ -85,6 +85,29 @@ class TestClassifyMeeting(VaultFixture):
         self.assertEqual(result["type"], "peer")
         self.assertEqual(result["person"], "jean_p")
 
+    def test_shared_first_name_disambiguated_by_last_initial(self):
+        self.mkdirs(
+            "areas/people_management/direct_reports/tom_d",
+            "areas/people_management/direct_reports/tom_m",
+        )
+        candidates = discover_candidates(self.root)
+        result = classify_meeting("Tom M x Josh Collaborama", ["Tom"], candidates)
+        self.assertEqual(result["type"], "direct_report")
+        self.assertEqual(result["person"], "tom_m")
+        self.assertEqual(result["confidence"], "high")
+
+        other = classify_meeting("Tom D x Josh Collaborama", ["Tom"], candidates)
+        self.assertEqual(other["person"], "tom_d")
+
+    def test_shared_first_name_without_initial_is_low_confidence(self):
+        self.mkdirs(
+            "areas/people_management/direct_reports/tom_d",
+            "areas/people_management/direct_reports/tom_m",
+        )
+        candidates = discover_candidates(self.root)
+        result = classify_meeting("Tom x Josh Collaborama", ["Tom"], candidates)
+        self.assertEqual(result["confidence"], "low")
+
     def test_direct_report_match(self):
         result = classify_meeting("Gabriel x Joshua Collaborama", ["Gabriel"], self.candidates)
         self.assertEqual(result["type"], "direct_report")
