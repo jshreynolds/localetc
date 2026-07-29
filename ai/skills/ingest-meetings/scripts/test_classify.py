@@ -110,6 +110,18 @@ class TestClassifyMeeting(VaultFixture):
         self.assertEqual(result["type"], "unclassified")
         self.assertEqual(result["confidence"], "low")
 
+    def test_vault_owner_first_name_does_not_prefix_match_colleague(self):
+        self.mkdirs("areas/colleagues/josh_barwise")
+        candidates = discover_candidates(self.root)
+        result = classify_meeting("US-Only MVP Deployment Strategy", ["Diego", "Josh"], candidates)
+        self.assertNotEqual(result["person"], "josh_barwise")
+
+    def test_stopword_does_not_cause_false_project_match(self):
+        self.mkdirs("projects/migrate_addresses_to_remailer")
+        candidates = discover_candidates(self.root)
+        result = classify_meeting("Orchestrator Team Getting to Know You", [], candidates)
+        self.assertNotEqual(result["person"], "migrate_addresses_to_remailer")
+
 
 class TestResolveDestination(VaultFixture):
     def test_person_destination_gets_minutes_suffix(self):

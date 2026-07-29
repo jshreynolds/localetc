@@ -36,5 +36,6 @@
   },
   "effortLevel": "high",
   "tui": "default",
-  "showThinkingSummaries": true
+  "showThinkingSummaries": true,
+  "model": "opus"
 }

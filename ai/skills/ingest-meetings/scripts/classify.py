@@ -32,6 +32,14 @@ SKIP_DIRS = {".obsidian", ".trash", ".git"}
 AREA_EXCLUDE = {"colleagues", "people_management"}
 WORD = re.compile(r"[a-z0-9]+")
 
+# The vault owner attends every meeting, so their own first name would
+# otherwise prefix-match unrelated colleague slugs (e.g. "josh" -> "josh_barwise").
+OWNER_ALIASES = {"josh", "joshua"}
+
+# Common short words that appear inside underscored slugs (e.g. "migrate_addresses_to_remailer")
+# but carry no classification signal on their own.
+STOPWORDS = {"a", "an", "the", "to", "of", "in", "on", "and", "or", "for", "with"}
+
 
 def discover_candidates(vault_root):
     vault_root = Path(vault_root)
@@ -56,7 +64,7 @@ def discover_candidates(vault_root):
 
 
 def _attendee_tokens(attendees):
-    return {a.lower() for a in attendees}
+    return {a.lower() for a in attendees} - OWNER_ALIASES
 
 
 def _person_matches(slug, tokens):
@@ -64,7 +72,7 @@ def _person_matches(slug, tokens):
 
 
 def _title_words(title):
-    return set(WORD.findall(title.lower()))
+    return set(WORD.findall(title.lower())) - STOPWORDS
 
 
 def classify_meeting(title, attendees, candidates):
