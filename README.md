@@ -1,36 +1,34 @@
 # etc — declarative macOS
 
-This repo IS the machine. One `flake.nix` plus a handful of small nix modules
-declare everything: CLI tools, GUI apps, shell config, dotfiles, and macOS
-settings. Apply the repo to the machine with one command; roll back with one
-command. Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
+My personal declarative system configruation.  Desing should be that for the most part you clone this repo, apple to the machine with one command,
+and Robert is your father's brother.
+Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
 [home-manager](https://github.com/nix-community/home-manager) on top of
 [Determinate Nix](https://determinate.systems/).
 
 ```
 ~/etc/
-├── flake.nix                  # front door: inputs + one mkHost line per machine
+├── flake.nix                  # main file. mkHost for machine specific design.
 ├── flake.lock                 # exact pinned versions of everything (committed)
 ├── nix/
 │   ├── darwin/                # system-level (applies to the whole Mac)
 │   │   ├── core.nix           #   machine identity, nix/Determinate handshake
-│   │   ├── homebrew.nix       #   GUI apps (casks) + App Store apps, declared
+│   │   ├── homebrew.nix       #   GUI apps (casks) + App Store apps
 │   │   └── macos-defaults.nix #   Finder/Dock/keyboard/etc settings
 │   └── home/                  # user-level (applies to $USER)
 │       ├── default.nix        #   entry point, imports the rest
 │       ├── packages.nix       #   every CLI tool & language runtime
 │       ├── shell.nix          #   zsh: aliases, env vars, PATH
 │       ├── git.nix            #   git + jujutsu
-│       ├── programs.nix       #   tools with managed config (starship, fzf, ...)
+│       ├── programs.nix       #   tools with "home" managed config (starship, fzf, ...)
 │       └── dotfiles.nix       #   config files: nix-managed vs live-editable
-├── dotfiles/                  # raw config files, referenced from the nix modules
+├── dotfiles/                  # raw config files, referenced from the nix modules.
 ├── ai/                        # agent instructions (AGENTS.md) + handcrafted skills
 ├── bin/                       # personal scripts (on PATH)
 └── secrets.zsh                # API keys — git-ignored, sourced by zsh
 ```
 
 Every `.nix` file opens with a comment explaining the nix concept it uses.
-Read them in the order listed above and you've had the tour.
 
 ## Daily operations
 
@@ -44,10 +42,11 @@ Read them in the order listed above and you've had the tour.
 | Update everything | `cd ~/etc && nix flake update && drs` (commit the new `flake.lock`) |
 | Undo the last switch | `sudo darwin-rebuild --rollback` |
 | See switch history | `darwin-rebuild --list-generations` |
-| Free disk space | `sudo determinate-nixd gc` |
+| Free disk space | `sudo ` |
 
 **The golden rule:** nix only sees files git knows about. After creating a new
-file, `git add` it or the build fails with a misleading "path does not exist".
+file, `git add` it or the build fails with a misleading "path does not exist". 
+Edited files will be applied with warnings.
 
 ### Editing config files
 
@@ -133,7 +132,7 @@ Determinate Nix owns the nix installation itself; nix-darwin is told hands-off
 - nix settings (extra substituters, trusted users) go in
   `/etc/nix/nix.custom.conf` by hand — not in nix-darwin options.
 - Upgrade nix itself: `sudo determinate-nixd upgrade`
-- Garbage-collect: `sudo determinate-nixd gc`
+- Garbage-collect: `sudo nix-collect-garbage`
 
 ## Homebrew's remaining job
 
@@ -141,8 +140,8 @@ Homebrew handles only what nixpkgs can't: GUI apps (casks), Mac App Store
 apps (via `mas`), and five formulae that aren't packaged in nixpkgs. The full
 list lives in `nix/darwin/homebrew.nix` with `cleanup = "zap"` — anything
 brew-installed that isn't declared there gets uninstalled on the next `drs`.
-So: to try something quickly, `brew install foo` works, but declare it or
-lose it.
+So: to try something quickly, `brew install foo` works, but declare it if you
+want to keep it around.
 
 ## Troubleshooting
 
@@ -150,7 +149,7 @@ lose it.
 - **A tool resolves to the wrong version** → `which -a <tool>`; nix paths
   (`/etc/profiles/per-user/...`) must come before `/opt/homebrew/bin`.
 - **Something broke after an update** → `sudo darwin-rebuild --rollback`,
-  then investigate at leisure. Generations are the safety net.
+  then investigate at your liesure.  That's one of the whole points.
 - **Home-manager refuses to overwrite a file** → something created a real
   file where it wants a symlink. Move it aside, or check for `*.hm-backup`
   leftovers from the automatic backup.
