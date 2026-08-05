@@ -12,7 +12,7 @@
 # repo skills wired up by nix/home/skills.nix). A missing repo only warns —
 # it must never fail the activation (the repo may not be cloned everywhere).
 #
-# Runs on every `drs` (home-manager activation hook in nix/home/skills.nix)
+# Runs on every rebuild (home-manager activation hook in nix/home/skills.nix)
 # and after every skill-add. Idempotent; prunes links it created whose skill
 # is gone; never touches real dirs or links it doesn't own.
 

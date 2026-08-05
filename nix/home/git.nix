@@ -4,15 +4,27 @@
 # programs.git writes ~/.config/git/config (git's XDG location). NO global
 # user identity is set here, on purpose — identity stays per-repo.
 # =============================================================================
-{ pkgs, ... }:
+{ pkgs, isDarwin, ... }:
+let
+  # The only platform-specific thing about git here. pinentry-mac draws the
+  # native macOS passphrase dialog and can reach the keychain; on linux there
+  # is no desktop declared yet, so pinentry-curses (prompts in the terminal
+  # that invoked gpg) is the choice that works over ssh and in a tty alike.
+  # Revisit if/when a display server lands: pinentry-gnome3 or pinentry-qt.
+  pinentry =
+    if isDarwin then
+      "${pkgs.pinentry_mac}/bin/pinentry-mac"
+    else
+      "${pkgs.pinentry-curses}/bin/pinentry-curses";
+in
 {
   # gpg-agent for gcrypt: pinentry path is pinned to the nix store and
-  # regenerated on every `drs`, so it never goes stale (was hardcoded to a
+  # regenerated on every rebuild, so it never goes stale (was hardcoded to a
   # dead /opt/homebrew path after the brew→nix migration).
   home.file.".gnupg/gpg-agent.conf".text = ''
     default-cache-ttl 600
     max-cache-ttl 7200
-    pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac
+    pinentry-program ${pinentry}
   '';
 
   programs.git = {

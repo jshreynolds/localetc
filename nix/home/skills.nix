@@ -4,12 +4,12 @@
 # ~/.agents/skills is THE skills directory (the cross-tool "agents standard"):
 #   - repo skills (ai/skills/<name>) are live-linked into it below. readDir
 #     enumerates them at eval time, so there is no list to maintain — a new
-#     skill is: create the directory, `git add`, `drs`. Edits to an existing
+#     skill is: create the directory, `git add`, rebuild. Edits to an existing
 #     skill apply instantly (live links, no rebuild).
 #   - external skills are installed next to them by ai/skill-add
 #     (`npx skills add -g` targets ~/.agents/skills already).
 #   - external skill REPOS (e.g. work's mgmt_agent_skills) are linked in by
-#     ai/skill-sync at activation time, not here: `drs` evaluates the flake
+#     ai/skill-sync at activation time, not here: a rebuild evaluates the flake
 #     purely, so nix can't readDir outside this repo — and activation-time
 #     linking means a missing repo just warns instead of failing the build.
 #
@@ -20,15 +20,20 @@
 #     ai/skill-sync mirrors ~/.agents/skills there — on every activation
 #     (hook below) and after every skill-add.
 # =============================================================================
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  work,
+  ...
+}:
 let
   etc = "${config.home.homeDirectory}/etc";
   live = config.lib.file.mkOutOfStoreSymlink;
   repoSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../ai/skills);
-  # external skill repos, linked by skill-sync at activation (see header)
-  skillRepos = [
-    "${config.home.homeDirectory}/tech/engineering_mgmt/mgmt_agent_skills"
-  ];
+  # external skill repos, linked by skill-sync at activation (see header).
+  # Work-only: a personal machine has no clone of it, and skill-sync would
+  # just warn — but not asking for it at all is clearer than a warning.
+  skillRepos = lib.optional work "${config.home.homeDirectory}/tech/engineering_mgmt/mgmt_agent_skills";
 in
 {
   # ~/.agents/skills/<name> → ~/etc/ai/skills/<name>, one link per repo skill.

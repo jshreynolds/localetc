@@ -5,10 +5,10 @@
 # lives here — that is the point.
 #
 # SCOPE, deliberately: linux containers, so this validates the shell scripts,
-# python tests, nix formatting and skill metadata. It does NOT build
-# `darwinConfigurations` — that needs a macOS runner plus nix-darwin. Green
-# here means "the code in this repo is sound", NOT "this config switches
-# cleanly on a mac".
+# python tests, nix formatting and skill metadata. It builds NEITHER host
+# configuration — `darwinConfigurations` needs a macOS runner plus nix-darwin,
+# and `nixosConfigurations` needs real hardware config. Green here means "the
+# code in this repo is sound", NOT "this config switches cleanly on a machine".
 
 name: checks
 

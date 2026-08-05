@@ -7,7 +7,7 @@
 # Two flavors:
 #
 # 1. NIX-MANAGED: the file is copied into the read-only /nix/store and
-#    symlinked into place. Edit the file in this repo, then `drs` to apply.
+#    symlinked into place. Edit the file in this repo, then rebuild to apply.
 #    Right for configs only *you* write and the app only *reads*.
 #
 # 2. LIVE SYMLINKS (mkOutOfStoreSymlink): the symlink points straight back
@@ -29,7 +29,7 @@ let
   live = config.lib.file.mkOutOfStoreSymlink;
 in
 {
-  # ---- nix-managed (edit in repo → drs) -------------------------------------
+  # ---- nix-managed (edit in repo → rebuild) ---------------------------------
   xdg.configFile."alacritty".source = ../../dotfiles/config/alacritty;
   xdg.configFile."ghostty".source = ../../dotfiles/config/ghostty;
   xdg.configFile."zellij".source = ../../dotfiles/config/zellij;

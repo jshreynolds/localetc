@@ -8,10 +8,11 @@ rather than by lists being kept in sync — see flake.nix, which reads the very
 same manifest.
 
 SCOPE LIMIT, on purpose: these run in a linux container, so they cover the
-shell scripts, python tests, nix formatting and skill metadata. They cannot
-build `darwinConfigurations` — that needs macOS plus nix-darwin, i.e. a macOS
-runner. A green run here means "the code in this repo is sound", NOT "this
-config switches cleanly on a mac".
+shell scripts, python tests, nix formatting and skill metadata. They build
+NEITHER host configuration — `darwinConfigurations` needs macOS plus
+nix-darwin, and `nixosConfigurations` needs a real nix/nixos/hardware.nix and
+an hour of build time. A green run here means "the code in this repo is sound",
+NOT "this config switches cleanly on a machine".
 
 Usage:
     dagger call all --source=.              # every check, in parallel

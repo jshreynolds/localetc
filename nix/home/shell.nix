@@ -1,16 +1,22 @@
 # =============================================================================
 # shell.nix — zsh: aliases, environment variables, PATH, startup snippets.
 #
-# home-manager generates ~/.zshrc from this file.
+# home-manager generates ~/.zshrc from this file (plus the platform's own
+# nix/home/{darwin,linux} additions, which are merged in on top).
+#
+# Everything here is platform-neutral. The macOS-specific layer — brew's PATH,
+# gcloud, /Applications paths, the `drs` alias — is nix/home/darwin/shell.nix.
 #
 # PATH layering (important):
-#   1. nix paths come FIRST — wired in by nix-darwin's /etc/zshrc
-#   2. home.sessionPath entries are APPENDED — including /opt/homebrew/bin,
-#      so anything still living in brew loses to its nix replacement.
+#   1. nix paths come FIRST — wired in by the /etc/zshrc that nix-darwin (or
+#      NixOS) generates
+#   2. home.sessionPath entries are APPENDED
+#   On macOS /opt/homebrew/bin is appended even later, by hand, so anything
+#   still living in brew loses to its nix replacement — see darwin/shell.nix.
 #   If brew ever mysteriously wins, check with `which -a <tool>`; the usual
 #   suspect is macOS path_helper (/etc/zprofile) reordering login shells.
 # =============================================================================
-{ lib, ... }:
+{ ... }:
 {
   programs.zsh = {
     enable = true;
@@ -25,11 +31,12 @@
       # -- convenience --------------------------------------------------------
       editalias = "nvim ~/etc/nix/home/shell.nix"; # aliases live HERE now
       xml = "xmllint --format -";
-      xcrmdd = "rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*";
       zelliful = "zellij attach --create beautiful";
 
       # -- nix ----------------------------------------------------------------
-      drs = "sudo darwin-rebuild switch --flake ~/etc"; # apply this repo to the machine
+      # The rebuild alias is platform-specific: `drs` on macOS
+      # (darwin-rebuild), `nrs` on NixOS (nixos-rebuild). See the platform
+      # shell modules.
 
       # -- git ----------------------------------------------------------------
       "ga." = "git add .";
@@ -49,39 +56,18 @@
       k = "kubectl";
     };
 
-    # Startup snippets for ~/.zshrc. mkOrder controls placement: 500 ≈ "very
-    # early" — the corporate profile must load before everything else.
-    # (Only mkOrder in this repo.)
-    initContent = lib.mkMerge [
-      (lib.mkOrder 500 ''
-        # Sinch corporate profile — must stay first
-        test -e "/Library/Application Support/Sinch/profile.zsh" && \
-          source "/Library/Application Support/Sinch/profile.zsh"
-      '')
-      ''
-        setopt extendedglob
-        bindkey "^A" beginning-of-line
-        bindkey "^E" end-of-line
+    # Default order (1000) — the base layer, alongside home-manager's own
+    # generated tool integrations. The platform modules position themselves
+    # around it with explicit mkOrder; see nix/home/darwin/shell.nix.
+    initContent = ''
+      setopt extendedglob
+      bindkey "^A" beginning-of-line
+      bindkey "^E" end-of-line
 
-        # Secrets (git-ignored). API keys must NEVER go into nix config —
-        # everything nix manages ends up world-readable in /nix/store.
-        [ -f "$HOME/etc/secrets.zsh" ] && source "$HOME/etc/secrets.zsh"
-
-        # brew, APPENDED manually — home.sessionPath entries end up in front
-        # of the nix paths, and brew must lose to nix (see header comment)
-        export PATH="$PATH:/opt/homebrew/bin"
-
-        # gcloud (installed as a brew cask — see homebrew.nix for why)
-        [ -f /opt/homebrew/share/google-cloud-sdk/path.zsh.inc ] && \
-          source /opt/homebrew/share/google-cloud-sdk/path.zsh.inc
-        [ -f /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc ] && \
-          source /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc
-
-        # conda init (anaconda not currently installed; uncomment if it returns)
-        # export ANACONDA_HOME=/opt/homebrew/anaconda3
-        # [ -x "$ANACONDA_HOME/bin/conda" ] && eval "$("$ANACONDA_HOME/bin/conda" shell.zsh hook)"
-      ''
-    ];
+      # Secrets (git-ignored). API keys must NEVER go into nix config —
+      # everything nix manages ends up world-readable in /nix/store.
+      [ -f "$HOME/etc/secrets.zsh" ] && source "$HOME/etc/secrets.zsh"
+    '';
   };
 
   # Environment variables, set once per login session.
@@ -89,13 +75,11 @@
   #  starship's config lives at ~/.config/starship.toml via programs.nix.)
   home.sessionVariables = {
     MANWIDTH = "80";
-    RSYNC_RSH = "/usr/bin/ssh";
     MCFLY_RESULTS = "50";
 
     # opt out of tracking/telemetry
     DOTNET_CLI_TELEMETRY_OPTOUT = "true";
     NEXT_TELEMETRY_DISABLED = "1";
-    HOMEBREW_NO_ANALYTICS = "1";
 
     # java
     MAVEN_OPTS = "--enable-native-access=ALL-UNNAMED";
@@ -108,16 +92,5 @@
   home.sessionPath = [
     "$HOME/etc/bin"
     "$HOME/.local/bin" # cursor agent CLI et al.
-    # NOTE: no $HOME/.rd/bin. Rancher Desktop's copies of docker/nerdctl sat
-    # ahead of the nix profile and shadowed the declared docker-client, so the
-    # binary in use was an undeclared, unpinned artifact — while the engine
-    # behind it was colima all along. Container tooling comes from
-    # nix/home/packages.nix only.
-    "$HOME/.lmstudio/bin" # lm studio CLI (lms)
-    "/Applications/Muesli.app/Contents/MacOS"
-    "/Applications/Obsidian.app/Contents/MacOS"
-    # NOTE: /opt/homebrew/bin is deliberately NOT here — sessionPath entries
-    # land in front of the nix paths, and brew must come after nix. It's
-    # appended in initContent above instead.
   ];
 }

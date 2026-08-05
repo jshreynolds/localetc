@@ -1,21 +1,28 @@
 {
   # ===========================================================================
-  # flake.nix — entrypoint of this machine's configuration.
+  # flake.nix — entrypoint of every machine's configuration.
   #
   # A *flake* is nix's way of saying: "here are my dependencies (inputs) and
   # here is what I produce (outputs)", with every dependency pinned to an
   # exact commit in flake.lock. Same lock file = same system, every time.
   #
+  # TWO PLATFORMS, ONE HOME. macOS machines are built by nix-darwin
+  # (`darwinConfigurations`) and Linux machines by NixOS (`nixosConfigurations`),
+  # but BOTH mount the same home-manager config from nix/home — so the shell,
+  # tools, dotfiles and agent skills are identical everywhere. The only
+  # per-platform code lives in nix/darwin, nix/nixos, nix/home/darwin and
+  # nix/home/linux. See mkDarwinHost / mkNixosHost below.
+  #
   # This repo is assumed to live at ~/etc on every machine (the live dotfile
-  # symlinks and the drs alias depend on that).
+  # symlinks and the rebuild aliases depend on that).
   #
   # Daily driver commands:
-  #   sudo darwin-rebuild switch --flake ~/etc     # apply config changes (alias: drs)
-  #   nix flake update                             # update all pinned inputs, then drs
-  #   darwin-rebuild --list-generations            # see history; every switch is undoable
+  #   macOS  sudo darwin-rebuild switch --flake ~/etc   # alias: drs
+  #   NixOS  sudo nixos-rebuild  switch --flake ~/etc   # alias: nrs
+  #   nix flake update                                  # update pinned inputs, then rebuild
   # ===========================================================================
 
-  description = "declarative macOS: nix-darwin + home-manager";
+  description = "declarative machines: nix-darwin + NixOS, one home-manager";
 
   inputs = {
     # The nix package collection. "nixpkgs-unstable" is the rolling branch —
@@ -23,6 +30,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     # nix-darwin manages macOS itself: system settings, homebrew, launchd.
+    # (NixOS needs no equivalent input — its modules ship inside nixpkgs.)
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     # "follows" means: use OUR nixpkgs above, not nix-darwin's own copy,
     # so the whole system is built from one package set.
@@ -41,28 +49,43 @@
       home-manager,
     }:
     let
-      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       lib = nixpkgs.lib;
+
+      # Systems this repo can be evaluated for. Darwin hosts are all Apple
+      # Silicon; the linux entries cover a NixOS machine on either arch (and
+      # keep `nix flake check` honest about the shared home modules — an
+      # accidentally darwin-only package in nix/home/ fails to evaluate here,
+      # on a mac, long before it reaches the linux box).
+      systems = [
+        "aarch64-darwin"
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forAllSystems = f: lib.genAttrs systems f;
 
       # ci/checks.list is the registry: one line per check, `<name> <tools>...`.
       # Parsed here at eval time (pure — just readFile) so this file never
       # carries its own copy of the list, and `nix flake check` cannot disagree
       # with `dagger call all` about which checks exist.
-      checkRegistry =
+      #
+      # Parsed once, resolved per system: the file gives *names*, and
+      # checkRegistry turns those names into packages from one system's pkgs.
+      checkEntries =
         let
           fieldsOf = line: builtins.filter (f: f != "") (lib.splitString " " line);
           isEntry = fields: fields != [ ] && !(lib.hasPrefix "#" (builtins.head fields));
-          entries = builtins.filter isEntry (
-            map fieldsOf (lib.splitString "\n" (builtins.readFile ./ci/checks.list))
-          );
         in
+        builtins.filter isEntry (map fieldsOf (lib.splitString "\n" (builtins.readFile ./ci/checks.list)));
+
+      checkRegistry =
+        pkgs:
         builtins.listToAttrs (
           map (fields: {
             name = builtins.head fields;
             # Tools are nixpkgs attribute names, so the same column that feeds
             # `<pinned-nixpkgs>#<attr>` in the container feeds pkgs.<attr> here.
             value = map (attr: pkgs.${attr}) (builtins.tail fields);
-          }) entries
+          }) checkEntries
         );
 
       # Every check is `ci/run-checks.sh <subcommand>`. The script discovers
@@ -72,7 +95,7 @@
       # tests, were silently unchecked). The same script is what .dagger runs,
       # so container CI and `nix flake check` cannot disagree.
       mkCheck =
-        name: tools:
+        pkgs: name: tools:
         pkgs.runCommand "localetc-${name}" { nativeBuildInputs = tools; } ''
           cd ${self}
           export PYTHONPYCACHEPREFIX="$TMPDIR/pycache"
@@ -80,18 +103,60 @@
           touch $out
         '';
 
-      # ---- one machine = one mkHost call -----------------------------------
+      # ---- the four facts every module is allowed to know ---------------------
+      # Declared once per machine below, derived here, then handed to every
+      # module (system AND home) via specialArgs. No other file hardcodes who
+      # you are, where your home is, or which platform it sits on:
+      #
+      #   username  the account short name (`whoami`)
+      #   hostname  the machine name
+      #   home      /Users/<username> on macOS, /home/<username> on NixOS
+      #   isDarwin  platform switch; picks nix/home/darwin vs nix/home/linux
+      #   work      is this a corporate machine? gates the Sinch shell profile
+      #             and the work skills repo. Personal machines set false.
+      #
+      # isDarwin is passed explicitly rather than read from
+      # `pkgs.stdenv.isDarwin` because nix/home/default.nix needs it in
+      # `imports`, which is evaluated before pkgs is safely available there.
+      # One fact, one source: modules use this arg everywhere, never stdenv.
+
+      # home-manager is wired identically under nix-darwin and NixOS — same
+      # option names, same home modules — so the block lives here once instead
+      # of being copy-pasted into both builders.
+      hmModule =
+        {
+          username,
+          home,
+          isDarwin,
+          work,
+        }:
+        {
+          home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
+          home-manager.useUserPackages = true; # install user pkgs to /etc/profiles/per-user/<username>
+          home-manager.users.${username} = import ./nix/home;
+          # same idea as specialArgs, but for the home modules
+          home-manager.extraSpecialArgs = {
+            inherit
+              username
+              home
+              isDarwin
+              work
+              ;
+          };
+          # If a real file already sits where home-manager wants to place a
+          # symlink, rename it to *.hm-backup instead of aborting activation.
+          home-manager.backupFileExtension = "hm-backup";
+        };
+
+      # ---- one macOS machine = one mkDarwinHost call --------------------------
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
-      # `username` must equal the macOS account short name (`whoami`).
       # `casks`/`brews`/`masApps` are OPTIONAL host-specific apps, merged onto
       # the shared lists in nix/darwin/homebrew.nix.
-      # Everything else (home directory, module wiring) is derived from these
-      # facts and passed to every module via specialArgs — no other file
-      # hardcodes who or where you are.
-      mkHost =
+      mkDarwinHost =
         {
           hostname,
           username,
+          work ? true,
           casks ? [ ],
           brews ? [ ],
           masApps ? { },
@@ -105,7 +170,13 @@
           # specialArgs makes these available as arguments in every darwin
           # module: `{ username, hostname, home, hostCasks, ... }:`
           specialArgs = {
-            inherit username hostname home;
+            inherit
+              username
+              hostname
+              home
+              work
+              ;
+            isDarwin = true;
             hostCasks = casks;
             hostBrews = brews;
             hostMasApps = masApps;
@@ -122,34 +193,79 @@
             # home-manager runs as a nix-darwin module so ONE `darwin-rebuild
             # switch` updates system config AND user config together.
             home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
-              home-manager.useUserPackages = true; # install user pkgs to /etc/profiles/per-user/<username>
-              home-manager.users.${username} = import ./nix/home;
-              # same idea as specialArgs, but for the home modules
-              home-manager.extraSpecialArgs = { inherit username home; };
-              # If a real file already sits where home-manager wants to place a
-              # symlink, rename it to *.hm-backup instead of aborting activation.
-              home-manager.backupFileExtension = "hm-backup";
-            }
+            (hmModule {
+              inherit username home work;
+              isDarwin = true;
+            })
+          ];
+        };
+
+      # ---- one NixOS machine = one mkNixosHost call ---------------------------
+      # `system` is explicit here (macs are all aarch64-darwin; a linux box can
+      # be either arch). Unlike macOS, nix itself is NixOS's job — there is no
+      # Determinate handshake to make, see nix/nixos/core.nix.
+      mkNixosHost =
+        {
+          hostname,
+          username,
+          system,
+          work ? false,
+        }:
+        let
+          home = "/home/${username}";
+        in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+
+          specialArgs = {
+            inherit
+              username
+              hostname
+              home
+              work
+              ;
+            isDarwin = false;
+          };
+
+          modules = [
+            ./nix/nixos/core.nix
+            ./nix/nixos/hardware.nix # PLACEHOLDER until the machine exists — see the file
+
+            # Same deal as darwin: ONE `nixos-rebuild switch` updates system
+            # config AND user config together.
+            home-manager.nixosModules.home-manager
+            (hmModule {
+              inherit username home work;
+              isDarwin = false;
+            })
           ];
         };
     in
     {
       # `nix fmt` formats every .nix file in the repo with the official style.
-      formatter.aarch64-darwin = pkgs.nixfmt-tree;
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
       # One derivation per line of ci/checks.list, so `nix build
-      # .#checks.aarch64-darwin.python` and `ci/run-checks.sh python` are the
-      # same thing. Each stays its own derivation: they run in parallel and
-      # cache independently. Adding a check here means adding a line there.
-      checks.aarch64-darwin = lib.mapAttrs mkCheck checkRegistry;
+      # .#checks.<system>.python` and `ci/run-checks.sh python` are the same
+      # thing. Each stays its own derivation: they run in parallel and cache
+      # independently. Adding a check here means adding a line there.
+      #
+      # The checks are platform-agnostic (shellcheck, python, nixfmt), so every
+      # system gets the same set and `nix flake check` works on mac and NixOS
+      # alike.
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        lib.mapAttrs (mkCheck pkgs) (checkRegistry pkgs)
+      );
 
       # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
       # machine's hostname — so each machine needs its own line here.
       darwinConfigurations = {
         # work machine
-        "mac-nl-josrey" = mkHost {
+        "mac-nl-josrey" = mkDarwinHost {
           hostname = "mac-nl-josrey";
           username = "josrey";
           casks = [
@@ -158,7 +274,7 @@
         };
 
         # work machine
-        "mac-nl-josrey-2" = mkHost {
+        "mac-nl-josrey-2" = mkDarwinHost {
           hostname = "mac-nl-josrey-2";
           username = "josrey";
           casks = [
@@ -167,15 +283,39 @@
         };
 
         # personal machine
-        "playbook" = mkHost {
+        "playbook" = mkDarwinHost {
           hostname = "playbook";
           username = "jreynolds";
+          work = false;
           casks = [
             "lulu"
             "scrivener"
             "surfshark"
             "thinkorswim"
           ];
+        };
+      };
+
+      # `nixos-rebuild switch --flake ~/etc` picks the attribute matching the
+      # machine's hostname, same as darwin above. Separate namespace, so a
+      # machine mid-migration can legitimately appear in both.
+      nixosConfigurations = {
+        # personal machine, being migrated off macOS.
+        #
+        # THREE FACTS TO CONFIRM before the first switch:
+        #   1. `system` — x86_64-linux for a PC, aarch64-linux for Apple
+        #      Silicon under Asahi.
+        #   2. `hostname`/`username` — must match the installed system.
+        #   3. nix/nixos/hardware.nix — replace the placeholder with the real
+        #      `nixos-generate-config` output, or this will not boot.
+        # Until then this entry earns its keep by proving nix/home evaluates on
+        # linux (`nix eval .#nixosConfigurations.playbook...`), which is what
+        # keeps darwin-only packages out of the shared modules.
+        "playbook" = mkNixosHost {
+          hostname = "playbook";
+          username = "jreynolds";
+          system = "x86_64-linux";
+          work = false;
         };
       };
     };

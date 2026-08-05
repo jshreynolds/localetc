@@ -1,12 +1,18 @@
 # =============================================================================
-# packages.nix — every CLI tool and language runtime, from nixpkgs.
+# packages.nix — every CROSS-PLATFORM CLI tool and language runtime, from
+# nixpkgs. This list lands on macOS and NixOS alike.
 #
 # Nix concept: `home.packages` is just a list of packages to put on PATH
-# (via /etc/profiles/per-user/<username>/bin). Add a line, run `drs`, done.
+# (via /etc/profiles/per-user/<username>/bin). Add a line, rebuild, done.
 # Find package names with:  nix search nixpkgs <thing>
 #
-# A few tools intentionally live in brew because nixpkgs doesn't carry them —
-# see the `brews` list in nix/darwin/homebrew.nix.
+# Anything that only builds or only makes sense on ONE platform goes in
+# nix/home/darwin/packages.nix or nix/home/linux/default.nix instead. A
+# darwin-only package added here breaks the linux hosts at eval time, which is
+# what the linux entries in flake.nix's `systems` are there to catch.
+#
+# A few macOS tools intentionally live in brew because nixpkgs doesn't carry
+# them — see the `brews` list in nix/darwin/homebrew.nix.
 #
 # Tools where home-manager also manages config/shell-wiring (git, starship,
 # fzf, neovim, ...) are NOT listed here — they live in programs.nix / git.nix,
@@ -56,13 +62,11 @@
     k9s
 
     # -- containers & kubernetes ----------------------------------------------
-    colima # container runtime (docker context points here)
-    docker-client # just the docker CLI — colima provides the engine
+    # The CLI is cross-platform; the ENGINE behind it is not. macOS gets colima
+    # (nix/home/darwin/packages.nix), NixOS gets virtualisation.docker.enable
+    # (nix/nixos/core.nix).
+    docker-client # just the docker CLI
     docker-compose
-    # ~/.docker/config.json sets credsStore=osxkeychain, and docker-client does
-    # not ship the helper. It used to arrive undeclared via Rancher Desktop's
-    # ~/.rd/bin; without it every registry pull fails to resolve credentials.
-    docker-credential-helpers
     (lib.hiPrio kubectl) # win the /bin/kubectl collision against minikube's bundled copy
     kubernetes-helm # the `helm` CLI
     minikube # ships its own kubectl; kubectl above takes precedence
@@ -79,8 +83,9 @@
 
     # -- security --------------------------------------------------------------
     gnupg
-    # pinentry_mac is pulled into the closure by git.nix's gpg-agent.conf
-    # (pinentry-program references its store path directly).
+    # The pinentry program is pulled into the closure by git.nix's
+    # gpg-agent.conf, which references its store path directly — and it differs
+    # per platform (pinentry-mac vs pinentry-curses), so it is chosen there.
 
     # -- AI CLIs ---------------------------------------------------------------
     # NOTE: nixpkgs can lag fast-moving AI tools by days-to-weeks, and their
@@ -93,9 +98,7 @@
     opencode
     pi-coding-agent # `pi` from pi.dev (@earendil-works) — self-update won't work (read-only store)
 
-    # -- apple dev ---------------------------------------------------------------
-    xcbeautify
-    xcodegen
+    # (apple dev tooling — xcbeautify, xcodegen — is in darwin/packages.nix)
 
     # -- language runtimes (deliberately lean) -----------------------------------
     # Only runtimes used ad-hoc at a shell prompt or for system scripting live
