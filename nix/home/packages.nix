@@ -49,7 +49,7 @@
     httpie
     jq
     yq-go # mikefarah's Go yq (nixpkgs `yq` is a different python tool)
-    nixfmt # load-bearing: `ci/run-checks.sh nixfmt` shells out to this
+    nixfmt # `ci/run-checks.sh nixfmt` shells out to this
     pre-commit
     shellcheck
     tokei
@@ -67,6 +67,9 @@
     # (nix/nixos/core.nix).
     docker-client # just the docker CLI
     docker-compose
+    # ~/.docker/config.json sets credsStore=osxkeychain, and docker-client does
+    # not ship the helper. It used to arrive undeclared via Rancher Desktop's
+    docker-credential-helpers
     (lib.hiPrio kubectl) # win the /bin/kubectl collision against minikube's bundled copy
     kubernetes-helm # the `helm` CLI
     minikube # ships its own kubectl; kubectl above takes precedence
@@ -91,9 +94,7 @@
     # NOTE: nixpkgs can lag fast-moving AI tools by days-to-weeks, and their
     # self-update commands can't write to the read-only store. If lag ever
     # hurts, move the offender to `brews` in homebrew.nix (one-line change).
-    aichat
     gemini-cli
-    python313Packages.huggingface-hub # `hf` CLI (was: pip install huggingface_hub)
     llm
     opencode
     pi-coding-agent # `pi` from pi.dev (@earendil-works) — self-update won't work (read-only store)
