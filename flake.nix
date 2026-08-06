@@ -273,15 +273,6 @@
           ];
         };
 
-        # work machine
-        "mac-nl-josrey-2" = mkDarwinHost {
-          hostname = "mac-nl-josrey-2";
-          username = "josrey";
-          casks = [
-            # apps only THIS machine gets (shared list: nix/darwin/homebrew.nix)
-          ];
-        };
-
         # personal machine
         "playbook" = mkDarwinHost {
           hostname = "playbook";
@@ -311,12 +302,19 @@
         # Until then this entry earns its keep by proving nix/home evaluates on
         # linux (`nix eval .#nixosConfigurations.playbook...`), which is what
         # keeps darwin-only packages out of the shared modules.
-        "playbook" = mkNixosHost {
-          hostname = "playbook";
+        "nixos" = mkNixosHost {
+          hostname = "nixos";
           username = "jreynolds";
           system = "x86_64-linux";
           work = false;
         };
+        "nacos" = mkNixosHost {
+          hostname = "nacos";
+          username = "jreynolds";
+          system = "aarch64-linux";
+          work = false;
+        };
+
       };
     };
 }

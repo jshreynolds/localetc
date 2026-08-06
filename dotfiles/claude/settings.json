@@ -37,5 +37,7 @@
   "effortLevel": "high",
   "tui": "default",
   "showThinkingSummaries": true,
-  "model": "opus"
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  }
 }
