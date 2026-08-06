@@ -15,12 +15,12 @@
 #   - GUI apps: the macs get them from homebrew casks (nix/darwin/homebrew.nix);
 #     the NixOS equivalents belong in a desktop module that does not exist yet.
 # =============================================================================
-{ ... }:
+{ repo, ... }:
 {
   programs.zsh.shellAliases = {
     # The counterpart to `drs` on the macs. Deliberately a different name —
     # `drs` means darwin-rebuild, and an alias that lies about which tool it
     # runs is worse than two names to remember.
-    nrs = "sudo nixos-rebuild switch --flake ~/etc";
+    nrs = "sudo nixos-rebuild switch --flake ${repo}";
   };
 }

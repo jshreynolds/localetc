@@ -23,11 +23,11 @@
 {
   config,
   lib,
+  repo,
   work,
   ...
 }:
 let
-  etc = "${config.home.homeDirectory}/etc";
   live = config.lib.file.mkOutOfStoreSymlink;
   repoSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../ai/skills);
   # external skill repos, linked by skill-sync at activation (see header).
@@ -36,18 +36,18 @@ let
   skillRepos = lib.optional work "${config.home.homeDirectory}/tech/engineering_mgmt/mgmt_agent_skills";
 in
 {
-  # ~/.agents/skills/<name> → ~/etc/ai/skills/<name>, one link per repo skill.
+  # ~/.agents/skills/<name> → <repo>/ai/skills/<name>, one link per repo skill.
   # The directory itself stays REAL so skill-add can install alongside these.
   home.file = lib.mapAttrs' (
     name: _:
     lib.nameValuePair ".agents/skills/${name}" {
-      source = live "${etc}/ai/skills/${name}";
+      source = live "${repo}/ai/skills/${name}";
     }
   ) repoSkills;
 
   # Link external skill repos into ~/.agents/skills, then mirror everything
   # into ~/.claude/skills, once the links above exist.
   home.activation.skillSync = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    run ${etc}/ai/skill-sync ${lib.escapeShellArgs skillRepos}
+    run ${repo}/ai/skill-sync ${lib.escapeShellArgs skillRepos}
   '';
 }

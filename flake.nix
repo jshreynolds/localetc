@@ -13,8 +13,9 @@
   # per-platform code lives in nix/darwin, nix/nixos, nix/home/darwin and
   # nix/home/linux. See mkDarwinHost / mkNixosHost below.
   #
-  # This repo is assumed to live at ~/etc on every machine (the live dotfile
-  # symlinks and the rebuild aliases depend on that).
+  # Where this repo is checked out is a per-machine fact, `repo`, set in the
+  # mkDarwinHost / mkNixosHost calls below and passed to every module. Default
+  # ~/etc; change it there, nowhere else.
   #
   # Daily driver commands:
   #   macOS  sudo darwin-rebuild switch --flake ~/etc   # alias: drs
@@ -103,7 +104,7 @@
           touch $out
         '';
 
-      # ---- the four facts every module is allowed to know ---------------------
+      # ---- the facts every module is allowed to know --------------------------
       # Declared once per machine below, derived here, then handed to every
       # module (system AND home) via specialArgs. No other file hardcodes who
       # you are, where your home is, or which platform it sits on:
@@ -111,6 +112,7 @@
       #   username  the account short name (`whoami`)
       #   hostname  the machine name
       #   home      /Users/<username> on macOS, /home/<username> on NixOS
+      #   repo      absolute path of this checkout, e.g. /Users/josrey/etc
       #   isDarwin  platform switch; picks nix/home/darwin vs nix/home/linux
       #   work      is this a corporate machine? gates the Sinch shell profile
       #             and the work skills repo. Personal machines set false.
@@ -120,6 +122,10 @@
       # `imports`, which is evaluated before pkgs is safely available there.
       # One fact, one source: modules use this arg everywhere, never stdenv.
 
+      # Default checkout directory under $HOME. The only place the name is
+      # written; a host that clones elsewhere passes its own absolute `repo`.
+      repoDirName = "etc";
+
       # home-manager is wired identically under nix-darwin and NixOS — same
       # option names, same home modules — so the block lives here once instead
       # of being copy-pasted into both builders.
@@ -127,6 +133,7 @@
         {
           username,
           home,
+          repo,
           isDarwin,
           work,
         }:
@@ -139,6 +146,7 @@
             inherit
               username
               home
+              repo
               isDarwin
               work
               ;
@@ -156,14 +164,13 @@
         {
           hostname,
           username,
+          home ? "/Users/${username}",
+          repo ? "${home}/${repoDirName}",
           work ? true,
           casks ? [ ],
           brews ? [ ],
           masApps ? { },
         }:
-        let
-          home = "/Users/${username}";
-        in
         nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
 
@@ -174,6 +181,7 @@
               username
               hostname
               home
+              repo
               work
               ;
             isDarwin = true;
@@ -194,7 +202,12 @@
             # switch` updates system config AND user config together.
             home-manager.darwinModules.home-manager
             (hmModule {
-              inherit username home work;
+              inherit
+                username
+                home
+                repo
+                work
+                ;
               isDarwin = true;
             })
           ];
@@ -209,11 +222,10 @@
           hostname,
           username,
           system,
+          home ? "/home/${username}",
+          repo ? "${home}/${repoDirName}",
           work ? false,
         }:
-        let
-          home = "/home/${username}";
-        in
         nixpkgs.lib.nixosSystem {
           inherit system;
 
@@ -222,6 +234,7 @@
               username
               hostname
               home
+              repo
               work
               ;
             isDarwin = false;
@@ -235,7 +248,12 @@
             # config AND user config together.
             home-manager.nixosModules.home-manager
             (hmModule {
-              inherit username home work;
+              inherit
+                username
+                home
+                repo
+                work
+                ;
               isDarwin = false;
             })
           ];

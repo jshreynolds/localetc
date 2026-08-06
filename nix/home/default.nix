@@ -11,8 +11,8 @@
 # If a module here fails to evaluate on linux, that is the bug the linux
 # systems in flake.nix exist to surface.
 #
-# `username`, `home`, `isDarwin` and `work` arrive via extraSpecialArgs —
-# defined once, in the mkDarwinHost / mkNixosHost call in flake.nix.
+# `username`, `home`, `repo`, `isDarwin` and `work` arrive via extraSpecialArgs
+# — defined once, in the mkDarwinHost / mkNixosHost call in flake.nix.
 # =============================================================================
 {
   username,

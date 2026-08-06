@@ -11,7 +11,7 @@
 #    Right for configs only *you* write and the app only *reads*.
 #
 # 2. LIVE SYMLINKS (mkOutOfStoreSymlink): the symlink points straight back
-#    into ~/etc, NOT the store. Edits apply instantly, and the app itself
+#    into the checkout, NOT the store. Edits apply instantly, and the app itself
 #    can write through the link. The cost: nix can't guarantee the content —
 #    git shows the drift instead.
 #
@@ -23,9 +23,8 @@
 # ai/AGENTS.md is the single source of base instructions for ALL agents;
 # each tool's expected filename is just another pointer to it.
 # =============================================================================
-{ config, ... }:
+{ config, repo, ... }:
 let
-  etc = "${config.home.homeDirectory}/etc";
   live = config.lib.file.mkOutOfStoreSymlink;
 in
 {
@@ -37,26 +36,22 @@ in
   # (starship → programs.nix; git → git.nix)
 
   # ---- agent base instructions (one source, many names) ----------------------
-  home.file.".claude/CLAUDE.md".source = live "${etc}/ai/AGENTS.md";
-  home.file.".codex/AGENTS.md".source = live "${etc}/ai/AGENTS.md";
-  home.file.".agents/AGENTS.md".source = live "${etc}/ai/AGENTS.md";
+  home.file.".claude/CLAUDE.md".source = live "${repo}/ai/AGENTS.md";
+  home.file.".codex/AGENTS.md".source = live "${repo}/ai/AGENTS.md";
+  home.file.".agents/AGENTS.md".source = live "${repo}/ai/AGENTS.md";
   # (XP.md merged into the `codemode` skill; skills are wired in skills.nix)
 
   # ---- live tool configs (apps write through these) --------------------------
   # Only the config FILE is linked — the surrounding directory stays real so
   # tool-written state (gh's hosts.yml auth token, zed's themes, opencode's
   # node_modules) never lands in this repo.
-  xdg.configFile."gh/config.yml".source = live "${etc}/dotfiles/config/gh/config.yml";
+  xdg.configFile."gh/config.yml".source = live "${repo}/dotfiles/config/gh/config.yml";
   xdg.configFile."opencode/opencode.jsonc".source =
-    live "${etc}/dotfiles/config/opencode/opencode.jsonc";
-  xdg.configFile."zed/settings.json".source = live "${etc}/dotfiles/config/zed/settings.json";
-
-  # Claude Code writes `model` back on every /model switch — a live link keeps
-  # that working and lets git show the drift (rest of ~/.claude stays real).
-  home.file.".claude/settings.json".source = live "${etc}/dotfiles/claude/settings.json";
+    live "${repo}/dotfiles/config/opencode/opencode.jsonc";
+  xdg.configFile."zed/settings.json".source = live "${repo}/dotfiles/config/zed/settings.json";
 
   # Status-line script referenced by settings.json's statusLine.command. Live
   # link so the executable bit on the repo file carries through and edits apply
   # instantly (Claude only executes it, never writes it).
-  home.file.".claude/statusline.sh".source = live "${etc}/dotfiles/claude/statusline.sh";
+  home.file.".claude/statusline.sh".source = live "${repo}/dotfiles/claude/statusline.sh";
 }

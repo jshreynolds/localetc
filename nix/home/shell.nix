@@ -16,7 +16,7 @@
 #   If brew ever mysteriously wins, check with `which -a <tool>`; the usual
 #   suspect is macOS path_helper (/etc/zprofile) reordering login shells.
 # =============================================================================
-{ ... }:
+{ repo, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -29,7 +29,7 @@
       "..." = "cd ../..";
 
       # -- convenience --------------------------------------------------------
-      editalias = "nvim ~/etc/nix/home/shell.nix"; # aliases live HERE now
+      editalias = "nvim ${repo}/nix/home/shell.nix"; # aliases live HERE now
       xml = "xmllint --format -";
       zelliful = "zellij attach --create beautiful";
 
@@ -66,7 +66,7 @@
 
       # Secrets (git-ignored). API keys must NEVER go into nix config —
       # everything nix manages ends up world-readable in /nix/store.
-      [ -f "$HOME/etc/secrets.zsh" ] && source "$HOME/etc/secrets.zsh"
+      [ -f "${repo}/secrets.zsh" ] && source "${repo}/secrets.zsh"
     '';
   };
 
@@ -90,7 +90,7 @@
 
   # Extra PATH entries — APPENDED after nix paths (see header comment).
   home.sessionPath = [
-    "$HOME/etc/bin"
+    "${repo}/bin"
     "$HOME/.local/bin" # cursor agent CLI et al.
   ];
 }

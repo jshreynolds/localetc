@@ -8,11 +8,16 @@
 # `work` arrives via extraSpecialArgs (see flake.nix): the corporate profile is
 # sourced on work machines only, never on the personal one.
 # =============================================================================
-{ lib, work, ... }:
+{
+  lib,
+  repo,
+  work,
+  ...
+}:
 {
   programs.zsh = {
     shellAliases = {
-      drs = "sudo darwin-rebuild switch --flake ~/etc"; # apply this repo to the machine
+      drs = "sudo darwin-rebuild switch --flake ${repo}"; # apply this repo to the machine
       xcrmdd = "rm -v -rf $HOME/Library/Developer/Xcode/DerivedData/*";
     };
 
@@ -58,7 +63,7 @@
   #
   # mkAfter, not a bare list: module merge order is not the `imports` order, and
   # without it these landed AHEAD of the shared entries in nix/home/shell.nix.
-  # $HOME/etc/bin holds your own scripts and must win over an app bundle.
+  # The repo's bin/ holds your own scripts and must win over an app bundle.
   home.sessionPath = lib.mkAfter [
     # NOTE: no $HOME/.rd/bin. Rancher Desktop's copies of docker/nerdctl sat
     # ahead of the nix profile and shadowed the declared docker-client, so the
