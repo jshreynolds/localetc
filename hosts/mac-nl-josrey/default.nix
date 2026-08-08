@@ -12,8 +12,4 @@
 {
   hostname = "mac-nl-josrey";
   username = "josrey";
-
-  casks = [
-    # apps only THIS machine gets (shared list: nix/darwin/homebrew.nix)
-  ];
 }
