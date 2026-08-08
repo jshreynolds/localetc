@@ -4,6 +4,9 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
@@ -36,8 +39,5 @@
   },
   "effortLevel": "high",
   "tui": "default",
-  "showThinkingSummaries": true,
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
-  }
+  "showThinkingSummaries": true
 }
