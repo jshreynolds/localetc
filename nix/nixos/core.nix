@@ -9,8 +9,8 @@
 #   NixOS  nix is just another NixOS service. Settings, the daemon and garbage
 #          collection are all declared here and applied by `nixos-rebuild`.
 #
-# `username`, `hostname`, and `home` arrive via specialArgs — they are defined
-# exactly once, in the mkNixosHost call in flake.nix.
+# `username`, `hostname`, and `home` arrive via specialArgs — they are written
+# exactly once, in hosts/<hostname>/default.nix.
 # =============================================================================
 {
   pkgs,

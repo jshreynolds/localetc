@@ -8,13 +8,21 @@ Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
 
 ```
 ~/etc/
-├── flake.nix                  # main file. mkHost for machine specific design.
+├── flake.nix                  # main file: the two mkHost functions + the roster
 ├── flake.lock                 # exact pinned versions of everything (committed)
-├── nix/
+├── hosts/                     # ONE MACHINE = ONE FOLDER
+│   ├── playbook/default.nix   #   its facts: username, work, its own casks
+│   └── nixos/                 #   a NixOS box
+│       ├── default.nix        #     same, plus `system` and `modules`
+│       └── hardware.nix       #     disks/bootloader for THIS machine only
+├── nix/                       # everything SHARED by all machines
 │   ├── darwin/                # system-level (applies to the whole Mac)
 │   │   ├── core.nix           #   machine identity, nix/Determinate handshake
 │   │   ├── homebrew.nix       #   GUI apps (casks) + App Store apps
 │   │   └── macos-defaults.nix #   Finder/Dock/keyboard/etc settings
+│   ├── nixos/                 # system-level (applies to the whole NixOS box)
+│   │   ├── core.nix           #   machine identity, nix settings, ssh, docker
+│   │   └── apps.nix           #   GUI apps (the counterpart to homebrew.nix)
 │   └── home/                  # user-level (applies to $USER)
 │       ├── default.nix        #   entry point, imports the rest
 │       ├── packages.nix       #   every CLI tool & language runtime
@@ -102,15 +110,30 @@ lands world-readable in `/nix/store`.
    ```
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
-6. **Declare the machine** in `flake.nix` — one block, then commit:
+6. **Declare the machine** — one folder, one line, then commit.
+
+   `hosts/its-hostname/default.nix` (plain data, no `{ pkgs, ... }:` header):
    ```nix
-   "its-hostname" = mkHost {
+   {
      hostname = "its-hostname";   # scutil --get LocalHostName
      username = "its-username";   # whoami
-     casks = [ ];                 # apps only this machine gets (optional,
-     masApps = { };               #  merged onto the shared homebrew.nix lists)
-   };
+     work = true;                 # optional; false on a personal machine
+     casks = [ ];                 # optional, merged onto the shared
+     brews = [ ];                 #  lists in nix/darwin/homebrew.nix
+     masApps = { };
+     modules = [ ];               # optional: .nix files in THIS folder
+   }
    ```
+   Then one line in `flake.nix`, under `darwinConfigurations`:
+   ```nix
+   "its-hostname" = mkDarwinHost (import ./hosts/its-hostname);
+   ```
+   The attribute name must equal `hostname` — that is what `darwin-rebuild`
+   matches on. `git add hosts/its-hostname` or the build won't see it.
+
+   A NixOS box is the same, with `mkNixosHost` under `nixosConfigurations`:
+   it takes `system` (`x86_64-linux` / `aarch64-linux`) and `apps` instead of
+   `casks`, and always needs its own `hardware.nix` in `modules`.
 7. **Create `~/etc/secrets.zsh`** with the API keys (copy from a password
    manager, not from another machine's shell history).
 8. **First switch** (quotes matter — zsh eats the `#`):

@@ -12,8 +12,9 @@
 # NOT here on purpose, pending an actual desktop on the machine:
 #   - clipboard: dotfiles/config/zellij/config.kdl hardcodes `pbcopy`. Fix it
 #     when a display server exists (wl-copy on wayland, xclip on X11).
-#   - GUI apps: the macs get them from homebrew casks (nix/darwin/homebrew.nix);
-#     the NixOS equivalents belong in a desktop module that does not exist yet.
+#   - the desktop itself: display server, compositor, session, tiling. The GUI
+#     APPS now have a home (nix/nixos/apps.nix, the counterpart to the macs'
+#     casks), but nothing draws them yet.
 # =============================================================================
 { repo, ... }:
 {

@@ -11,8 +11,8 @@
 #
 # ---- REPLACE ME, on the machine, before the first switch --------------------
 #   sudo nixos-generate-config --show-hardware-config \
-#     > ~/etc/nix/nixos/hardware.nix
-#   git add nix/nixos/hardware.nix      # nix only sees files git knows about
+#     > ~/etc/hosts/nacos/hardware.nix
+#   git add hosts/nacos/hardware.nix    # nix only sees files git knows about
 #   sudo nixos-rebuild switch --flake ~/etc
 #
 # That output supersedes this file entirely — kernel modules, real filesystem
@@ -20,8 +20,9 @@
 # does not carry them (it usually does not): systemd-boot for UEFI, or
 # boot.loader.grub for legacy BIOS.
 #
-# Once every machine has a real one, this becomes per-host:
-# nix/nixos/hosts/<hostname>/hardware.nix, imported from the mkNixosHost call.
+# This file describes ONE machine and lives in that machine's folder — it
+# reaches the system through `modules` in ./default.nix. Every NixOS host has
+# its own; nothing here is shared.
 # =============================================================================
 {
   boot.loader.systemd-boot.enable = true;

@@ -5,8 +5,8 @@
 # you, like `pkgs` or `config`) to an attribute set of option values. nix-darwin
 # merges all modules together and builds the system from the result.
 #
-# `username`, `hostname`, and `home` arrive via specialArgs — they are defined
-# exactly once, in the mkHost call in flake.nix.
+# `username`, `hostname`, and `home` arrive via specialArgs — they are written
+# exactly once, in hosts/<hostname>/default.nix.
 # =============================================================================
 {
   pkgs,

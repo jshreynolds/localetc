@@ -10,7 +10,7 @@ same manifest.
 SCOPE LIMIT, on purpose: these run in a linux container, so they cover the
 shell scripts, python tests, nix formatting and skill metadata. They build
 NEITHER host configuration — `darwinConfigurations` needs macOS plus
-nix-darwin, and `nixosConfigurations` needs a real nix/nixos/hardware.nix and
+nix-darwin, and `nixosConfigurations` needs a real hosts/<hostname>/hardware.nix and
 an hour of build time. A green run here means "the code in this repo is sound",
 NOT "this config switches cleanly on a machine".
 

@@ -8,8 +8,12 @@
 # macOS; casks are the pragmatic standard).
 #
 # This file holds the SHARED lists every machine gets. Host-specific apps are
-# declared per machine in flake.nix (mkHost's casks/brews/masApps) and arrive
-# here as hostCasks/hostBrews/hostMasApps to be merged in.
+# declared per machine in hosts/<hostname>/default.nix (casks/brews/masApps)
+# and arrive here as hostCasks/hostBrews/hostMasApps to be merged in.
+#
+# The NixOS side of the same job is nix/nixos/apps.nix — same role (the shared
+# GUI app list, plus per-host extras), different mechanism (plain nixpkgs, no
+# brew). It records which casks below have no Linux equivalent, and why.
 # =============================================================================
 {
   hostCasks ? [ ],

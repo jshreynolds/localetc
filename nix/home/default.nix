@@ -12,7 +12,7 @@
 # systems in flake.nix exist to surface.
 #
 # `username`, `home`, `repo`, `isDarwin` and `work` arrive via extraSpecialArgs
-# — defined once, in the mkDarwinHost / mkNixosHost call in flake.nix.
+# — written once, in hosts/<hostname>/default.nix.
 # =============================================================================
 {
   username,

@@ -13,9 +13,12 @@
   # per-platform code lives in nix/darwin, nix/nixos, nix/home/darwin and
   # nix/home/linux. See mkDarwinHost / mkNixosHost below.
   #
-  # Where this repo is checked out is a per-machine fact, `repo`, set in the
-  # mkDarwinHost / mkNixosHost calls below and passed to every module. Default
-  # ~/etc; change it there, nowhere else.
+  # ONE MACHINE = ONE FOLDER. Every per-machine fact lives in
+  # hosts/<hostname>/default.nix — username, work-or-not, its own casks/apps,
+  # and any nix that belongs to that machine alone. This file holds only the
+  # two mkHost functions and the roster at the bottom. Where the repo is checked
+  # out is such a fact too (`repo`, default ~/etc); change it there, nowhere
+  # else.
   #
   # Daily driver commands:
   #   macOS  sudo darwin-rebuild switch --flake ~/etc   # alias: drs
@@ -105,9 +108,10 @@
         '';
 
       # ---- the facts every module is allowed to know --------------------------
-      # Declared once per machine below, derived here, then handed to every
-      # module (system AND home) via specialArgs. No other file hardcodes who
-      # you are, where your home is, or which platform it sits on:
+      # Written once per machine in hosts/<hostname>/default.nix, derived here,
+      # then handed to every module (system AND home) via specialArgs. No other
+      # file hardcodes who you are, where your home is, or which platform it
+      # sits on:
       #
       #   username  the account short name (`whoami`)
       #   hostname  the machine name
@@ -160,6 +164,8 @@
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
       # `casks`/`brews`/`masApps` are OPTIONAL host-specific apps, merged onto
       # the shared lists in nix/darwin/homebrew.nix.
+      # `modules` is the escape hatch for nix that belongs to ONE machine — see
+      # the note at the `++ modules` line below.
       mkDarwinHost =
         {
           hostname,
@@ -170,6 +176,7 @@
           casks ? [ ],
           brews ? [ ],
           masApps ? { },
+          modules ? [ ],
         }:
         nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
@@ -210,13 +217,24 @@
                 ;
               isDarwin = true;
             })
-          ];
+          ]
+          # The host's OWN nix files, from its folder under hosts/. Appended
+          # last, so a machine can override anything above it.
+          #
+          # Reading note: an attribute name never shadows the enclosing scope
+          # (this set is not `rec`), so `modules` on THIS line is the function
+          # argument declared above — not the list being defined.
+          ++ modules;
         };
 
       # ---- one NixOS machine = one mkNixosHost call ---------------------------
       # `system` is explicit here (macs are all aarch64-darwin; a linux box can
       # be either arch). Unlike macOS, nix itself is NixOS's job — there is no
       # Determinate handshake to make, see nix/nixos/core.nix.
+      #
+      # `apps` is the counterpart of mkDarwinHost's `casks`: OPTIONAL
+      # host-specific GUI apps, given as nixpkgs attribute names and merged onto
+      # the shared list in nix/nixos/apps.nix.
       mkNixosHost =
         {
           hostname,
@@ -225,6 +243,8 @@
           home ? "/home/${username}",
           repo ? "${home}/${repoDirName}",
           work ? false,
+          apps ? [ ],
+          modules ? [ ],
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -238,11 +258,14 @@
               work
               ;
             isDarwin = false;
+            hostApps = apps;
           };
 
           modules = [
             ./nix/nixos/core.nix
-            ./nix/nixos/hardware.nix # PLACEHOLDER until the machine exists — see the file
+            ./nix/nixos/apps.nix
+            # hardware.nix is NOT here: it describes one machine, so it lives
+            # in that machine's folder and arrives via `modules` below.
 
             # Same deal as darwin: ONE `nixos-rebuild switch` updates system
             # config AND user config together.
@@ -256,7 +279,11 @@
                 ;
               isDarwin = false;
             })
-          ];
+          ]
+          # The host's OWN nix files — on this platform that always includes
+          # its hardware.nix. Same note as mkDarwinHost above: `modules` here
+          # is the function argument, not the list being defined.
+          ++ modules;
         };
     in
     {
@@ -279,60 +306,30 @@
         lib.mapAttrs (mkCheck pkgs) (checkRegistry pkgs)
       );
 
-      # `darwin-rebuild switch --flake ~/etc` picks the attribute matching the
-      # machine's hostname — so each machine needs its own line here.
+      # ---- the machine roster -------------------------------------------------
+      # ONE MACHINE = ONE FOLDER under hosts/, plus one line here.
+      #
+      # `hosts/<hostname>/default.nix` is plain data — the facts above, written
+      # out for that machine. `import` reads it; the mkHost function turns it
+      # into a system. Anything else in the folder is ordinary nix, pulled in by
+      # that file's `modules` list (every NixOS host's hardware.nix, for one).
+      #
+      # The attribute name must equal the machine's hostname: that is what
+      # `darwin-rebuild switch --flake ~/etc` matches on.
+
       darwinConfigurations = {
         # work machine
-        "mac-nl-josrey" = mkDarwinHost {
-          hostname = "mac-nl-josrey";
-          username = "josrey";
-          casks = [
-            # apps only THIS machine gets (shared list: nix/darwin/homebrew.nix)
-          ];
-        };
-
+        "mac-nl-josrey" = mkDarwinHost (import ./hosts/mac-nl-josrey);
         # personal machine
-        "playbook" = mkDarwinHost {
-          hostname = "playbook";
-          username = "jreynolds";
-          work = false;
-          casks = [
-            "lulu"
-            "scrivener"
-            "surfshark"
-            "thinkorswim"
-          ];
-        };
+        "playbook" = mkDarwinHost (import ./hosts/playbook);
       };
 
-      # `nixos-rebuild switch --flake ~/etc` picks the attribute matching the
-      # machine's hostname, same as darwin above. Separate namespace, so a
+      # Same as darwin above, for `nixos-rebuild`. Separate namespace, so a
       # machine mid-migration can legitimately appear in both.
       nixosConfigurations = {
-        # personal machine, being migrated off macOS.
-        #
-        # THREE FACTS TO CONFIRM before the first switch:
-        #   1. `system` — x86_64-linux for a PC, aarch64-linux for Apple
-        #      Silicon under Asahi.
-        #   2. `hostname`/`username` — must match the installed system.
-        #   3. nix/nixos/hardware.nix — replace the placeholder with the real
-        #      `nixos-generate-config` output, or this will not boot.
-        # Until then this entry earns its keep by proving nix/home evaluates on
-        # linux (`nix eval .#nixosConfigurations.playbook...`), which is what
-        # keeps darwin-only packages out of the shared modules.
-        "nixos" = mkNixosHost {
-          hostname = "nixos";
-          username = "jreynolds";
-          system = "x86_64-linux";
-          work = false;
-        };
-        "nacos" = mkNixosHost {
-          hostname = "nacos";
-          username = "jreynolds";
-          system = "aarch64-linux";
-          work = false;
-        };
-
+        # personal machine, being migrated off macOS
+        "nixos" = mkNixosHost (import ./hosts/nixos);
+        "nacos" = mkNixosHost (import ./hosts/nacos);
       };
     };
 }
