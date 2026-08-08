@@ -67,8 +67,11 @@
     # (nix/nixos/core.nix).
     docker-client # just the docker CLI
     docker-compose
-    # ~/.docker/config.json sets credsStore=osxkeychain, and docker-client does
-    # not ship the helper. It used to arrive undeclared via Rancher Desktop's
+    # Cross-platform, but it is macOS that needs it: ~/.docker/config.json sets
+    # credsStore=osxkeychain and docker-client does not ship the helper. It used
+    # to arrive undeclared via Rancher Desktop's ~/.rd/bin; without it every
+    # registry pull fails to resolve credentials. Declared here rather than in
+    # darwin/packages.nix so there is one line, not two.
     docker-credential-helpers
     (lib.hiPrio kubectl) # win the /bin/kubectl collision against minikube's bundled copy
     kubernetes-helm # the `helm` CLI

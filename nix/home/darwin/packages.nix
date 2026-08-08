@@ -16,11 +16,7 @@
     # -- containers ------------------------------------------------------------
     colima # the docker ENGINE on macOS (docker context points here).
     # NixOS uses virtualisation.docker.enable instead; the docker CLI itself is
-    # cross-platform and lives in the shared packages.nix.
-
-    # ~/.docker/config.json sets credsStore=osxkeychain, and docker-client does
-    # not ship the helper. It used to arrive undeclared via Rancher Desktop's
-    # ~/.rd/bin; without it every registry pull fails to resolve credentials.
-    docker-credential-helpers
+    # cross-platform and lives in the shared packages.nix — as does
+    # docker-credential-helpers, which builds on both platforms.
   ];
 }
