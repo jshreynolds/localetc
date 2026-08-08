@@ -26,10 +26,36 @@ describe a multi-click menu path as the primary answer when a shortcut
 exists.
 
 If you're not certain a shortcut is current for the user's installed
-version, say so in one clause and verify via WebSearch/WebFetch against
-Kdenlive's own docs (kdenlive.org/en/user-manual, invent.kde.org/multimedia/kdenlive)
-rather than guessing from memory — shortcuts have moved between major
-versions (notably around the 20.x → 21.x/23.x timeline-tool rework).
+version, say so in one clause and verify against Kdenlive's own docs rather
+than guessing from memory — shortcuts have moved between major versions
+(notably around the 20.x → 21.x/23.x timeline-tool rework). See "Manual
+cache" below for where to look first.
+
+## Manual cache — check local before you search
+
+This skill keeps a local cache of Kdenlive manual pages at
+`resources/manual_cache/` (relative to this skill's own directory — the "Base
+directory for this skill" path shown when the skill loads).
+
+1. **Before** calling WebSearch/WebFetch for anything manual-worthy (a
+   shortcut, an effect, a workflow step), `Grep` `resources/manual_cache/` for the
+   topic. If a matching page is already cached, `Read` it and answer from
+   that — no network call.
+2. If nothing matches, fetch the relevant page(s) from
+   `docs.kdenlive.org` with WebFetch, using a prompt that asks for the full
+   page content verbatim (not a summary) — e.g. "Return the complete page
+   content as markdown, preserving all shortcuts/tables/steps, do not
+   summarize or omit anything." Then `Write` that content to
+   `resources/manual_cache/<slug>.md`, where `<slug>` is the last path segment of
+   the doc URL (e.g. `.../effects_and_filters/audio.html` → `audio.md`).
+   Answer the user from the freshly fetched content.
+3. Treat cached files as a mirror of the manual, not hand-edited notes —
+   don't add commentary to them. If a cached page looks stale for the
+   user's version (a shortcut it lists doesn't match what they're seeing),
+   refetch and overwrite the file rather than patching around it.
+4. `invent.kde.org/multimedia/kdenlive` (source repo, for anything not
+   covered by the manual, e.g. very recent changes) is not cached — query
+   it live when needed.
 
 ## The macOS gotcha (this user is on Darwin)
 
