@@ -18,6 +18,18 @@ fmt_k() {
   }'
 }
 
+# format seconds-until epoch as "2h14m" / "45m", empty -> empty
+fmt_reset() {
+  local epoch="$1"
+  [ -z "$epoch" ] && return
+  local now delta
+  now="$(date +%s)"
+  delta=$((epoch - now))
+  [ "$delta" -le 0 ] && { printf 'now'; return; }
+  local h=$((delta / 3600)) m=$(((delta % 3600) / 60))
+  if [ "$h" -gt 0 ]; then printf '%dh%dm' "$h" "$m"; else printf '%dm' "$m"; fi
+}
+
 # ANSI colors (disable by exporting NO_COLOR)
 if [ -z "${NO_COLOR:-}" ]; then
   c_reset=$'\033[0m'; c_dim=$'\033[90m'; c_bold=$'\033[1m'
@@ -67,6 +79,11 @@ cache_fresh="$(get '.context_window.current_usage.input_tokens')"
 cache_write="$(get '.context_window.current_usage.cache_creation_input_tokens')"
 cache_read="$(get '.context_window.current_usage.cache_read_input_tokens')"
 
+rl_5h_pct="$(get '.rate_limits.five_hour.used_percentage')"
+rl_5h_reset="$(get '.rate_limits.five_hour.resets_at')"
+rl_7d_pct="$(get '.rate_limits.seven_day.used_percentage')"
+rl_7d_reset="$(get '.rate_limits.seven_day.resets_at')"
+
 cost="$(get '.cost.total_cost_usd')"
 [ -z "$cost" ] && cost="$(get '.cost_usd')"
 [ -n "$cost" ] && cost="$(awk -v c="$cost" 'BEGIN { printf "%.2f", c }')"
@@ -110,6 +127,20 @@ if [ -n "$cache_read" ] || [ -n "$cache_write" ]; then
   # green > 70% hit > 30% > red
   cache_color="$(color_low "${cache_hit:-0}" 70 30)"
   parts+=("${c_dim}cache:${c_reset}${cache_color}${cache_hit:-0}%${c_reset} ${c_dim}(${cache_read_h:-0}rd/${cache_write_h:-0}wr)${c_reset}")
+fi
+
+if [ -n "$rl_5h_pct" ]; then
+  rl_5h_pct_r="$(awk -v p="$rl_5h_pct" 'BEGIN { printf "%d", p }')"
+  rl_5h_color="$(color_high "$rl_5h_pct_r" 50 80)"
+  rl_5h_reset_h="$(fmt_reset "$rl_5h_reset")"
+  parts+=("${c_dim}5h:${c_reset}${rl_5h_color}${rl_5h_pct_r}%${c_reset}${c_dim}${rl_5h_reset_h:+ (${rl_5h_reset_h})}${c_reset}")
+fi
+
+if [ -n "$rl_7d_pct" ]; then
+  rl_7d_pct_r="$(awk -v p="$rl_7d_pct" 'BEGIN { printf "%d", p }')"
+  rl_7d_color="$(color_high "$rl_7d_pct_r" 50 80)"
+  rl_7d_reset_h="$(fmt_reset "$rl_7d_reset")"
+  parts+=("${c_dim}7d:${c_reset}${rl_7d_color}${rl_7d_pct_r}%${c_reset}${c_dim}${rl_7d_reset_h:+ (${rl_7d_reset_h})}${c_reset}")
 fi
 
 [ -n "$cost" ] && parts+=("${c_dim}cost:${c_reset}${c_yellow}\$$cost${c_reset}")

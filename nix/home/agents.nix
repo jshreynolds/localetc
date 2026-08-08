@@ -1,5 +1,5 @@
 # =============================================================================
-# skills.nix — agent skills: one canonical home, every tool reads it.
+# agents.nix — agent skills + agent specs: one canonical home, every tool reads it.
 #
 # ~/.agents/skills is THE skills directory (the cross-tool "agents standard"):
 #   - repo skills (ai/skills/<name>) are live-linked into it below. readDir
@@ -19,6 +19,12 @@
 #     (a whole-dir symlink breaks: claude writes .system metadata through it).
 #     ai/skill-sync mirrors ~/.agents/skills there — on every activation
 #     (hook below) and after every skill-add.
+#
+# Claude Code subagents (ai/agents/<name>.md) are a separate, simpler case:
+# each is a single markdown file (frontmatter + prompt), read directly from
+# ~/.claude/agents/*.md — there's no cross-tool standard location to funnel
+# through and no directory-metadata problem, so a direct live-link per file
+# is enough. No mirroring step needed.
 # =============================================================================
 {
   config,
@@ -30,6 +36,9 @@
 let
   live = config.lib.file.mkOutOfStoreSymlink;
   repoSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../ai/skills);
+  repoAgents = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".md" name) (
+    builtins.readDir ../../ai/agents
+  );
   # external skill repos, linked by skill-sync at activation (see header).
   # Work-only: a personal machine has no clone of it, and skill-sync would
   # just warn — but not asking for it at all is clearer than a warning.

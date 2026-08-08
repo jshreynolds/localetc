@@ -50,6 +50,10 @@ in
     live "${repo}/dotfiles/config/opencode/opencode.jsonc";
   xdg.configFile."zed/settings.json".source = live "${repo}/dotfiles/config/zed/settings.json";
 
+  # Claude writes through this (e.g. `/model` saving a default), so it needs
+  # the live flavor, not a read-only store copy.
+  home.file.".claude/settings.json".source = live "${repo}/dotfiles/claude/settings.json";
+
   # Status-line script referenced by settings.json's statusLine.command. Live
   # link so the executable bit on the repo file carries through and edits apply
   # instantly (Claude only executes it, never writes it).
