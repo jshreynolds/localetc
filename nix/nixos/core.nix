@@ -1,7 +1,10 @@
 # =============================================================================
-# core.nix — machine identity and the nix/NixOS fundamentals.
+# core.nix — the NixOS-ONLY half of machine identity and the nix fundamentals.
 #
-# The NixOS counterpart to nix/darwin/core.nix. Same job, one big difference:
+# Everything both platforms say identically — hostName, the user's home, zsh,
+# fonts, allowUnfree — is in nix/core.nix, which flake.nix imports alongside
+# this file. What remains below has no macOS counterpart, or means something
+# different there. The big one:
 #
 #   macOS  Determinate Nix owns the nix installation, so nix-darwin is told
 #          hands-off (`nix.enable = false`) and nix settings are hand-edited
@@ -9,24 +12,23 @@
 #   NixOS  nix is just another NixOS service. Settings, the daemon and garbage
 #          collection are all declared here and applied by `nixos-rebuild`.
 #
-# `username`, `hostname`, and `home` arrive via specialArgs — they are written
-# exactly once, in hosts/<hostname>/default.nix.
+# `username` arrives via specialArgs — written exactly once, in
+# hosts/<hostname>/default.nix.
 # =============================================================================
 {
   pkgs,
   username,
-  hostname,
-  home,
   ...
 }:
 {
-  networking.hostName = hostname;
   # DHCP + wifi via nmcli/nmtui. The desktop applet arrives with the desktop.
+  # (networking.hostName is shared — see nix/core.nix.)
   networking.networkmanager.enable = true;
 
+  # The rest of the account. `home` is set in nix/core.nix, because macOS needs
+  # that one line too.
   users.users.${username} = {
     isNormalUser = true;
-    inherit home;
     description = username;
     # wheel = sudo; networkmanager = manage wifi; docker = talk to the daemon
     # enabled below without sudo.
@@ -60,12 +62,6 @@
   # Hard-link identical files in the store. Cheap disk win, no downside.
   nix.optimise.automatic = true;
 
-  # ---- shell -----------------------------------------------------------------
-  # Generates /etc/zshrc so every zsh (login, ssh, scripts) gets nix paths and
-  # completions wired in before the user's own ~/.zshrc runs. Exactly what
-  # nix/darwin/core.nix does on the other platform.
-  programs.zsh.enable = true;
-
   # ---- containers ------------------------------------------------------------
   # The linux answer to colima on macOS: docker-client/compose/k9s come from the
   # shared nix/home/packages.nix, and this provides the engine they talk to.
@@ -78,21 +74,11 @@
     settings.PasswordAuthentication = false;
   };
 
-  # ---- locale & fonts --------------------------------------------------------
+  # ---- locale ----------------------------------------------------------------
   # NixOS defaults to UTC; a machine you sit in front of wants local time.
+  # (macOS gets both of these from the OS installer, not from nix.)
   time.timeZone = "Europe/Amsterdam";
   i18n.defaultLocale = "en_US.UTF-8";
-
-  # Same two nerd fonts the macs install, so terminal glyphs match everywhere.
-  fonts.packages = with pkgs; [
-    nerd-fonts.fira-code
-    nerd-fonts._3270
-  ];
-
-  # Some packages have non-open-source licenses (terraform is BUSL, for one).
-  # nixpkgs refuses to build them unless you opt in. home-manager inherits this
-  # because flake.nix sets useGlobalPkgs.
-  nixpkgs.config.allowUnfree = true;
 
   # Compatibility marker for NixOS's stateful defaults. Set to the release you
   # INSTALL from and then NEVER changed — it is not a version selector, and

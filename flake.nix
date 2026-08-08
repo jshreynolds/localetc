@@ -198,8 +198,9 @@
           };
 
           # Each module is a file handling exactly one concern. Start reading
-          # at nix/darwin/core.nix.
+          # at nix/core.nix, then nix/darwin/core.nix.
           modules = [
+            ./nix/core.nix # the options BOTH platforms set identically
             ./nix/darwin/core.nix
             ./nix/darwin/homebrew.nix
             ./nix/darwin/macos-defaults.nix
@@ -262,6 +263,7 @@
           };
 
           modules = [
+            ./nix/core.nix # the same shared file mkDarwinHost imports
             ./nix/nixos/core.nix
             ./nix/nixos/apps.nix
             # hardware.nix is NOT here: it describes one machine, so it lives

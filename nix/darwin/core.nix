@@ -1,18 +1,21 @@
 # =============================================================================
-# core.nix — machine identity and the nix/macOS fundamentals.
+# core.nix — the macOS-ONLY half of machine identity and the nix fundamentals.
 #
 # Nix concept: a *module* is just a function from `{ ... }` (things nix hands
 # you, like `pkgs` or `config`) to an attribute set of option values. nix-darwin
 # merges all modules together and builds the system from the result.
 #
-# `username`, `hostname`, and `home` arrive via specialArgs — they are written
-# exactly once, in hosts/<hostname>/default.nix.
+# Everything both platforms say identically — hostName, the user's home, zsh,
+# fonts, allowUnfree — is in nix/core.nix, which flake.nix imports alongside
+# this file. What remains below has no NixOS counterpart, or means something
+# different there.
+#
+# `username` and `hostname` arrive via specialArgs — they are written exactly
+# once, in hosts/<hostname>/default.nix.
 # =============================================================================
 {
-  pkgs,
   username,
   hostname,
-  home,
   ...
 }:
 {
@@ -30,29 +33,14 @@
   nix.enable = false;
 
   # nix-darwin needs to know which user owns user-scoped things
-  # (homebrew, system.defaults user domains, home-manager).
+  # (homebrew, system.defaults user domains, home-manager). No NixOS
+  # equivalent — there, "the user" is just an entry in users.users.
   system.primaryUser = username;
-  users.users.${username}.home = home;
 
-  # Machine name (ComputerName, LocalHostName, HostName in one place).
-  networking.hostName = hostname;
+  # The two EXTRA names macOS gives the same machine. networking.hostName is
+  # the shared one and lives in nix/core.nix.
   networking.computerName = hostname;
   networking.localHostName = hostname;
-
-  # nix-darwin generates /etc/zshrc so every zsh (login, ssh, scripts) gets
-  # nix paths and completions wired in before the user's own ~/.zshrc runs.
-  programs.zsh.enable = true;
-
-  # Fonts installed system-wide (into /Library/Fonts/Nix Fonts).
-  fonts.packages = with pkgs; [
-    nerd-fonts.fira-code
-    nerd-fonts._3270
-  ];
-
-  # Some packages have non-open-source licenses (terraform is BUSL, for one).
-  # nixpkgs refuses to build them unless you opt in. home-manager inherits
-  # this because flake.nix sets useGlobalPkgs.
-  nixpkgs.config.allowUnfree = true;
 
   # Compatibility marker for nix-darwin's internal state format. Set once at
   # install time and then NEVER changed — it is not a version selector.
