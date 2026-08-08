@@ -107,6 +107,49 @@
           touch $out
         '';
 
+      # ---- forcing evaluation of every host, without building it -------------
+      # `.dagger/src/checks` says outright that it never builds a host config
+      # (needs macOS, or an hour on real NixOS hardware) — a green `dagger call
+      # all` means the repo's OWN code is sound, not that a host switches
+      # cleanly. This closes part of that gap for `nix flake check`, which runs
+      # natively and can afford to ask the real question.
+      #
+      # A derivation's `.drvPath` is a string, known once nix has EVALUATED and
+      # INSTANTIATED it — referencing that string costs nothing to build (no
+      # sandbox network, no multi-hour NixOS closure), but surfaces exactly the
+      # "path does not exist" / assertion failures that would otherwise wait
+      # for `drs` on the real machine.
+      #
+      # Each host is checked under its OWN system only (`nix flake check`
+      # already scopes `checks.<system>` that way): a darwin host's modules are
+      # free to assert `stdenv.isDarwin`, so evaluating one under a foreign
+      # system's pkgs is not something to rely on, even where it happens to
+      # work today.
+      mkHostEvalCheck =
+        pkgs: name: toplevel:
+        pkgs.runCommand "localetc-hosteval-${name}" { } ''
+          : "${toplevel.drvPath}"
+          touch $out
+        '';
+
+      # { <hostname> = <toplevel derivation>; ... } across both platforms —
+      # darwinConfigurations' build output IS `.system`; nixosConfigurations'
+      # is `.config.system.build.toplevel`. Same shape, different name, same
+      # "look tempting to share, aren't" case nix/core.nix's header warns about.
+      hostToplevels =
+        (lib.mapAttrs (_: cfg: cfg.system) self.darwinConfigurations)
+        // (lib.mapAttrs (_: cfg: cfg.config.system.build.toplevel) self.nixosConfigurations);
+
+      hostSystems =
+        (lib.mapAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system) self.darwinConfigurations)
+        // (lib.mapAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system) self.nixosConfigurations);
+
+      hostEvalChecks =
+        system: pkgs:
+        lib.mapAttrs' (
+          name: toplevel: lib.nameValuePair "hosteval-${name}" (mkHostEvalCheck pkgs name toplevel)
+        ) (lib.filterAttrs (name: _: hostSystems.${name} == system) hostToplevels);
+
       # ---- the facts every module is allowed to know --------------------------
       # Written once per machine in hosts/<hostname>/default.nix, derived here,
       # then handed to every module (system AND home) via specialArgs. No other
@@ -305,7 +348,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        lib.mapAttrs (mkCheck pkgs) (checkRegistry pkgs)
+        (lib.mapAttrs (mkCheck pkgs) (checkRegistry pkgs)) // (hostEvalChecks system pkgs)
       );
 
       # ---- the machine roster -------------------------------------------------
