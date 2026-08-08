@@ -125,8 +125,10 @@
     tilt
 
     # -- media -------------------------------------------------------------------
-    ffmpeg # default build carries afftdn + arnndn (native filters, no extra libs)
+    ffmpeg-full # afftdn + arnndn as the default build, plus the openal capture device
     # arnndn needs a .rnnn model at runtime — pinned in rnnoise-models.nix ($RNNOISE_MODEL)
+    # openal is what `podio bumper` records through: the avfoundation input in the
+    # default build silently drops 11-17% of a recording, which is audible as clicks.
 
     # -- misc --------------------------------------------------------------------
     cheat
