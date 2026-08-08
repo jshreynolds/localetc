@@ -41,13 +41,14 @@
     # CLI formulae that intentionally STAY in brew (everything else comes from
     # nixpkgs — see nix/home/packages.nix):
     brews = [
-      "mas" # Mac App Store CLI — required by masApps below
+      "mas" # Mac App Store CLI — required by masApps below; darwin-only in nixpkgs
+      "container" # Apple container runtime; darwin-only in nixpkgs, and a system
+      # VM runtime rather than a user tool — brew is the right installer
+      # Not in nixpkgs at all (checked against the pinned rev):
       "xcode-build-server"
       "dagger"
-      "herdr"
       "aiven-client"
       "zshdb"
-      "container" # Apple container runtime
     ]
     ++ hostBrews;
 
@@ -66,15 +67,15 @@
       "google-chrome"
       "microsoft-edge"
       # -- editors & IDEs ---------------------------------------------------
-      "visual-studio-code"
       "zed"
       # -- AI ---------------------------------------------------------------
+      # Only the GUI apps are here. The AI *CLIs* (claude-code, codex,
+      # copilot-cli) come from nixpkgs via nix/home/packages.nix now — one
+      # declaration for every machine instead of a cask here and a package in
+      # nix/nixos/apps.nix.
       "chatgpt"
       "claude"
-      "claude-code@latest"
-      "codex"
       "comfy"
-      "copilot-cli"
       "lm-studio"
       "ollama-app"
       # -- dev tools ----------------------------------------------------------

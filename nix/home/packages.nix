@@ -97,7 +97,11 @@
     # NOTE: nixpkgs can lag fast-moving AI tools by days-to-weeks, and their
     # self-update commands can't write to the read-only store. If lag ever
     # hurts, move the offender to `brews` in homebrew.nix (one-line change).
+    claude-code # was a cask + a NixOS app; nixpkgs builds it on both platforms
+    codex # "
+    github-copilot-cli # " (the `copilot-cli` cask)
     gemini-cli
+    herdr # agent multiplexer — was a brew, but nixpkgs has it on both platforms
     llm
     opencode
     pi-coding-agent # `pi` from pi.dev (@earendil-works) — self-update won't work (read-only store)

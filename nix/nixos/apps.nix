@@ -14,10 +14,6 @@
 # System-level (not home.packages) on purpose, to match the macs: casks are a
 # nix-darwin system concern there, so apps are a NixOS system concern here.
 #
-# NOT EVERY CASK HAS A LINUX ANSWER. The mapping, including the gaps, is
-# recorded inline below — a cask missing from this file should be findable here
-# with the reason, rather than looking like an oversight.
-#
 # PREREQUISITE: these are apps, and nothing on the NixOS side draws a desktop
 # yet — no display server, no compositor, no session. Installing them is
 # harmless in the meantime, but they are only *usable* once a desktop module
@@ -58,16 +54,12 @@
       google-chrome
 
       # -- editors & IDEs ---------------------------------------------------
-      vscode
       zed-editor
 
       # -- AI ---------------------------------------------------------------
-      # These three are casks on macOS but ordinary CLIs from nixpkgs here.
-      # They stay in THIS file rather than nix/home/packages.nix so the macs
-      # keep getting them from brew — one installer per platform, no collision.
-      claude-code
-      codex
-      github-copilot-cli
+      # (claude-code, codex, github-copilot-cli: ordinary CLIs, and nixpkgs
+      #  builds them on darwin too — so they moved to nix/home/packages.nix and
+      #  every machine gets them from one declaration)
       lmstudio
       ollama # the CLI/server; there is no Linux build of the ollama desktop app
       # (chatgpt, claude desktop: macOS-only, no Linux build exists)
@@ -94,7 +86,7 @@
         microsoft-edge
         discord
         dropbox
-        lens # the maintained Kubernetes IDE; openlens is not in nixpkgs
+        lens
       ]
     ++
       # Host-specific apps, declared per machine in hosts/<hostname>/default.nix
