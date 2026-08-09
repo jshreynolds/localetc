@@ -43,6 +43,15 @@
     # home-manager manages the user environment: packages, dotfiles, zsh.
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Apple Silicon (Asahi) support for NixOS: the patched kernel, GPU/mesa
+    # overlay, WiFi/firmware and the m1n1 -> u-boot boot chain. Only the
+    # aarch64 Mac hosts pull its module in (see hosts/nacos/boot.nix); it is a
+    # no-op for every other machine. `follows` keeps the whole system on our
+    # one nixpkgs, so the asahi mesa overlay patches the same mesa the desktop
+    # uses.
+    nixos-apple-silicon.url = "github:nix-community/nixos-apple-silicon";
+    nixos-apple-silicon.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -51,6 +60,7 @@
       nixpkgs,
       nix-darwin,
       home-manager,
+      nixos-apple-silicon,
     }:
     let
       lib = nixpkgs.lib;
@@ -303,6 +313,9 @@
               ;
             isDarwin = false;
             hostApps = apps;
+            # The Asahi flake input, for the aarch64 Mac hosts to import in
+            # their boot.nix. Handed to every NixOS host; the others ignore it.
+            appleSilicon = nixos-apple-silicon;
           };
 
           modules = [

@@ -17,6 +17,7 @@
 # =============================================================================
 {
   pkgs,
+  lib,
   username,
   ...
 }:
@@ -98,9 +99,9 @@
   # INSTALL from and then NEVER changed — it is not a version selector, and
   # bumping it can silently migrate service state (postgres data dirs, etc).
   #
-  # nixpad installed from 26.05 (its /etc/nixos carried this value); nacos, the
-  # other host sharing this file, is a not-yet-real placeholder, so one value
-  # serves both. A future host installed from a different release that needs to
-  # differ would override system.stateVersion in its own host module.
-  system.stateVersion = "26.05";
+  # nixpad installed from 26.05 (its /etc/nixos carried this value), so that is
+  # the shared default. It is `mkDefault` because the install release is
+  # per-machine: nacos installed from 26.11 and overrides this in its own
+  # hosts/nacos/boot.nix, and any future host that differs does the same.
+  system.stateVersion = lib.mkDefault "26.05";
 }
