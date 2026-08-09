@@ -28,8 +28,32 @@ exists.
 If you're not certain a shortcut is current for the user's installed
 version, say so in one clause and verify against Kdenlive's own docs rather
 than guessing from memory — shortcuts have moved between major versions
-(notably around the 20.x → 21.x/23.x timeline-tool rework). See "Manual
-cache" below for where to look first.
+(notably around the 20.x → 21.x/23.x timeline-tool rework). See "FAQ log"
+and "Manual cache" below for where to look first.
+
+## FAQ log — check this before anything else
+
+`FAQ.md` (next to this file, in the skill's own directory) is a running log
+of real questions this user has asked and the answers that were actually
+tracked down for them — including ones that needed real digging (manual
+cache search, WebSearch/WebFetch, or reasoning through undocumented
+behavior). It's the fastest path to a repeat question and the only source
+that captures answers the manual doesn't state outright (e.g. "no built-in
+feature for X, here's the closest workflow").
+
+1. On any manual-worthy question, `Grep`/skim `FAQ.md` **first**, before the
+   manual cache or the web. If it's already answered there, answer from it
+   directly — don't re-derive or re-search.
+2. After answering a question that required looking beyond the built-in
+   shortcut cheat-sheet below (manual cache lookup, WebSearch/WebFetch, or
+   nontrivial synthesis), append a new entry to `FAQ.md`:
+   `## <short topic>` heading, then `**Q:**`, `**A:**`, and an `_Answered:
+   <date>_` line. Keep the answer as terse as what you'd say in chat — this
+   is a lookup table, not prose documentation. Skip logging trivial
+   lookups already covered by the cheat-sheet table further down.
+3. If a logged answer turns out wrong or stale (contradicted by what the
+   user sees, or a version bump), update that entry in place rather than
+   appending a conflicting second one.
 
 ## Manual cache — check local before you search
 
