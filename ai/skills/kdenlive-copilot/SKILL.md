@@ -33,27 +33,36 @@ cache" below for where to look first.
 
 ## Manual cache — check local before you search
 
-This skill keeps a local cache of Kdenlive manual pages at
-`resources/manual_cache/` (relative to this skill's own directory — the "Base
-directory for this skill" path shown when the skill loads).
+This skill keeps a local cache of the Kdenlive manual at
+`resources/manual_cache/` (relative to this skill's own directory — the
+"Base directory for this skill" path shown when the skill loads), built
+from the official `KdenliveManual.epub` (linked from docs.kdenlive.org) and
+mirroring the site's own path structure — e.g. the page at
+`docs.kdenlive.org/en/effects_and_filters/audio.html` lands at
+`resources/manual_cache/effects_and_filters/audio.md`.
 
-1. **Before** calling WebSearch/WebFetch for anything manual-worthy (a
-   shortcut, an effect, a workflow step), `Grep` `resources/manual_cache/` for the
-   topic. If a matching page is already cached, `Read` it and answer from
-   that — no network call.
-2. If nothing matches, fetch the relevant page(s) from
+1. **On the first manual-worthy question of a session** (a shortcut, an
+   effect, a workflow step), check whether the cache is populated: if
+   `resources/manual_cache/` has nothing besides `README.md`, run
+   `scripts/fetch_manual.py` (Bash, stdlib-only — no install needed)
+   before answering. It downloads the current manual EPUB and converts
+   every page in a couple of seconds. After that, the cache is warm for the
+   rest of the session (and future sessions, until it's cleared).
+2. **Before** calling WebSearch/WebFetch for anything manual-worthy, `Grep`
+   `resources/manual_cache/` for the topic. The mirror is comprehensive —
+   almost everything should be there. `Read` the matching page and answer
+   from that — no network call.
+3. Only if nothing matches (the page is genuinely missing, or the user asks
+   about something newer than the cached snapshot) fetch live from
    `docs.kdenlive.org` with WebFetch, using a prompt that asks for the full
-   page content verbatim (not a summary) — e.g. "Return the complete page
-   content as markdown, preserving all shortcuts/tables/steps, do not
-   summarize or omit anything." Then `Write` that content to
-   `resources/manual_cache/<slug>.md`, where `<slug>` is the last path segment of
-   the doc URL (e.g. `.../effects_and_filters/audio.html` → `audio.md`).
-   Answer the user from the freshly fetched content.
-3. Treat cached files as a mirror of the manual, not hand-edited notes —
-   don't add commentary to them. If a cached page looks stale for the
-   user's version (a shortcut it lists doesn't match what they're seeing),
-   refetch and overwrite the file rather than patching around it.
-4. `invent.kde.org/multimedia/kdenlive` (source repo, for anything not
+   page content verbatim (not a summary), and note the gap — don't silently
+   patch it into the cache (that's `fetch_manual.py`'s job; a one-off
+   WebFetch summary would drift from the mirror's format).
+4. If a cached page looks stale for the user's version (a shortcut it
+   lists doesn't match what they're seeing), re-run
+   `scripts/fetch_manual.py` to refresh the whole mirror rather than
+   hand-editing one file.
+5. `invent.kde.org/multimedia/kdenlive` (source repo, for anything not
    covered by the manual, e.g. very recent changes) is not cached — query
    it live when needed.
 
