@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # skill-add — install a skill globally and register it in external-skills.list
 #

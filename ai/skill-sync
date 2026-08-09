@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # skill-sync — mirror ~/.agents/skills into ~/.claude/skills as per-skill symlinks.
 #
