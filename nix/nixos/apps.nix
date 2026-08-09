@@ -14,10 +14,8 @@
 # System-level (not home.packages) on purpose, to match the macs: casks are a
 # nix-darwin system concern there, so apps are a NixOS system concern here.
 #
-# PREREQUISITE: these are apps, and nothing on the NixOS side draws a desktop
-# yet — no display server, no compositor, no session. Installing them is
-# harmless in the meantime, but they are only *usable* once a desktop module
-# exists. See nix/home/linux/default.nix for the other half of that gap.
+# These run in the GNOME session drawn by nix/nixos/desktop.nix (display server,
+# login manager, audio, printing) — the counterpart module to this one.
 # =============================================================================
 {
   pkgs,

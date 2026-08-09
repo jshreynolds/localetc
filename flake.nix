@@ -309,8 +309,10 @@
             ./nix/core.nix # the same shared file mkDarwinHost imports
             ./nix/nixos/core.nix
             ./nix/nixos/apps.nix
-            # hardware.nix is NOT here: it describes one machine, so it lives
-            # in that machine's folder and arrives via `modules` below.
+            ./nix/nixos/desktop.nix # GNOME + audio + printing, shared by every NixOS host
+            # hardware-configuration.nix / boot.nix are NOT here: they describe
+            # one machine, so they live in that machine's folder and arrive via
+            # `modules` below.
 
             # Same deal as darwin: ONE `nixos-rebuild switch` updates system
             # config AND user config together.
@@ -372,8 +374,8 @@
       # Same as darwin above, for `nixos-rebuild`. Separate namespace, so a
       # machine mid-migration can legitimately appear in both.
       nixosConfigurations = {
-        # personal machine, being migrated off macOS
-        "nixos" = mkNixosHost (import ./hosts/nixos);
+        # personal machine, being migrated off macOS (first real NixOS box)
+        "nixpad" = mkNixosHost (import ./hosts/nixpad);
         "nacos" = mkNixosHost (import ./hosts/nacos);
       };
     };

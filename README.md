@@ -1,10 +1,14 @@
-# etc — declarative macOS
+# etc — one declarative config for macOS and NixOS
 
-My personal declarative system configruation.  Desing should be that for the most part you clone this repo, apple to the machine with one command,
-and Robert is your father's brother.
-Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
-[home-manager](https://github.com/nix-community/home-manager) on top of
-[Determinate Nix](https://determinate.systems/).
+My personal declarative system configuration. The design: for the most part you
+clone this repo, apply it to the machine with one command, and Robert is your
+father's brother.
+
+Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) on macOS and
+[NixOS](https://nixos.org/) on Linux, sharing one
+[home-manager](https://github.com/nix-community/home-manager) config so the
+shell, tools and dotfiles are identical on both. macOS builds nix via
+[Determinate Nix](https://determinate.systems/); NixOS ships its own.
 
 ```
 ~/etc/
@@ -12,9 +16,10 @@ Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
 ├── flake.lock                 # exact pinned versions of everything (committed)
 ├── hosts/                     # ONE MACHINE = ONE FOLDER
 │   ├── playbook/default.nix   #   its facts: username, work, its own casks
-│   └── nixos/                 #   a NixOS box
+│   └── nixpad/                #   a NixOS box
 │       ├── default.nix        #     same, plus `system` and `modules`
-│       └── hardware.nix       #     disks/bootloader for THIS machine only
+│       ├── hardware-configuration.nix # verbatim nixos-generate-config output
+│       └── boot.nix           #     hand-written boot config for THIS machine
 ├── nix/                       # everything SHARED by all machines
 │   ├── darwin/                # system-level (applies to the whole Mac)
 │   │   ├── core.nix           #   machine identity, nix/Determinate handshake
@@ -22,7 +27,8 @@ Powered by [nix-darwin](https://github.com/nix-darwin/nix-darwin) +
 │   │   └── macos-defaults.nix #   Finder/Dock/keyboard/etc settings
 │   ├── nixos/                 # system-level (applies to the whole NixOS box)
 │   │   ├── core.nix           #   machine identity, nix settings, ssh, docker
-│   │   └── apps.nix           #   GUI apps (the counterpart to homebrew.nix)
+│   │   ├── apps.nix           #   GUI apps (the counterpart to homebrew.nix)
+│   │   └── desktop.nix        #   GNOME session: display, audio, printing
 │   └── home/                  # user-level (applies to $USER)
 │       ├── default.nix        #   entry point, imports the rest
 │       ├── packages.nix       #   every CLI tool & language runtime
@@ -40,17 +46,22 @@ Every `.nix` file opens with a comment explaining the nix concept it uses.
 
 ## Daily operations
 
+The rebuild command depends on the platform: **`drs`** on macOS
+(`sudo darwin-rebuild switch --flake ~/etc`), **`nrs`** on NixOS
+(`sudo nixos-rebuild switch --flake ~/etc`). The table and notes below write
+**rebuild** for whichever your machine uses.
+
 | I want to… | Command |
 |---|---|
-| Apply config changes to the machine | `drs` (alias for `sudo darwin-rebuild switch --flake ~/etc`) |
-| Add a CLI tool | add it to `nix/home/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, `drs` |
-| Add a GUI app | add the cask to `nix/darwin/homebrew.nix`, `git add`, `drs` |
-| Update a brew-managed cask | `brew upgrade --cask <name>` (all: `brew upgrade`) — switches never upgrade casks (`onActivation.upgrade = false`), and many apps self-update anyway |
-| Add an alias / env var | edit `nix/home/shell.nix`, `drs`, open a new terminal |
-| Update everything | `cd ~/etc && nix flake update && drs` (commit the new `flake.lock`) |
-| Undo the last switch | `sudo darwin-rebuild --rollback` |
-| See switch history | `darwin-rebuild --list-generations` |
-| Free disk space | `sudo ` |
+| Apply config changes to the machine | rebuild (`drs` on macOS / `nrs` on NixOS) |
+| Add a CLI tool | add it to `nix/home/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, rebuild |
+| Add a GUI app | macOS: a cask in `nix/darwin/homebrew.nix`. NixOS: a package in `nix/nixos/apps.nix`. Then `git add`, rebuild |
+| Add an alias / env var | edit `nix/home/shell.nix`, rebuild, open a new terminal |
+| Update everything | `cd ~/etc && nix flake update`, then rebuild (commit the new `flake.lock`) |
+| Undo the last switch | macOS: `sudo darwin-rebuild --rollback` · NixOS: `sudo nixos-rebuild switch --rollback` |
+| See switch history | macOS: `darwin-rebuild --list-generations` · NixOS: `nixos-rebuild list-generations` |
+| Free disk space | `sudo nix-collect-garbage -d` (NixOS also GCs weekly on its own — `nix.gc` in `nix/nixos/core.nix`) |
+| Update a brew-managed cask (macOS only) | `brew upgrade --cask <name>` (all: `brew upgrade`) — switches never upgrade casks (`onActivation.upgrade = false`), and many apps self-update anyway |
 
 **The golden rule:** nix only sees files git knows about. After creating a new
 file, `git add` it or the build fails with a misleading "path does not exist". 
@@ -63,7 +74,7 @@ target structure minus the leading dot (`dotfiles/claude/settings.json` →
 `~/.claude/settings.json`).
 
 - **Nix-managed** (starship, alacritty, ghostty, zellij, git, jj prefs): edit
-  the file in `~/etc/dotfiles/` (or the `.nix` module), then `drs` to apply.
+  the file in `~/etc/dotfiles/` (or the `.nix` module), then rebuild to apply.
   The live copy is a read-only symlink into the nix store.
 - **Live** (claude settings, gh config, opencode.jsonc, zed settings, and
   `ai/AGENTS.md` — the base instructions every agent tool gets): symlinked
@@ -80,13 +91,13 @@ in this repo.
 `~/.agents/skills` is the one skills directory (wired in `nix/home/skills.nix`):
 
 - **Repo skills** live in `ai/skills/<name>/` — each is live-linked into
-  `~/.agents/skills`. Edits apply instantly; a NEW skill needs `git add` + `drs`.
+  `~/.agents/skills`. Edits apply instantly; a NEW skill needs `git add` + rebuild.
 - **External skills**: `~/etc/ai/skill-add <org/repo> [skill]` installs into
   `~/.agents/skills` and records the source in `ai/external-skills.list`.
 
 Codex reads `~/.agents/skills` natively. Claude Code only reads
 `~/.claude/skills` (flat, per-skill symlinks), so `ai/skill-sync` mirrors the
-directory there — automatically on every `drs` and after every `skill-add`.
+directory there — automatically on every rebuild and after every `skill-add`.
 
 ### Secrets
 
@@ -95,6 +106,8 @@ zsh at startup. Never put a secret in any `.nix` file — everything nix touches
 lands world-readable in `/nix/store`.
 
 ## Setting up a new machine
+
+### macOS
 
 1. **macOS basics**: sign in to iCloud/App Store; `xcode-select --install`.
 2. **Install Determinate Nix**:
@@ -147,32 +160,112 @@ lands world-readable in `/nix/store`.
 10. Optional manual passes (not scriptable): the checklist at the top of
     `nix/darwin/macos-defaults.nix`, and Safari preferences.
 
-## The Determinate Nix arrangement
+#### The Determinate Nix arrangement
 
-Determinate Nix owns the nix installation itself; nix-darwin is told hands-off
-(`nix.enable = false` in `core.nix`). Practical consequences:
+macOS only. Determinate Nix owns the nix installation itself; nix-darwin is told
+hands-off (`nix.enable = false` in `core.nix`). Practical consequences:
 
 - nix settings (extra substituters, trusted users) go in
   `/etc/nix/nix.custom.conf` by hand — not in nix-darwin options.
 - Upgrade nix itself: `sudo determinate-nixd upgrade`
 - Garbage-collect: `sudo nix-collect-garbage`
 
-## Homebrew's remaining job
+NixOS has no equivalent: there, nix is just another service the config declares
+— settings, daemon and GC all live in `nix/nixos/core.nix`.
 
-Homebrew handles only what nixpkgs can't: GUI apps (casks), Mac App Store
-apps (via `mas`), and five formulae that aren't packaged in nixpkgs. The full
+#### Homebrew's remaining job
+
+macOS only. Homebrew handles what nixpkgs can't: GUI apps (casks), Mac App Store
+apps (via `mas`), and a few formulae that aren't packaged in nixpkgs. The full
 list lives in `nix/darwin/homebrew.nix` with `cleanup = "zap"` — anything
-brew-installed that isn't declared there gets uninstalled on the next `drs`.
-So: to try something quickly, `brew install foo` works, but declare it if you
-want to keep it around.
+brew-installed that isn't declared there gets uninstalled on the next `drs`. So:
+to try something quickly, `brew install foo` works, but declare it if you want
+to keep it around.
+
+NixOS has no brew: GUI apps are ordinary nixpkgs packages in
+`nix/nixos/apps.nix`.
+
+### NixOS, from a wiped disk
+
+No Determinate Nix, no Homebrew — on NixOS, nix *is* the OS. The goal is the
+same: a booting minimal system, this repo, one `switch`. This recreates
+`nixpad`; for a different box see the note in step 4.
+
+1. **Install minimal NixOS from the ISO.** Boot the official installer (the
+   graphical GNOME image is easiest). Pick *Erase disk → Encrypt* — this machine
+   runs LUKS on root **and** swap — and create the `jshlyd` account. Hostname,
+   extra packages and desktop chosen here are all irrelevant; the flake
+   overrides them. Reboot into the bare system.
+
+2. **ssh key → GitHub.** The repo is private, so the fresh box needs a key
+   before it can clone:
+   ```
+   nix-shell -p git openssh
+   ssh-keygen -t ed25519 -C nixpad
+   cat ~/.ssh/id_ed25519.pub    # add at github.com/settings/keys
+   ```
+
+3. **Clone to `~/etc`** (the location is a hard assumption — see `repoDirName`
+   in flake.nix):
+   ```
+   git clone git@github.com:jshreynolds/localetc.git ~/etc
+   ```
+
+4. **Re-generate this machine's hardware.** A fresh install makes *new* LUKS
+   containers with *new* UUIDs, so the committed
+   `hosts/nixpad/hardware-configuration.nix` and the swap-unlock UUID in
+   `hosts/nixpad/boot.nix` describe the OLD disk and will not boot. Replace them:
+   ```
+   sudo nixos-generate-config --show-hardware-config \
+     > ~/etc/hosts/nixpad/hardware-configuration.nix
+   ```
+   Then reconcile `boot.nix`'s swap-LUKS `.device` UUID with the new disk — the
+   installer wrote the real one into `/etc/nixos/configuration.nix`, and `blkid`
+   lists them — and run `nix fmt`.
+   > **Different machine, not nixpad?** Also add its `hosts/<host>/` folder and a
+   > `nixosConfigurations` line in `flake.nix`, exactly as the macOS steps show,
+   > then point the commands below at `#<host>` instead of `#nixpad`.
+
+5. **git add** the regenerated files — a flake ignores untracked files:
+   ```
+   git -C ~/etc add hosts/nixpad
+   ```
+
+6. **Build, then switch.** Flakes aren't enabled on a stock install yet, hence
+   the flag. Build first to surface any broken package without activating:
+   ```
+   sudo nixos-rebuild build  --flake ~/etc#nixpad \
+     --extra-experimental-features "nix-command flakes"
+   sudo nixos-rebuild switch --flake ~/etc#nixpad \
+     --extra-experimental-features "nix-command flakes"
+   ```
+   After this first switch the flag is unnecessary — `nix/nixos/core.nix` turns
+   flakes on — and the rebuild alias is `nrs`.
+
+7. **Reboot** into the GNOME session, then the non-nix bits (git-ignored or
+   deliberately machine-local, so they never come from the repo):
+   - `~/etc/secrets.zsh` with API keys (`chmod 600`; copy from a password
+     manager, not another machine's history).
+   - git/jj identity: `~/.config/jj/conf.d/user.toml` (kept out of the repo on
+     purpose — see `nix/home/git.nix`).
+   - Sign in to 1Password; it unlocks via the polkit policy `nix/nixos/apps.nix`
+     grants to your user.
 
 ## Troubleshooting
 
-- **"path ... does not exist" during build** → you forgot `git add`.
-- **A tool resolves to the wrong version** → `which -a <tool>`; nix paths
-  (`/etc/profiles/per-user/...`) must come before `/opt/homebrew/bin`.
-- **Something broke after an update** → `sudo darwin-rebuild --rollback`,
-  then investigate at your liesure.  That's one of the whole points.
-- **Home-manager refuses to overwrite a file** → something created a real
-  file where it wants a symlink. Move it aside, or check for `*.hm-backup`
-  leftovers from the automatic backup.
+- **"path ... does not exist" during build** → you forgot `git add`. Nix only
+  sees tracked files. _(Both platforms.)_
+- **A tool resolves to the wrong version** → `which -a <tool>`, then check what
+  wins ahead of the nix profile (`/etc/profiles/per-user/...`):
+  - macOS: usually `/opt/homebrew/bin`, which must come *after* nix — see the
+    PATH note in `nix/home/shell.nix`.
+  - NixOS: no brew to blame; a stray copy is almost always in `~/.local/bin` or
+    a language toolchain's own `bin`.
+- **Something broke after an update** → roll back to the previous generation,
+  then investigate at your leisure (that's one of the whole points):
+  - macOS: `sudo darwin-rebuild --rollback`
+  - NixOS: `sudo nixos-rebuild switch --rollback`, or pick an older generation
+    from the systemd-boot menu at startup.
+- **Home-manager refuses to overwrite a file** → something created a real file
+  where it wants a symlink. Move it aside, or check for `*.hm-backup` leftovers
+  from the automatic backup. _(Both platforms.)_

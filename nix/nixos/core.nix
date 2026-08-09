@@ -79,11 +79,28 @@
   # (macOS gets both of these from the OS installer, not from nix.)
   time.timeZone = "Europe/Amsterdam";
   i18n.defaultLocale = "en_US.UTF-8";
+  # UI language stays US English (defaultLocale above); formats — dates, paper
+  # size, measurement, money — follow Dutch conventions. Companion to the
+  # Amsterdam timezone: every machine here sits in NL.
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "nl_NL.UTF-8";
+    LC_IDENTIFICATION = "nl_NL.UTF-8";
+    LC_MEASUREMENT = "nl_NL.UTF-8";
+    LC_MONETARY = "nl_NL.UTF-8";
+    LC_NAME = "nl_NL.UTF-8";
+    LC_NUMERIC = "nl_NL.UTF-8";
+    LC_PAPER = "nl_NL.UTF-8";
+    LC_TELEPHONE = "nl_NL.UTF-8";
+    LC_TIME = "nl_NL.UTF-8";
+  };
 
   # Compatibility marker for NixOS's stateful defaults. Set to the release you
   # INSTALL from and then NEVER changed — it is not a version selector, and
   # bumping it can silently migrate service state (postgres data dirs, etc).
   #
-  # TODO on first install: set this to the release on the installer ISO.
-  system.stateVersion = "25.05";
+  # nixpad installed from 26.05 (its /etc/nixos carried this value); nacos, the
+  # other host sharing this file, is a not-yet-real placeholder, so one value
+  # serves both. A future host installed from a different release that needs to
+  # differ would override system.stateVersion in its own host module.
+  system.stateVersion = "26.05";
 }

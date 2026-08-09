@@ -9,12 +9,12 @@
 # macOS equivalent named a Mac-only path or command. It stays ONE file until
 # there is enough to split (the darwin side started this way too).
 #
-# NOT here on purpose, pending an actual desktop on the machine:
-#   - clipboard: dotfiles/config/zellij/config.kdl hardcodes `pbcopy`. Fix it
-#     when a display server exists (wl-copy on wayland, xclip on X11).
-#   - the desktop itself: display server, compositor, session, tiling. The GUI
-#     APPS now have a home (nix/nixos/apps.nix, the counterpart to the macs'
-#     casks), but nothing draws them yet.
+# The desktop itself now exists: nix/nixos/desktop.nix draws a GNOME/Wayland
+# session, and the GUI apps live in nix/nixos/apps.nix. Still open here:
+#   - clipboard: dotfiles/config/zellij/config.kdl hardcodes `pbcopy`, which is
+#     macOS-only. Now fixable (GNOME is Wayland → wl-copy from wl-clipboard),
+#     but that config file is SHARED with the macs, so the fix needs to branch
+#     on platform rather than just swap the command. Deferred until it bites.
 # =============================================================================
 { repo, ... }:
 {
