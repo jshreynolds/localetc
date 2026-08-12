@@ -7,15 +7,15 @@
 { pkgs, isDarwin, ... }:
 let
   # The only platform-specific thing about git here. pinentry-mac draws the
-  # native macOS passphrase dialog and can reach the keychain; on linux there
-  # is no desktop declared yet, so pinentry-curses (prompts in the terminal
-  # that invoked gpg) is the choice that works over ssh and in a tty alike.
-  # Revisit if/when a display server lands: pinentry-gnome3 or pinentry-qt.
+  # native macOS passphrase dialog and can reach the keychain; linux now has a
+  # GNOME session, so pinentry-gnome3 can prompt from a systemd user service —
+  # sops-nix re-renders secrets from one at login, where a tty-only pinentry
+  # has no terminal to prompt in.
   pinentry =
     if isDarwin then
       "${pkgs.pinentry_mac}/bin/pinentry-mac"
     else
-      "${pkgs.pinentry-curses}/bin/pinentry-curses";
+      "${pkgs.pinentry-gnome3}/bin/pinentry-gnome3";
 in
 {
   # gpg-agent for gcrypt: pinentry path is pinned to the nix store and

@@ -32,6 +32,7 @@
     ./protonmail-bridge.nix # headless IMAP/SMTP gateway for Proton Mail
     ./proton-drive.nix # pinned Proton Drive CLI (not in nixpkgs)
     ./storage-box.nix # rclone bisync of ~/sbox with the Hetzner Storage Box
+    ./gpg-keys.nix # public-key distribution + expiry warnings for sops
 
     # Exactly one of these — the platform's own packages, paths and aliases.
     (if isDarwin then ./darwin else ./linux)

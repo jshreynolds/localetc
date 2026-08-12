@@ -52,6 +52,11 @@
     # uses.
     nixos-apple-silicon.url = "github:nix-community/nixos-apple-silicon";
     nixos-apple-silicon.inputs.nixpkgs.follows = "nixpkgs";
+
+    # sops-nix decrypts secrets/ at activation. The ciphertext is committed;
+    # the plaintext never enters git or the world-readable nix store.
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -61,6 +66,7 @@
       nix-darwin,
       home-manager,
       nixos-apple-silicon,
+      sops-nix,
     }:
     let
       lib = nixpkgs.lib;
@@ -198,6 +204,8 @@
           home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
           home-manager.useUserPackages = true; # install user pkgs to /etc/profiles/per-user/<username>
           home-manager.users.${username} = import ./nix/home;
+          # sops-nix's home module, so nix/home can declare secrets on any host
+          home-manager.sharedModules = [ sops-nix.homeManagerModules.sops ];
           # same idea as specialArgs, but for the home modules
           home-manager.extraSpecialArgs = {
             inherit
