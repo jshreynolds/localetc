@@ -51,6 +51,9 @@
       firefox
       google-chrome
 
+      # -- mail ---------------------------------------------------------------
+      geary # GNOME mail client; talks IMAP/SMTP to protonmail-bridge on 127.0.0.1
+
       # -- editors & IDEs ---------------------------------------------------
       zed-editor
 
