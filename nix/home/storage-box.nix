@@ -8,21 +8,15 @@
 # compares against the previous run's listing, so it can tell a new file from a
 # deleted one without a daemon watching the tree.
 #
-# CREDENTIALS ARE NOT IN THIS REPO. The connection details are read at runtime
-# from ~/.config/storage-box/env, which you create once per machine, chmod 600:
+# The connection details are encrypted in secrets/storage-box.env and rendered
+# by sops to ~/.config/storage-box/env at activation. Edit them with:
 #
-#   RCLONE_CONFIG_BOX_TYPE=sftp
-#   RCLONE_CONFIG_BOX_HOST=uXXXXXX.your-storagebox.de
-#   RCLONE_CONFIG_BOX_USER=uXXXXXX
-#   RCLONE_CONFIG_BOX_PORT=23
-#   RCLONE_CONFIG_BOX_KEY_FILE=/home/you/.ssh/id_ed25519
-#   RCLONE_CONFIG_BOX_KNOWN_HOSTS_FILE=/home/you/.ssh/known_hosts
-#   STORAGE_BOX_ROOT=/home/sbox
+#   sops secrets/storage-box.env
 #
-# rclone builds the `box:` remote from those RCLONE_CONFIG_* variables, so no
-# rclone.conf is needed. That file is the seam for the sops/agenix work: once
-# secrets are encrypted in git, they render to this same path and nothing here
-# changes.
+# rclone builds the `box:` remote straight from those RCLONE_CONFIG_BOX_*
+# variables, so no rclone.conf exists anywhere. The two path variables are set
+# below rather than in the secret: they are not secret, and they differ between
+# macOS and linux homes.
 #
 # Also one-time, per machine:
 #   ssh-copy-id -p 23 uXXXXXX@uXXXXXX.your-storagebox.de   (upload the pubkey)
@@ -49,13 +43,16 @@ let
     text = ''
       env_file="${envFile}"
       if [ ! -r "$env_file" ]; then
-        echo "storage-box: no credentials at $env_file (see nix/home/storage-box.nix)" >&2
+        echo "storage-box: sops has not rendered $env_file — is the gpg key present?" >&2
         exit 1
       fi
 
       set -a
       # shellcheck disable=SC1090
       . "$env_file"
+      # Not secret, and home differs per platform, so not in the sops file.
+      RCLONE_CONFIG_BOX_KEY_FILE="$HOME/.ssh/id_ed25519"
+      RCLONE_CONFIG_BOX_KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
       set +a
 
       if [ -z "''${STORAGE_BOX_ROOT:-}" ]; then
@@ -94,6 +91,13 @@ let
 in
 {
   home.packages = [ storage-box-sync ];
+
+  sops.secrets."storage-box.env" = {
+    sopsFile = ../../secrets/storage-box.env;
+    format = "dotenv";
+    path = envFile;
+    mode = "0600";
+  };
 
   # Linux: a plain oneshot on a timer. Persistent catches up after the machine
   # has been off, which is the normal case here.

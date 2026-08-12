@@ -90,6 +90,7 @@
 
     # -- security --------------------------------------------------------------
     gnupg
+    sops # edits secrets/*.env in place; recipients come from .sops.yaml
     # The pinentry program is pulled into the closure by git.nix's
     # gpg-agent.conf, which references its store path directly — and it differs
     # per platform (pinentry-mac vs pinentry-curses), so it is chosen there.

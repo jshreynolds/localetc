@@ -21,6 +21,7 @@
 {
   pkgs,
   lib,
+  config,
   isDarwin,
   ...
 }:
@@ -61,6 +62,9 @@ let
 in
 {
   home.packages = [ gpg-expiry-check ];
+
+  # Where sops looks for the secret key that decrypts secrets/.
+  sops.gnupg.home = "${config.home.homeDirectory}/.gnupg";
 
   # Public keys only — safe to import unconditionally, and a no-op once present.
   home.activation.importGpgPubkeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
