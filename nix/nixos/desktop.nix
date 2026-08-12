@@ -26,6 +26,9 @@
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
+  # The proton apps (bridge, drive CLI) need a Secret Service.
+  services.gnome.gnome-keyring.enable = true;
+
   # Keyboard layout for the graphical session.
   services.xserver.xkb = {
     layout = "us";
