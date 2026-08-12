@@ -30,6 +30,7 @@
     dust # friendlier du
     mmv # mass rename
     ripgrep # rg
+    rclone # also the engine behind storage-box.nix
     rm-improved # rip: rm with a trash can
     rsync
     silver-searcher-ng # ag (maintained fork)
