@@ -13,13 +13,17 @@
 #
 #   sops secrets/storage-box.env
 #
+# Editing alone changes nothing on the machine: sops-nix decrypts the copy of
+# this file in the nix store, so a rebuild is what re-renders the env file.
+#
 # rclone builds the `box:` remote straight from those RCLONE_CONFIG_BOX_*
 # variables, so no rclone.conf exists anywhere. The two path variables are set
 # below rather than in the secret: they are not secret, and they differ between
 # macOS and linux homes.
 #
 # Also one-time, per machine:
-#   ssh-copy-id -p 23 uXXXXXX@uXXXXXX.your-storagebox.de   (upload the pubkey)
+#   ssh-copy-id -s -p 23 uXXXXXX@uXXXXXX.your-storagebox.de  (upload the pubkey;
+#     -s copies over SFTP — without it ssh-copy-id needs a shell the box lacks)
 #   ssh-keyscan -p 23 uXXXXXX.your-storagebox.de >> ~/.ssh/known_hosts
 # =============================================================================
 {
