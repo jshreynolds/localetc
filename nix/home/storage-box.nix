@@ -50,10 +50,11 @@ let
       set -a
       # shellcheck disable=SC1090
       . "$env_file"
-      # Not secret, and home differs per platform, so not in the sops file.
-      RCLONE_CONFIG_BOX_KEY_FILE="$HOME/.ssh/id_ed25519"
-      RCLONE_CONFIG_BOX_KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
       set +a
+
+      # Not secret, and home differs per platform, so not in the sops file.
+      export RCLONE_CONFIG_BOX_KEY_FILE="$HOME/.ssh/id_ed25519"
+      export RCLONE_CONFIG_BOX_KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
 
       if [ -z "''${STORAGE_BOX_ROOT:-}" ]; then
         echo "storage-box: STORAGE_BOX_ROOT not set in $env_file" >&2
