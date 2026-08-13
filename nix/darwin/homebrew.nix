@@ -55,7 +55,7 @@
     casks = [
       # -- daily drivers --------------------------------------------------
       "1password"
-      "ghostty"
+      "alacritty"
       "obsidian"
       "rectangle"
       "slack"

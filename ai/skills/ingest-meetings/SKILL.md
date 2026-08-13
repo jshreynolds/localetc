@@ -1,11 +1,11 @@
 ---
 name: ingest-meetings
-description: Pull completed Muesli meetings into the Obsidian work vault inbox, then classify and file them. Two phases — ingest (fully automated) and file (classification proposal + your confirmation). Use when the user wants to process their meetings, sync Muesli meetings to Obsidian, "save today's meetings", or run an end-of-day meeting sync. Also trigger on "process my meetings" or "file my meetings".
+description: Pull completed Muesli meetings into the Obsidian work vault inbox, then classify and file them. Two phases, chained by default — ingest (fully automated) straight into file (classification proposal + your confirmation) — unless the caller explicitly asks for ingest only. Use when the user wants to process their meetings, sync Muesli meetings to Obsidian, "save today's meetings", or run an end-of-day meeting sync. Also trigger on "process my meetings" or "file my meetings".
 ---
 
 # Ingest Meetings
 
-Two phases, run separately:
+Two phases:
 
 1. **Ingest** — pull completed meetings from Muesli into
    `inbox/meetings_outgest/`, split into `notes.md` + `transcript.md`. Fully
@@ -14,6 +14,13 @@ Two phases, run separately:
    destination. The matching itself is code (attendee/title vs. live vault
    folder names); you only confirm or correct the proposed table once before
    anything moves.
+
+**By default, run phase 1 then immediately continue into phase 2** in the
+same invocation — resolve any `needs_attendees`/title questions first, then
+show the classification table for confirmation before applying. Only stop
+after phase 1 and leave meetings staged when the caller explicitly asks for
+ingest-only (e.g. another skill says "ingest only, filing not required
+here").
 
 Both phases are idempotent — safe to re-run.
 
@@ -60,8 +67,9 @@ python3 scripts/ingest.py set-title <folder> New Meeting Title   # prints the (p
 python3 scripts/ingest.py set-attendees <folder> Name1 Name2      # use the path set-title printed, if it moved
 ```
 
-Report what was created — titles and folders — and stop. Don't move to
-phase 2 in the same breath; the user may want to review the raw ingest first.
+Report what was created — titles and folders. Then continue straight into
+Phase 2 below, unless the caller explicitly asked for ingest only — in that
+case, stop here and leave the meetings staged.
 
 ## Phase 2: File
 
@@ -106,8 +114,9 @@ Report the result table — title, type, destination — to the user.
 
 ## Edge Cases
 
-- No meetings to ingest: say so, stop.
-- Nothing staged in `meetings_outgest/` for phase 2: say so, stop.
+- Nothing new to ingest, but meetings are already staged from a prior run:
+  say so, then still continue into phase 2 for the staged meetings.
+- Nothing new ingested and nothing staged: say so, stop.
 - Low-confidence or unclassified items: still show them in the confirmation
   table — don't silently drop them into `dailies/meetings/` without the user
   seeing it first.

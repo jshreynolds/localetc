@@ -21,7 +21,6 @@
         "1Password"
         "Dropbox"
         "Muesli"
-        "LM Studio"
       ];
       mkLoginItem = app: {
         # lowercased, spaces stripped → launchd label / plist filename
