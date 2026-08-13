@@ -89,7 +89,7 @@ in this repo.
 
 ### Agent skills
 
-`~/.agents/skills` is the one skills directory (wired in `nix/home-manager/skills.nix`):
+`~/.agents/skills` is the one skills directory (wired in `nix/home-manager/agents.nix`):
 
 - **Repo skills** live in `ai/skills/<name>/` — each is live-linked into
   `~/.agents/skills`. Edits apply instantly; a NEW skill needs `git add` + rebuild.

@@ -39,7 +39,7 @@ in
   home.file.".claude/CLAUDE.md".source = live "${repo}/ai/AGENTS.md";
   home.file.".codex/AGENTS.md".source = live "${repo}/ai/AGENTS.md";
   home.file.".agents/AGENTS.md".source = live "${repo}/ai/AGENTS.md";
-  # (XP.md merged into the `codemode` skill; skills are wired in skills.nix)
+  # (XP.md merged into the `codemode` skill; skills are wired in agents.nix)
 
   # ---- live tool configs (apps write through these) --------------------------
   # Only the config FILE is linked — the surrounding directory stays real so
