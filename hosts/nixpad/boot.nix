@@ -17,7 +17,7 @@
 #     generated, and lives in hardware-configuration.nix.)
 #
 # Machine-specific: reaches the system via `modules` in ./default.nix, nothing
-# shared. Bootloader stays per-host (not nix/nixos/core.nix) because Apple
+# shared. Bootloader stays per-host (not nix/system/linux/core.nix) because Apple
 # Silicon hosts like nacos boot a different way — systemd-boot is not universal.
 # =============================================================================
 { pkgs, ... }:

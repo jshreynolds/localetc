@@ -1,7 +1,7 @@
 # =============================================================================
 # darwin/shell.nix — the macOS layer of the zsh config.
 #
-# home-manager merges this into the same ~/.zshrc that nix/home/shell.nix
+# home-manager merges this into the same ~/.zshrc that nix/home-manager/shell.nix
 # generates. Split out because every line below names a path or a command that
 # only exists on a Mac.
 #
@@ -25,7 +25,7 @@
     # `imports` list, because module merge order does not follow it (this block
     # landed ahead of the shared base when left at the default order):
     #   500   corporate profile — before everything else
-    #   1000  the shared base in nix/home/shell.nix, and home-manager's own
+    #   1000  the shared base in nix/home-manager/shell.nix, and home-manager's own
     #         generated tool integrations (starship, mcfly, direnv)
     #   1050  this block — after all of the above, before zsh-syntax-highlighting
     initContent = lib.mkMerge [
@@ -62,14 +62,14 @@
   # macOS app bundles that ship a CLI inside them — APPENDED after nix paths.
   #
   # mkAfter, not a bare list: module merge order is not the `imports` order, and
-  # without it these landed AHEAD of the shared entries in nix/home/shell.nix.
+  # without it these landed AHEAD of the shared entries in nix/home-manager/shell.nix.
   # The repo's bin/ holds your own scripts and must win over an app bundle.
   home.sessionPath = lib.mkAfter [
     # NOTE: no $HOME/.rd/bin. Rancher Desktop's copies of docker/nerdctl sat
     # ahead of the nix profile and shadowed the declared docker-client, so the
     # binary in use was an undeclared, unpinned artifact — while the engine
     # behind it was colima all along. Container tooling comes from
-    # nix/home/packages.nix only.
+    # nix/home-manager/packages.nix only.
     "$HOME/.lmstudio/bin" # lm studio CLI (lms)
     "/Applications/Muesli.app/Contents/MacOS"
     "/Applications/Obsidian.app/Contents/MacOS"

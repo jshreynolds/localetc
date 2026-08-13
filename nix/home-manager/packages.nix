@@ -7,12 +7,12 @@
 # Find package names with:  nix search nixpkgs <thing>
 #
 # Anything that only builds or only makes sense on ONE platform goes in
-# nix/home/darwin/packages.nix or nix/home/linux/default.nix instead. A
+# nix/home-manager/darwin/packages.nix or nix/home-manager/linux/default.nix instead. A
 # darwin-only package added here breaks the linux hosts at eval time, which is
 # what the linux entries in flake.nix's `systems` are there to catch.
 #
 # A few macOS tools intentionally live in brew because nixpkgs doesn't carry
-# them — see the `brews` list in nix/darwin/homebrew.nix.
+# them — see the `brews` list in nix/system/darwin/homebrew.nix.
 #
 # Tools where home-manager also manages config/shell-wiring (git, starship,
 # fzf, neovim, ...) are NOT listed here — they live in programs.nix / git.nix,
@@ -64,8 +64,8 @@
 
     # -- containers & kubernetes ----------------------------------------------
     # The CLI is cross-platform; the ENGINE behind it is not. macOS gets colima
-    # (nix/home/darwin/packages.nix), NixOS gets virtualisation.docker.enable
-    # (nix/nixos/core.nix).
+    # (nix/home-manager/darwin/packages.nix), NixOS gets virtualisation.docker.enable
+    # (nix/system/linux/core.nix).
     docker-client # just the docker CLI
     docker-compose
     # Cross-platform, but it is macOS that needs it: ~/.docker/config.json sets

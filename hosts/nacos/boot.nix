@@ -60,10 +60,10 @@
 
   # iwd instead of wpa_supplicant: the Asahi-recommended backend for this
   # machine's Broadcom WiFi. (NetworkManager itself is enabled in
-  # nix/nixos/core.nix; this only swaps its wifi driver.)
+  # nix/system/linux/core.nix; this only swaps its wifi driver.)
   networking.networkmanager.wifi.backend = "iwd";
 
-  # nacos was installed from 26.11; the shared default in nix/nixos/core.nix is
+  # nacos was installed from 26.11; the shared default in nix/system/linux/core.nix is
   # 26.05 (nixpad's install release). stateVersion tracks the install release
   # for stateful defaults and must not follow upgrades, so it is pinned here.
   system.stateVersion = "26.11";

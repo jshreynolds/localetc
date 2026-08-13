@@ -21,7 +21,7 @@
   work = false;
 
   apps = [
-    # apps only THIS machine gets (shared list: nix/nixos/apps.nix)
+    # apps only THIS machine gets (shared list: nix/system/linux/apps.nix)
   ];
 
   modules = [

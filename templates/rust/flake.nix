@@ -2,7 +2,7 @@
   # ===========================================================================
   # Rust project devshell.
   #
-  # Moved OUT of the global profile (nix/home/packages.nix): rustup managed
+  # Moved OUT of the global profile (nix/home-manager/packages.nix): rustup managed
   # toolchains mutably in ~/.rustup, escaping nix's reproducibility. This uses
   # the nix-pinned Rust toolchain instead, so the lock fully determines the
   # version. For pinned nightly or extra cross targets, add the rust-overlay or

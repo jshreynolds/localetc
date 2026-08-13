@@ -8,10 +8,10 @@
   #
   # TWO PLATFORMS, ONE HOME. macOS machines are built by nix-darwin
   # (`darwinConfigurations`) and Linux machines by NixOS (`nixosConfigurations`),
-  # but BOTH mount the same home-manager config from nix/home — so the shell,
+  # but BOTH mount the same home-manager config from nix/home-manager — so the shell,
   # tools, dotfiles and agent skills are identical everywhere. The only
-  # per-platform code lives in nix/darwin, nix/nixos, nix/home/darwin and
-  # nix/home/linux. See mkDarwinHost / mkNixosHost below.
+  # per-platform code lives in nix/system/darwin, nix/system/linux, nix/home-manager/darwin and
+  # nix/home-manager/linux. See mkDarwinHost / mkNixosHost below.
   #
   # ONE MACHINE = ONE FOLDER. Every per-machine fact lives in
   # hosts/<hostname>/default.nix — username, work-or-not, its own casks/apps,
@@ -74,7 +74,7 @@
       # Systems this repo can be evaluated for. Darwin hosts are all Apple
       # Silicon; the linux entries cover a NixOS machine on either arch (and
       # keep `nix flake check` honest about the shared home modules — an
-      # accidentally darwin-only package in nix/home/ fails to evaluate here,
+      # accidentally darwin-only package in nix/home-manager/ fails to evaluate here,
       # on a mac, long before it reaches the linux box).
       systems = [
         "aarch64-darwin"
@@ -176,12 +176,12 @@
       #   hostname  the machine name
       #   home      /Users/<username> on macOS, /home/<username> on NixOS
       #   repo      absolute path of this checkout, e.g. /Users/josrey/etc
-      #   isDarwin  platform switch; picks nix/home/darwin vs nix/home/linux
+      #   isDarwin  platform switch; picks nix/home-manager/darwin vs nix/home-manager/linux
       #   work      is this a corporate machine? gates the Sinch shell profile
       #             and the work skills repo. Personal machines set false.
       #
       # isDarwin is passed explicitly rather than read from
-      # `pkgs.stdenv.isDarwin` because nix/home/default.nix needs it in
+      # `pkgs.stdenv.isDarwin` because nix/home-manager/default.nix needs it in
       # `imports`, which is evaluated before pkgs is safely available there.
       # One fact, one source: modules use this arg everywhere, never stdenv.
 
@@ -203,8 +203,8 @@
         {
           home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
           home-manager.useUserPackages = true; # install user pkgs to /etc/profiles/per-user/<username>
-          home-manager.users.${username} = import ./nix/home;
-          # sops-nix's home module, so nix/home can declare secrets on any host
+          home-manager.users.${username} = import ./nix/home-manager;
+          # sops-nix's home module, so nix/home-manager can declare secrets on any host
           home-manager.sharedModules = [ sops-nix.homeManagerModules.sops ];
           # same idea as specialArgs, but for the home modules
           home-manager.extraSpecialArgs = {
@@ -224,7 +224,7 @@
       # ---- one macOS machine = one mkDarwinHost call --------------------------
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
       # `casks`/`brews`/`masApps` are OPTIONAL host-specific apps, merged onto
-      # the shared lists in nix/darwin/homebrew.nix.
+      # the shared lists in nix/system/darwin/homebrew.nix.
       # `modules` is the escape hatch for nix that belongs to ONE machine — see
       # the note at the `++ modules` line below.
       mkDarwinHost =
@@ -259,13 +259,13 @@
           };
 
           # Each module is a file handling exactly one concern. Start reading
-          # at nix/core.nix, then nix/darwin/core.nix.
+          # at nix/core.nix, then nix/system/darwin/core.nix.
           modules = [
             ./nix/core.nix # the options BOTH platforms set identically
-            ./nix/darwin/core.nix
-            ./nix/darwin/homebrew.nix
-            ./nix/darwin/macos-defaults.nix
-            ./nix/darwin/login-items.nix
+            ./nix/system/darwin/core.nix
+            ./nix/system/darwin/homebrew.nix
+            ./nix/system/darwin/macos-defaults.nix
+            ./nix/system/darwin/login-items.nix
 
             # home-manager runs as a nix-darwin module so ONE `darwin-rebuild
             # switch` updates system config AND user config together.
@@ -292,11 +292,11 @@
       # ---- one NixOS machine = one mkNixosHost call ---------------------------
       # `system` is explicit here (macs are all aarch64-darwin; a linux box can
       # be either arch). Unlike macOS, nix itself is NixOS's job — there is no
-      # Determinate handshake to make, see nix/nixos/core.nix.
+      # Determinate handshake to make, see nix/system/linux/core.nix.
       #
       # `apps` is the counterpart of mkDarwinHost's `casks`: OPTIONAL
       # host-specific GUI apps, given as nixpkgs attribute names and merged onto
-      # the shared list in nix/nixos/apps.nix.
+      # the shared list in nix/system/linux/apps.nix.
       mkNixosHost =
         {
           hostname,
@@ -328,9 +328,9 @@
 
           modules = [
             ./nix/core.nix # the same shared file mkDarwinHost imports
-            ./nix/nixos/core.nix
-            ./nix/nixos/apps.nix
-            ./nix/nixos/desktop.nix # GNOME + audio + printing, shared by every NixOS host
+            ./nix/system/linux/core.nix
+            ./nix/system/linux/apps.nix
+            ./nix/system/linux/desktop.nix # GNOME + audio + printing, shared by every NixOS host
             # hardware-configuration.nix / boot.nix are NOT here: they describe
             # one machine, so they live in that machine's folder and arrive via
             # `modules` below.

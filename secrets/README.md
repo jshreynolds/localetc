@@ -5,8 +5,8 @@ safe to push. This file explains what decrypts it, when that happens, and what
 breaks when it doesn't.
 
 Related: [`pubkeys/README.md`](pubkeys/README.md) for adding machines and
-extending expiries. Implementation lives in `nix/home/gpg-keys.nix` (key
-hygiene), `nix/home/storage-box.nix` (the one secret we currently have), and
+extending expiries. Implementation lives in `nix/home-manager/gpg-keys.nix` (key
+hygiene), `nix/home-manager/storage-box.nix` (the one secret we currently have), and
 the `sops-nix` input in `flake.nix`.
 
 ---
@@ -78,7 +78,7 @@ to re-encrypt existing files to the new recipient list.
 ### `nrs` / `drs` (rebuild)
 
 1. home-manager activation runs.
-2. `nix/home/gpg-keys.nix` imports `secrets/pubkeys/*.asc` — public keys only,
+2. `nix/home-manager/gpg-keys.nix` imports `secrets/pubkeys/*.asc` — public keys only,
    no passphrase, idempotent.
 3. sops-nix's activation hook restarts the decryption unit:
    - **Linux**: `systemctl --user restart sops-nix`
@@ -114,7 +114,7 @@ key. A sync at 3am doesn't wake up a passphrase prompt.
 ## 5. pinentry: who asks for the passphrase
 
 `sops` → `gpg` → `gpg-agent` → **pinentry**. The agent picks the pinentry
-binary named in `~/.gnupg/gpg-agent.conf`, which `nix/home/git.nix` generates:
+binary named in `~/.gnupg/gpg-agent.conf`, which `nix/home-manager/git.nix` generates:
 
 | platform | program | can prompt from a background service? |
 |---|---|---|
@@ -141,7 +141,7 @@ systemctl --user status sops-nix
 journalctl --user -u sops-nix -b
 ```
 
-If it fails there, the fix is to order it later, in `nix/home/gpg-keys.nix`:
+If it fails there, the fix is to order it later, in `nix/home-manager/gpg-keys.nix`:
 
 ```nix
 systemd.user.services.sops-nix.Install.WantedBy = lib.mkForce [ "graphical-session.target" ];

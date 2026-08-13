@@ -2,7 +2,7 @@
 # desktop.nix — the graphical session, shared by every NixOS host.
 #
 # This is the one subsystem the macs have no counterpart to: on macOS the OS
-# *is* the desktop, so nix/darwin only tweaks its defaults. On NixOS the desktop
+# *is* the desktop, so nix/system/darwin only tweaks its defaults. On NixOS the desktop
 # is something this repo has to draw itself — display server, login manager,
 # desktop environment, audio, printing. It lives here, once, so nixpad and nacos
 # get the same environment (the arch difference between them is a hardware

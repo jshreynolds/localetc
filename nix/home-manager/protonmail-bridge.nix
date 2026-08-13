@@ -15,7 +15,7 @@
 # what the mail client authenticates with — never your Proton password.
 #
 # Credentials live in the platform keychain: gnome-keyring on NixOS (declared
-# in nix/nixos/desktop.nix), the system Keychain on macOS.
+# in nix/system/linux/desktop.nix), the system Keychain on macOS.
 # =============================================================================
 {
   pkgs,

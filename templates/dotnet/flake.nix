@@ -2,7 +2,7 @@
   # ===========================================================================
   # .NET project devshell.
   #
-  # Moved OUT of the global profile (nix/home/packages.nix): the .NET SDK is
+  # Moved OUT of the global profile (nix/home-manager/packages.nix): the .NET SDK is
   # large and project-specific. Copy this dir into a repo, then `direnv allow`.
   # Swap dotnet-sdk_10 for another SDK attribute if the project needs it.
   # ===========================================================================

@@ -4,7 +4,7 @@ One `<hostname>.asc` per machine — the **public** half of that machine's GPG
 key. Public keys are not secret; committing them is what makes a refresh a
 `git pull` instead of an export/import dance between three machines.
 
-Every machine imports all of these at activation (`nix/home/gpg-keys.nix`), so
+Every machine imports all of these at activation (`nix/home-manager/gpg-keys.nix`), so
 each one can encrypt to every other one. That is what sops needs in order to
 write a secret readable by all three.
 

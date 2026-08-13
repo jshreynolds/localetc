@@ -2,7 +2,7 @@
 
 Runtimes that used to sit on the global profile now live here instead, so each
 project pins its own toolchain. `direnv` + `nix-direnv` are already enabled
-globally (see `nix/home/programs.nix`), so entering a project directory loads
+globally (see `nix/home-manager/programs.nix`), so entering a project directory loads
 its shell automatically.
 
 ## Use

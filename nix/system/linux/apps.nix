@@ -1,5 +1,5 @@
 # =============================================================================
-# apps.nix — GUI applications, the NixOS counterpart to nix/darwin/homebrew.nix.
+# apps.nix — GUI applications, the NixOS counterpart to nix/system/darwin/homebrew.nix.
 #
 # There is no cask equivalent here, and none is needed: on Linux, nixpkgs
 # packages GUI apps as well as it packages CLI tools, so an app is just another
@@ -8,13 +8,13 @@
 #
 # So the two files are parallel in ROLE, not in mechanism:
 #
-#   nix/darwin/homebrew.nix   shared cask list + hostCasks   -> `brew bundle`
-#   nix/nixos/apps.nix        shared app list  + hostApps    -> nix store
+#   nix/system/darwin/homebrew.nix   shared cask list + hostCasks   -> `brew bundle`
+#   nix/system/linux/apps.nix        shared app list  + hostApps    -> nix store
 #
 # System-level (not home.packages) on purpose, to match the macs: casks are a
 # nix-darwin system concern there, so apps are a NixOS system concern here.
 #
-# These run in the GNOME session drawn by nix/nixos/desktop.nix (display server,
+# These run in the GNOME session drawn by nix/system/linux/desktop.nix (display server,
 # login manager, audio, printing) — the counterpart module to this one.
 # =============================================================================
 {
@@ -59,7 +59,7 @@
 
       # -- AI ---------------------------------------------------------------
       # (claude-code, codex, github-copilot-cli: ordinary CLIs, and nixpkgs
-      #  builds them on darwin too — so they moved to nix/home/packages.nix and
+      #  builds them on darwin too — so they moved to nix/home-manager/packages.nix and
       #  every machine gets them from one declaration)
       lmstudio
       ollama # the CLI/server; there is no Linux build of the ollama desktop app

@@ -4,7 +4,7 @@
 # nix-darwin and NixOS are separate module systems, but they deliberately share
 # a lot of option NAMES. Where both spell an option the same way and this repo
 # wants the same value on every machine, it is written here — once — instead of
-# in nix/darwin/core.nix and nix/nixos/core.nix side by side.
+# in nix/system/darwin/core.nix and nix/system/linux/core.nix side by side.
 #
 # Both builders import this file first; see mkDarwinHost / mkNixosHost in
 # flake.nix. The platform cores then add what only their platform has.
@@ -31,7 +31,7 @@
 }:
 {
   # Machine name. macOS has two more names for the same machine (computerName,
-  # localHostName) — nix/darwin/core.nix sets those.
+  # localHostName) — nix/system/darwin/core.nix sets those.
   networking.hostName = hostname;
 
   # Where this user's home is. The rest of the account differs per platform:

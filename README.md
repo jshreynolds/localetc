@@ -21,15 +21,16 @@ shell, tools and dotfiles are identical on both. macOS builds nix via
 │       ├── hardware-configuration.nix # verbatim nixos-generate-config output
 │       └── boot.nix           #     hand-written boot config for THIS machine
 ├── nix/                       # everything SHARED by all machines
-│   ├── darwin/                # system-level (applies to the whole Mac)
-│   │   ├── core.nix           #   machine identity, nix/Determinate handshake
-│   │   ├── homebrew.nix       #   GUI apps (casks) + App Store apps
-│   │   └── macos-defaults.nix #   Finder/Dock/keyboard/etc settings
-│   ├── nixos/                 # system-level (applies to the whole NixOS box)
-│   │   ├── core.nix           #   machine identity, nix settings, ssh, docker
-│   │   ├── apps.nix           #   GUI apps (the counterpart to homebrew.nix)
-│   │   └── desktop.nix        #   GNOME session: display, audio, printing
-│   └── home/                  # user-level (applies to $USER)
+│   ├── system/                # system-level (applies to the whole machine)
+│   │   ├── darwin/            #   the Mac side
+│   │   │   ├── core.nix       #     machine identity, nix/Determinate handshake
+│   │   │   ├── homebrew.nix   #     GUI apps (casks) + App Store apps
+│   │   │   └── macos-defaults.nix #  Finder/Dock/keyboard/etc settings
+│   │   └── linux/             #   the NixOS side
+│   │       ├── core.nix       #     machine identity, nix settings, ssh, docker
+│   │       ├── apps.nix       #     GUI apps (the counterpart to homebrew.nix)
+│   │       └── desktop.nix    #     GNOME session: display, audio, printing
+│   └── home-manager/          # user-level (applies to $USER)
 │       ├── default.nix        #   entry point, imports the rest
 │       ├── packages.nix       #   every CLI tool & language runtime
 │       ├── shell.nix          #   zsh: aliases, env vars, PATH
@@ -54,13 +55,13 @@ The rebuild command depends on the platform: **`drs`** on macOS
 | I want to… | Command |
 |---|---|
 | Apply config changes to the machine | rebuild (`drs` on macOS / `nrs` on NixOS) |
-| Add a CLI tool | add it to `nix/home/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, rebuild |
-| Add a GUI app | macOS: a cask in `nix/darwin/homebrew.nix`. NixOS: a package in `nix/nixos/apps.nix`. Then `git add`, rebuild |
-| Add an alias / env var | edit `nix/home/shell.nix`, rebuild, open a new terminal |
+| Add a CLI tool | add it to `nix/home-manager/packages.nix` (find names: `nix search nixpkgs <thing>`), `git add`, rebuild |
+| Add a GUI app | macOS: a cask in `nix/system/darwin/homebrew.nix`. NixOS: a package in `nix/system/linux/apps.nix`. Then `git add`, rebuild |
+| Add an alias / env var | edit `nix/home-manager/shell.nix`, rebuild, open a new terminal |
 | Update everything | `cd ~/etc && nix flake update`, then rebuild (commit the new `flake.lock`) |
 | Undo the last switch | macOS: `sudo darwin-rebuild --rollback` · NixOS: `sudo nixos-rebuild switch --rollback` |
 | See switch history | macOS: `darwin-rebuild --list-generations` · NixOS: `nixos-rebuild list-generations` |
-| Free disk space | `sudo nix-collect-garbage -d` (NixOS also GCs weekly on its own — `nix.gc` in `nix/nixos/core.nix`) |
+| Free disk space | `sudo nix-collect-garbage -d` (NixOS also GCs weekly on its own — `nix.gc` in `nix/system/linux/core.nix`) |
 | Update a brew-managed cask (macOS only) | `brew upgrade --cask <name>` (all: `brew upgrade`) — switches never upgrade casks (`onActivation.upgrade = false`), and many apps self-update anyway |
 
 **The golden rule:** nix only sees files git knows about. After creating a new
@@ -69,7 +70,7 @@ Edited files will be applied with warnings.
 
 ### Editing config files
 
-Two flavors, declared in `nix/home/dotfiles.nix`. `dotfiles/` mirrors the
+Two flavors, declared in `nix/home-manager/dotfiles.nix`. `dotfiles/` mirrors the
 target structure minus the leading dot (`dotfiles/claude/settings.json` →
 `~/.claude/settings.json`).
 
@@ -88,7 +89,7 @@ in this repo.
 
 ### Agent skills
 
-`~/.agents/skills` is the one skills directory (wired in `nix/home/skills.nix`):
+`~/.agents/skills` is the one skills directory (wired in `nix/home-manager/skills.nix`):
 
 - **Repo skills** live in `ai/skills/<name>/` — each is live-linked into
   `~/.agents/skills`. Edits apply instantly; a NEW skill needs `git add` + rebuild.
@@ -132,7 +133,7 @@ lands world-readable in `/nix/store`.
      username = "its-username";   # whoami
      work = true;                 # optional; false on a personal machine
      casks = [ ];                 # optional, merged onto the shared
-     brews = [ ];                 #  lists in nix/darwin/homebrew.nix
+     brews = [ ];                 #  lists in nix/system/darwin/homebrew.nix
      masApps = { };
      modules = [ ];               # optional: .nix files in THIS folder
    }
@@ -158,7 +159,7 @@ lands world-readable in `/nix/store`.
 9. **Open a new terminal.** Prompt, aliases, and tools should all be there.
    From now on it's `drs`.
 10. Optional manual passes (not scriptable): the checklist at the top of
-    `nix/darwin/macos-defaults.nix`, and Safari preferences.
+    `nix/system/darwin/macos-defaults.nix`, and Safari preferences.
 
 #### The Determinate Nix arrangement
 
@@ -171,19 +172,19 @@ hands-off (`nix.enable = false` in `core.nix`). Practical consequences:
 - Garbage-collect: `sudo nix-collect-garbage`
 
 NixOS has no equivalent: there, nix is just another service the config declares
-— settings, daemon and GC all live in `nix/nixos/core.nix`.
+— settings, daemon and GC all live in `nix/system/linux/core.nix`.
 
 #### Homebrew's remaining job
 
 macOS only. Homebrew handles what nixpkgs can't: GUI apps (casks), Mac App Store
 apps (via `mas`), and a few formulae that aren't packaged in nixpkgs. The full
-list lives in `nix/darwin/homebrew.nix` with `cleanup = "zap"` — anything
+list lives in `nix/system/darwin/homebrew.nix` with `cleanup = "zap"` — anything
 brew-installed that isn't declared there gets uninstalled on the next `drs`. So:
 to try something quickly, `brew install foo` works, but declare it if you want
 to keep it around.
 
 NixOS has no brew: GUI apps are ordinary nixpkgs packages in
-`nix/nixos/apps.nix`.
+`nix/system/linux/apps.nix`.
 
 ### NixOS, from a wiped disk
 
@@ -243,7 +244,7 @@ boots through Asahi and diverges at steps 1 and 4 — see **Apple Silicon
    sudo nixos-rebuild switch --flake ~/etc#nixpad \
      --extra-experimental-features "nix-command flakes"
    ```
-   After this first switch the flag is unnecessary — `nix/nixos/core.nix` turns
+   After this first switch the flag is unnecessary — `nix/system/linux/core.nix` turns
    flakes on — and the rebuild alias is `nrs`.
 
 7. **Reboot** into the GNOME session, then the non-nix bits (git-ignored or
@@ -251,8 +252,8 @@ boots through Asahi and diverges at steps 1 and 4 — see **Apple Silicon
    - `~/etc/secrets.zsh` with API keys (`chmod 600`; copy from a password
      manager, not another machine's history).
    - git/jj identity: `~/.config/jj/conf.d/user.toml` (kept out of the repo on
-     purpose — see `nix/home/git.nix`).
-   - Sign in to 1Password; it unlocks via the polkit policy `nix/nixos/apps.nix`
+     purpose — see `nix/home-manager/git.nix`).
+   - Sign in to 1Password; it unlocks via the polkit policy `nix/system/linux/apps.nix`
      grants to your user.
 
 #### Apple Silicon (nacos): the disk and boot bits that differ
@@ -368,7 +369,7 @@ this repo is private), run `nix fmt`, and rejoin steps 5–7 unchanged.
 - **A tool resolves to the wrong version** → `which -a <tool>`, then check what
   wins ahead of the nix profile (`/etc/profiles/per-user/...`):
   - macOS: usually `/opt/homebrew/bin`, which must come *after* nix — see the
-    PATH note in `nix/home/shell.nix`.
+    PATH note in `nix/home-manager/shell.nix`.
   - NixOS: no brew to blame; a stray copy is almost always in `~/.local/bin` or
     a language toolchain's own `bin`.
 - **Something broke after an update** → roll back to the previous generation,

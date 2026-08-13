@@ -11,7 +11,7 @@
 # declared per machine in hosts/<hostname>/default.nix (casks/brews/masApps)
 # and arrive here as hostCasks/hostBrews/hostMasApps to be merged in.
 #
-# The NixOS side of the same job is nix/nixos/apps.nix — same role (the shared
+# The NixOS side of the same job is nix/system/linux/apps.nix — same role (the shared
 # GUI app list, plus per-host extras), different mechanism (plain nixpkgs, no
 # brew). It records which casks below have no Linux equivalent, and why.
 # =============================================================================
@@ -39,7 +39,7 @@
     };
 
     # CLI formulae that intentionally STAY in brew (everything else comes from
-    # nixpkgs — see nix/home/packages.nix):
+    # nixpkgs — see nix/home-manager/packages.nix):
     brews = [
       "mas" # Mac App Store CLI — required by masApps below; darwin-only in nixpkgs
       "container" # Apple container runtime; darwin-only in nixpkgs, and a system
@@ -70,9 +70,9 @@
       "zed"
       # -- AI ---------------------------------------------------------------
       # Only the GUI apps are here. The AI *CLIs* (claude-code, codex,
-      # copilot-cli) come from nixpkgs via nix/home/packages.nix now — one
+      # copilot-cli) come from nixpkgs via nix/home-manager/packages.nix now — one
       # declaration for every machine instead of a cask here and a package in
-      # nix/nixos/apps.nix.
+      # nix/system/linux/apps.nix.
       "chatgpt"
       "claude"
       "comfy"

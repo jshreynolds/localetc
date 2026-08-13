@@ -2,7 +2,7 @@
   # ===========================================================================
   # JVM project devshell — Java + Gradle/Maven, Scala, Clojure.
   #
-  # These moved OUT of the global profile (nix/home/packages.nix) so each
+  # These moved OUT of the global profile (nix/home-manager/packages.nix) so each
   # project pins its own toolchain instead of one global version fighting all
   # projects. Copy this dir into a repo, trim the packages to what it needs,
   # then `direnv allow` (the .envrc runs `use flake` and drops you in the shell

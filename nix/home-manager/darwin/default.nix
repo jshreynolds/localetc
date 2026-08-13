@@ -1,7 +1,7 @@
 # =============================================================================
 # darwin/default.nix — the macOS-only half of the home configuration.
 #
-# Imported by nix/home/default.nix when isDarwin is true; nix/home/linux is
+# Imported by nix/home-manager/default.nix when isDarwin is true; nix/home-manager/linux is
 # imported instead otherwise. Everything in here would either fail to build on
 # linux or point at a path that only exists on a Mac.
 # =============================================================================

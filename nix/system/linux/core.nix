@@ -65,7 +65,7 @@
 
   # ---- containers ------------------------------------------------------------
   # The linux answer to colima on macOS: docker-client/compose/k9s come from the
-  # shared nix/home/packages.nix, and this provides the engine they talk to.
+  # shared nix/home-manager/packages.nix, and this provides the engine they talk to.
   virtualisation.docker.enable = true;
 
   # ---- remote access ---------------------------------------------------------

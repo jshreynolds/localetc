@@ -2,10 +2,10 @@
 # shell.nix — zsh: aliases, environment variables, PATH, startup snippets.
 #
 # home-manager generates ~/.zshrc from this file (plus the platform's own
-# nix/home/{darwin,linux} additions, which are merged in on top).
+# nix/home-manager/{darwin,linux} additions, which are merged in on top).
 #
 # Everything here is platform-neutral. The macOS-specific layer — brew's PATH,
-# gcloud, /Applications paths, the `drs` alias — is nix/home/darwin/shell.nix.
+# gcloud, /Applications paths, the `drs` alias — is nix/home-manager/darwin/shell.nix.
 #
 # PATH layering (important):
 #   1. nix paths come FIRST — wired in by the /etc/zshrc that nix-darwin (or
@@ -29,7 +29,7 @@
       "..." = "cd ../..";
 
       # -- convenience --------------------------------------------------------
-      editalias = "nvim ${repo}/nix/home/shell.nix"; # aliases live HERE now
+      editalias = "nvim ${repo}/nix/home-manager/shell.nix"; # aliases live HERE now
       xml = "xmllint --format -";
       zelliful = "zellij attach --create beautiful";
 
@@ -58,7 +58,7 @@
 
     # Default order (1000) — the base layer, alongside home-manager's own
     # generated tool integrations. The platform modules position themselves
-    # around it with explicit mkOrder; see nix/home/darwin/shell.nix.
+    # around it with explicit mkOrder; see nix/home-manager/darwin/shell.nix.
     initContent = ''
       setopt extendedglob
       bindkey "^A" beginning-of-line
