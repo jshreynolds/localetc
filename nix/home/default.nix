@@ -27,6 +27,7 @@
     ./git.nix # git and jujutsu
     ./programs.nix # tools where home-manager wires config + shell integration
     ./dotfiles.nix # config files: nix-managed vs live-editable symlinks
+    ./clipboard.nix # term_copy/term_paste over pbcopy or wl-copy
     ./agents.nix # agent skills + subagent specs: ~/.agents/skills (mirrored to claude/codex), ~/.claude/agents
     ./rnnoise-models.nix # pinned .rnnn models for ffmpeg's arnndn filter
     ./protonmail-bridge.nix # headless IMAP/SMTP gateway for Proton Mail

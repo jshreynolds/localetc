@@ -10,14 +10,15 @@
 # there is enough to split (the darwin side started this way too).
 #
 # The desktop itself now exists: nix/nixos/desktop.nix draws a GNOME/Wayland
-# session, and the GUI apps live in nix/nixos/apps.nix. Still open here:
-#   - clipboard: dotfiles/config/zellij/config.kdl hardcodes `pbcopy`, which is
-#     macOS-only. Now fixable (GNOME is Wayland → wl-copy from wl-clipboard),
-#     but that config file is SHARED with the macs, so the fix needs to branch
-#     on platform rather than just swap the command. Deferred until it bites.
+# session, and the GUI apps live in nix/nixos/apps.nix. The clipboard split is
+# handled cross-platform in nix/home/clipboard.nix (term_copy/term_paste).
 # =============================================================================
 { repo, ... }:
 {
+  imports = [
+    ./packages.nix # linux-only tools (wl-clipboard)
+  ];
+
   programs.zsh.shellAliases = {
     # The counterpart to `drs` on the macs. Deliberately a different name —
     # `drs` means darwin-rebuild, and an alias that lies about which tool it

@@ -274,7 +274,12 @@ default_layout "2x2"
 //
 // copy_command "xclip -selection clipboard" // x11
 // copy_command "wl-copy"                    // wayland
-copy_command "pbcopy"                     // osx
+// copy_command "pbcopy"                     // osx
+//
+// term_copy is a wrapper nix puts on PATH that resolves to whichever of the
+// above the machine actually has — see nix/home/clipboard.nix. Keeps this
+// file identical on the macs and the NixOS box.
+copy_command "term_copy"
 
 // Choose the destination for copied text
 // Allows using the primary selection buffer (on x11/wayland) instead of the system clipboard.
