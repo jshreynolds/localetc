@@ -67,10 +67,17 @@ in
   sops.gnupg.home = "${config.home.homeDirectory}/.gnupg";
 
   # Public keys only — safe to import unconditionally, and a no-op once present.
+  #
+  # A failed import is reported but does not abort activation: it costs this
+  # machine the ability to ENCRYPT to some other machine, which is no reason to
+  # block a rebuild. It must be loud, though — a silent `|| true` here once hid
+  # a stale keyboxd lock that made every import time out for days, leaving an
+  # empty keyring behind while rebuilds still looked green.
   home.activation.importGpgPubkeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     for key in ${pubkeys}/*.asc; do
       [ -e "$key" ] || continue
-      run ${lib.getExe pkgs.gnupg} --batch --quiet --import "$key" || true
+      run ${lib.getExe pkgs.gnupg} --batch --quiet --import "$key" \
+        || echo "gpg-keys: failed to import $key — cannot encrypt to that machine" >&2
     done
   '';
 
