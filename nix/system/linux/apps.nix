@@ -39,6 +39,7 @@
     with pkgs;
     [
       # -- daily drivers --------------------------------------------------
+      alacritty
       ghostty
       obsidian
       # (1password: see programs._1password-gui above)
@@ -52,8 +53,7 @@
       google-chrome
 
       # -- mail ---------------------------------------------------------------
-      evolution # heavier client, kept for the calendar/contacts side
-      geary # GNOME mail client; talks IMAP/SMTP to protonmail-bridge on 127.0.0.1
+      evolution
 
       # -- editors & IDEs ---------------------------------------------------
       zed-editor
