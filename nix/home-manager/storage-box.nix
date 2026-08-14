@@ -31,9 +31,18 @@
   lib,
   config,
   isDarwin,
+  hostname,
   ...
 }:
 let
+  # A machine can only decrypt the secret if secrets/*.env was encrypted to its
+  # key, i.e. if it has a public key in the repo (see secrets/pubkeys/README.md).
+  # Machines that don't are skipped entirely rather than declaring a secret that
+  # sops-nix would then fail to render — a failed sops-nix.service fails the
+  # whole activation, which would block every rebuild on that machine until
+  # another machine got around to running `sops updatekeys`.
+  isSopsRecipient = builtins.pathExists ../../secrets/pubkeys/${hostname}.asc;
+
   # Add a name here to sync another folder from the same box. Each entry pairs
   # ~/sbox/<name> with <STORAGE_BOX_ROOT>/<name>.
   folders = [ "yellingatrobots" ];
@@ -97,7 +106,7 @@ in
 {
   home.packages = [ storage-box-sync ];
 
-  sops.secrets."storage-box.env" = {
+  sops.secrets."storage-box.env" = lib.mkIf isSopsRecipient {
     sopsFile = ../../secrets/storage-box.env;
     format = "dotenv";
     path = envFile;
@@ -105,8 +114,10 @@ in
   };
 
   # Linux: a plain oneshot on a timer. Persistent catches up after the machine
-  # has been off, which is the normal case here.
-  systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin) {
+  # has been off, which is the normal case here. Not scheduled on a machine
+  # without the key: nothing would have rendered the env file, so every run
+  # would fail. `storage-box-sync` stays on PATH and says so if run by hand.
+  systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin && isSopsRecipient) {
     Unit.Description = "Sync ~/sbox with the Hetzner Storage Box";
     Service = {
       Type = "oneshot";
@@ -114,7 +125,7 @@ in
     };
   };
 
-  systemd.user.timers.storage-box-sync = lib.mkIf (!isDarwin) {
+  systemd.user.timers.storage-box-sync = lib.mkIf (!isDarwin && isSopsRecipient) {
     Unit.Description = "Hourly Hetzner Storage Box sync";
     Timer = {
       OnBootSec = "5m";
@@ -126,7 +137,7 @@ in
 }
 // lib.optionalAttrs isDarwin {
   launchd.agents.storage-box-sync = {
-    enable = true;
+    enable = isSopsRecipient;
     config = {
       ProgramArguments = [ (lib.getExe storage-box-sync) ];
       RunAtLoad = true;

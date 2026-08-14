@@ -194,6 +194,7 @@
       # of being copy-pasted into both builders.
       hmModule =
         {
+          hostname,
           username,
           home,
           repo,
@@ -209,6 +210,7 @@
           # same idea as specialArgs, but for the home modules
           home-manager.extraSpecialArgs = {
             inherit
+              hostname
               username
               home
               repo
@@ -272,6 +274,7 @@
             home-manager.darwinModules.home-manager
             (hmModule {
               inherit
+                hostname
                 username
                 home
                 repo
@@ -340,6 +343,7 @@
             home-manager.nixosModules.home-manager
             (hmModule {
               inherit
+                hostname
                 username
                 home
                 repo
