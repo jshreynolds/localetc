@@ -1,13 +1,17 @@
 # secrets — how encryption works here
 
-Everything in this directory except the `pubkeys/` folder is **ciphertext** and
-safe to push. This file explains what decrypts it, when that happens, and what
+Everything in this directory except `pubkeys/` and this file is **ciphertext**
+and safe to push. This explains what decrypts it, when that happens, and what
 breaks when it doesn't.
 
-Related: [`pubkeys/README.md`](pubkeys/README.md) for adding machines and
-extending expiries. Implementation lives in `nix/home-manager/gpg-keys.nix` (key
-hygiene), `nix/home-manager/storage-box.nix` (the one secret we currently have), and
-the `sops-nix` input in `flake.nix`.
+The worked example throughout is `storage-box.env` — the Hetzner Storage Box
+credentials consumed by `nix/home-manager/storage-box.nix`. Nothing about the
+scheme is specific to it; any number of secrets work the same way.
+
+Related: [`pubkeys/README.md`](pubkeys/README.md) for the per-machine public
+keys, and [`enroll-machine`](enroll-machine), which performs §5. Implementation
+lives in `nix/home-manager/gpg-keys.nix` (key hygiene) and the `sops-nix` input
+in `flake.nix`.
 
 ---
 
@@ -15,14 +19,14 @@ the `sops-nix` input in `flake.nix`.
 
 | piece | what it is | where |
 |---|---|---|
-| **GPG key** | one per machine. Primary `ed25519` (certify+sign, expires in 2y), subkey `cv25519` (encrypt, no expiry) | `~/.gnupg`, never in this repo |
+| **GPG key** | one per machine. Primary `ed25519` (certify+sign), subkey `cv25519` (encrypt). Neither expires — a machine is retired by dropping it from `.sops.yaml` | `~/.gnupg`, never in this repo |
 | **`.sops.yaml`** | which fingerprints each secret is encrypted to | repo root |
-| **`secrets/*.env`** | the secrets, encrypted per value | this directory, committed |
+| **`secrets/*`** | the secrets, encrypted per value | this directory, committed |
 | **`secrets/pubkeys/*.asc`** | public halves, so each machine can encrypt to the others | this directory, committed |
 | **sops** | the CLI that encrypts/decrypts. Calls `gpg` | on PATH everywhere |
 | **sops-nix** | the home-manager module that decrypts at the right moments | flake input |
 | **gpg-agent** | holds your passphrase in memory, spawns pinentry | auto-started on demand |
-| **pinentry** | the thing that actually asks for your passphrase | see §5 |
+| **pinentry** | the thing that actually asks for your passphrase | see §7 |
 
 Only the **cv25519 subkey** is used for secrets. The primary just certifies it.
 
@@ -33,47 +37,125 @@ Only the **cv25519 subkey** is used for secrets. The primary just certifies it.
 Never on disk in this repo, and never in the nix store.
 
 ```
-secrets/storage-box.env          ciphertext, committed to git
+secrets/<name>                   ciphertext, committed to git
         │
         │  sops-nix decrypts at activation / login
         ▼
-$XDG_RUNTIME_DIR/secrets.d/<N>/storage-box.env      (linux: /run/user/1000/…, tmpfs)
-getconf DARWIN_USER_TEMP_DIR /secrets.d/<N>/…       (macOS: /var/folders/…)
+$XDG_RUNTIME_DIR/secrets.d/<N>/<name>          (linux: /run/user/1000/…, tmpfs)
+getconf DARWIN_USER_TEMP_DIR /secrets.d/<N>/…  (macOS: /var/folders/…)
         │
-        │  symlink
+        │  symlink, if the module asked for one via `path`
         ▼
-~/.config/storage-box/env        mode 0600 — what storage-box-sync reads
+<wherever the consumer reads it>   e.g. ~/.config/storage-box/env, mode 0600
 ```
 
 On Linux that runtime directory is **tmpfs**: it lives in RAM and is destroyed
 on reboot. Plaintext secrets never touch the SSD. The consequence is that they
-must be re-decrypted on *every* boot — which is the whole reason §5 matters.
+must be re-decrypted on *every* boot — which is the whole reason §7 matters.
 
-Encryption is **per value**, not per file. In `storage-box.env` the key names
-(`RCLONE_CONFIG_BOX_HOST=`) are readable in git; only the values are
-`ENC[AES256_GCM,…]`. Don't put a secret in a key name.
+Encryption is **per value**, not per file. In a dotenv secret the key names
+(`RCLONE_CONFIG_BOX_HOST=`) stay readable in git; only the values are
+`ENC[AES256_GCM,…]`. Don't put a secret in a key name. The same holds for the
+keys of a YAML or JSON secret.
 
 ---
 
-## 3. Sequence: editing a secret
+## 3. Adding a secret
+
+1. Create it, encrypted from the start — `sops` writes ciphertext on save, so
+   the plaintext never exists as a file:
+   ```
+   sops secrets/<name>.env
+   ```
+   The extension picks the format sops parses (`.env`, `.yaml`, `.json`).
+   `.sops.yaml`'s `path_regex` decides which keys it is encrypted to; the
+   current rule covers `secrets/*.env`, so a different extension needs a rule.
+
+2. Declare it in the home-manager module that consumes it:
+   ```nix
+   sops.secrets."<name>.env" = {
+     sopsFile = ../../secrets/<name>.env;
+     format = "dotenv";
+     path = "${config.xdg.configHome}/<consumer>/env";   # optional symlink
+     mode = "0600";
+   };
+   ```
+   A machine that isn't a recipient cannot render this, and a failed
+   `sops-nix.service` fails the whole activation — which would block every
+   rebuild on that machine. `storage-box.nix` guards against that with
+   `isSopsRecipient`, gating the secret (and its timers) on the machine having
+   a public key in `pubkeys/`. Copy that pattern for anything that must not
+   break rebuilds on a half-enrolled machine.
+
+3. `git add` both files, rebuild.
+
+Some secrets also need per-service setup that has nothing to do with sops — for
+the Storage Box, an ssh key uploaded to the box and its host key trusted, once
+per machine (the commands are in the header comment of `storage-box.nix`).
+
+---
+
+## 4. Editing a secret
 
 You do this by hand, whenever a value changes.
 
-1. `sops secrets/storage-box.env` — sops reads `.sops.yaml`, sees which
-   fingerprints this path must be encrypted to.
+1. `sops secrets/<name>.env` — sops reads `.sops.yaml`, sees which fingerprints
+   this path must be encrypted to.
 2. sops calls `gpg` to **decrypt** the file into a temp buffer.
    → **passphrase needed** (unless the agent has it cached).
 3. Your `$EDITOR` opens on the plaintext.
 4. On save, sops **re-encrypts** to every fingerprint in `.sops.yaml`.
    → *no* passphrase needed; encryption only uses public keys.
-5. `git commit` the ciphertext.
-
-If you add a machine, editing isn't enough — run `sops updatekeys secrets/*.env`
-to re-encrypt existing files to the new recipient list.
+5. `git commit` the ciphertext, then rebuild: sops-nix decrypts the copy of the
+   file in the nix store, so editing alone changes nothing on the machine.
 
 ---
 
-## 4. Sequence: build, boot, and steady state
+## 5. A new machine
+
+A machine can read secrets only if it has its own GPG key and the ciphertext
+was encrypted to it. Four steps: make the key, publish its public half, list
+its fingerprint in `.sops.yaml`, re-encrypt everything to the new list.
+
+The last step needs a key that can *already* decrypt, which a new machine by
+definition lacks. So it takes two runs of the same script:
+
+```
+./secrets/enroll-machine          # on the new machine: key, pubkey, .sops.yaml
+git push
+# then, on a machine that is already a recipient:
+git pull && ./secrets/enroll-machine    # re-encrypts, commits
+git push
+# back on the new machine:
+git pull && nrs                   # or drs — renders the secrets
+```
+
+Every step is idempotent and skips what is already done, so "run it on both
+machines" is the whole procedure. `--hostname`, `--name` and `--email` override
+the defaults (`hostname -s`, and the repo's git identity); `--expire` gives the
+primary an expiry, which it otherwise does not have; `--no-commit` leaves the
+changes staged for inspection.
+
+By hand it is:
+
+```
+gpg --quick-generate-key "Name (hostname) <email>" ed25519 cert,sign never
+gpg --quick-add-key <FPR> cv25519 encr never
+gpg --export --armor <FPR> > secrets/pubkeys/<hostname>.asc
+# add <FPR> to .sops.yaml, then on an existing recipient machine:
+sops updatekeys secrets/*.env
+```
+
+The *first* machine ever is the one case the script can't help with: with no
+fingerprint in `.sops.yaml` yet there is nothing to append to, so write the
+`pgp:` block by hand after generating the key.
+
+Back up the new key's revocation certificate
+(`~/.gnupg/openpgp-revocs.d/<FPR>.rev`) to a password manager.
+
+---
+
+## 6. Sequence: build, boot, and steady state
 
 ### `nrs` / `drs` (rebuild)
 
@@ -94,11 +176,11 @@ to re-encrypt existing files to the new recipient list.
    `WantedBy = graphical-session-pre.target`, i.e. it runs as the graphical
    session comes up rather than at plain login.
 3. It decrypts. → **passphrase needed**, and nobody is typing at a terminal.
-   This is the fragile moment. See §5 and §6.
+   This is the fragile moment. See §7 and §8.
 
 ### Steady state
 
-Neither timer touches gpg:
+Nothing on a timer touches gpg:
 
 | unit | schedule | needs passphrase? |
 |---|---|---|
@@ -111,7 +193,7 @@ key. A sync at 3am doesn't wake up a passphrase prompt.
 
 ---
 
-## 5. pinentry: who asks for the passphrase
+## 7. pinentry: who asks for the passphrase
 
 `sops` → `gpg` → `gpg-agent` → **pinentry**. The agent picks the pinentry
 binary named in `~/.gnupg/gpg-agent.conf`, which `nix/home-manager/git.nix` generates:
@@ -122,7 +204,7 @@ binary named in `~/.gnupg/gpg-agent.conf`, which `nix/home-manager/git.nix` gene
 | Linux | `pinentry-gnome3` | **yes, if** the GNOME session's gcr prompter is up on the D-Bus session bus |
 | Linux (old config) | `pinentry-curses` | **no** — needs a controlling terminal; in a systemd unit there is none |
 
-We moved Linux from curses to gnome3 precisely because of §4's boot step. A
+We moved Linux from curses to gnome3 precisely because of §6's boot step. A
 tty-only pinentry cannot prompt from `sops-nix.service`, so secrets would
 simply never appear after a reboot.
 
@@ -153,36 +235,36 @@ somewhere to go.
 
 ---
 
-## 6. What goes wrong
+## 8. What goes wrong
 
 | symptom | cause | fix |
 |---|---|---|
-| `storage-box: sops has not rendered …` | the secret was never decrypted | `systemctl --user status sops-nix`, then restart it |
-| sops-nix unit failed, log says no secret key | this machine's fingerprint isn't in `.sops.yaml` | add it, `sops updatekeys secrets/*.env`, rebuild |
+| a consumer says its env file isn't there (e.g. `storage-box: sops has not rendered …`) | the secret was never decrypted | `systemctl --user status sops-nix`, then restart it |
+| sops-nix unit failed, log says no secret key | this machine's fingerprint isn't in `.sops.yaml` | `./secrets/enroll-machine`, then again on a recipient machine (§5) |
 | `gpg: Inappropriate ioctl for device` | a tty-only pinentry with no tty | `export GPG_TTY=$(tty)`, or use the GUI pinentry |
 | gpg hangs forever, `waiting for lock (held by …)` | stale lock file in `~/.gnupg/public-keys.d/`, often after a **hostname change** — the lock records the old host so gpg won't break it | `gpgconf --kill all`, then delete `.#lk*` and `*.lock` there |
-| `skipped: Unusable public key` when encrypting | the recipient's key has expired | `gpg --quick-set-expire <FPR> 2y`, re-export to `pubkeys/` |
+| `skipped: Unusable public key` when encrypting | the recipient's key carries an expiry and it has passed | `gpg --quick-set-expire <FPR> never`, re-export to `pubkeys/` |
 | passphrase asked again ~2h later | `max-cache-ttl 7200` | expected; raise it in `git.nix` if it grates |
 | secrets gone after reboot, before login completes | tmpfs, by design | they come back when `sops-nix.service` runs |
-| decrypt works on nacos, fails elsewhere | only nacos's fingerprint is currently a recipient | give that machine a key, add it, `updatekeys` |
+| decrypt works on one machine, fails on another | only that machine's fingerprint is a recipient | enroll the other one (§5) |
 
 ---
 
-## 7. Threat model
+## 9. Threat model
 
 **Protected:** the repo can be pushed to a public remote. Ciphertext is
 AES-256-GCM with keys wrapped to each machine's cv25519 subkey. Plaintext never
 enters git, the nix store (world-readable), or the disk on Linux.
 
-**Not protected:** anyone with your unlocked session can read
-`~/.config/storage-box/env` — it's a plain 0600 file owned by you. The private
-key at rest is guarded by your passphrase plus LUKS. Key *names* in dotenv
-files are visible. And sops leaves metadata in the clear: which fingerprints
+**Not protected:** anyone with your unlocked session can read the rendered
+plaintext — it's a plain 0600 file owned by you. The private key at rest is
+guarded by your passphrase plus LUKS. Key *names* in dotenv, YAML and JSON
+secrets are visible. And sops leaves metadata in the clear: which fingerprints
 can decrypt, and when it was last modified.
 
 **Losing keys.** Secrets are encrypted to *every* machine's key, so losing one
-machine costs a `sops updatekeys`, not access. Losing all of them means the
+machine costs an `enroll-machine` run, not access. Losing all of them means the
 ciphertext is unrecoverable — back up at least one secret key and its
 revocation certificate (`~/.gnupg/openpgp-revocs.d/<FPR>.rev`) to 1Password.
-Worth remembering that everything stored here is also *re-issuable*: a Storage
-Box credential can simply be regenerated.
+Worth remembering that most of what's stored here is also *re-issuable*: a
+Storage Box credential can simply be regenerated.

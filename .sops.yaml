@@ -1,6 +1,6 @@
 # Which GPG keys each secret is encrypted to — one fingerprint per machine.
-# Adding a machine: append its fingerprint, then `sops updatekeys secrets/*.env`.
-# See secrets/pubkeys/README.md.
+# Adding a machine: `./secrets/enroll-machine` appends the fingerprint and
+# re-encrypts. See secrets/README.md §5.
 creation_rules:
   - path_regex: secrets/.*\.env$
     pgp: >-

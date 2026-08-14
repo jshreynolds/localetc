@@ -2,18 +2,19 @@
 # gpg-keys.nix — GPG key hygiene: distribute public keys, warn before expiry.
 #
 # Two jobs, both consequences of the per-machine key layout used for sops:
-# every machine holds its own secret key and the other machines' public keys,
-# and every key expires after two years.
+# every machine holds its own secret key and the other machines' public keys.
 #
 #   1. Import secrets/pubkeys/*.asc at activation, so each machine can encrypt
 #      to all the others. Refreshing a key is then a rebuild, not a manual
 #      export/import between three machines.
 #
-#   2. Warn daily once any key is within 30 days of expiry. An expired key can
-#      still DECRYPT everything it ever could — only encrypting to it fails —
-#      so this is a nuisance alarm, not an emergency one. Extend with
-#      `gpg --quick-set-expire <FPR> 2y`: the expiry sits on the primary only,
-#      and an expired primary is enough to make the key unusable for encryption.
+#   2. Warn daily once any key in the keyring is within 30 days of expiry. The
+#      machine keys are made without one, but signing keys and imported keys
+#      often carry one. An expired key can still DECRYPT everything it ever
+#      could — only encrypting to it fails — so this is a nuisance alarm, not
+#      an emergency one. Extend with `gpg --quick-set-expire <FPR> <spec>`: the
+#      expiry sits on the primary only, and an expired primary is enough to
+#      make the key unusable for encryption.
 #
 # The secret keys themselves are never in this repo, and never generated here:
 # each machine makes its own, with a passphrase this repo never sees.

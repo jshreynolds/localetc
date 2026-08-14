@@ -8,17 +8,19 @@ Every machine imports all of these at activation (`nix/home-manager/gpg-keys.nix
 each one can encrypt to every other one. That is what sops needs in order to
 write a secret readable by all three.
 
-Add a machine:
+Add a machine — `./secrets/enroll-machine`, on the new machine and then on one
+that is already a recipient (see `secrets/README.md` §5). By hand that is:
 
     gpg --export --armor <FPR> > secrets/pubkeys/<hostname>.asc
     # add the fingerprint to .sops.yaml, then
     sops updatekeys secrets/*.env
 
-Extend an expiry (fingerprint does not change, so no re-encryption). Only the
-primary carries an expiry; an expired primary already makes the key unusable
-for encryption, so there is nothing to extend on the subkeys:
+Keys made by `enroll-machine` do not expire. For an older one that does, change
+or clear the expiry (the fingerprint does not change, so no re-encryption).
+Only the primary carries an expiry — an expired primary already makes the key
+unusable for encryption, so there is nothing to change on the subkeys:
 
-    gpg --quick-set-expire <FPR> 2y
+    gpg --quick-set-expire <FPR> never
     gpg --export --armor <FPR> > secrets/pubkeys/<hostname>.asc
 
 Then commit — the other machines pick it up on their next rebuild.
