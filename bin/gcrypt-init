@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# =============================================================================
+# gcrypt-init — turn any repo into an encrypted one on a remote you don't trust.
+#
+# `gcrypt::<url>` in front of an otherwise ordinary URL is the whole trick: git
+# hands the transport to git-remote-gcrypt, which encrypts every object before
+# it leaves the machine. The forge stores ciphertext and a manifest, and can
+# tell neither what the files are nor how many commits there are.
+#
+# This does the one-time setup — add the remote, point it at the key roster
+# (gcrypt-sync), optionally make the first push. Re-running is safe: each step
+# is skipped when it is already done.
+#
+# The remote must be a URL git can already reach with your normal credentials
+# (ssh, https, or a plain path). gcrypt changes what is sent, not how.
+#
+#   gcrypt-init git@github.com:me/vault.git --push
+#   git clone gcrypt::git@github.com:me/vault.git    # on the next machine
+#
+# A cloned repo needs its participants set too — that is `gcrypt-sync` in the
+# clone, not this script.
+# =============================================================================
+set -euo pipefail
+
+remote="origin"
+push=0
+pubkeys_arg=""
+url=""
+
+usage() {
+  cat <<'EOF'
+usage: gcrypt-init <url> [options]
+
+  --remote NAME   remote to create        (default: origin)
+  --push          push the current branch once configured
+  --pubkeys DIR   key roster              (default: <etc>/secrets/pubkeys)
+  -h, --help      this
+
+Run inside the repo you want encrypted. The url is the ordinary remote url —
+the gcrypt:: prefix is added for you.
+EOF
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --remote)  remote="$2";      shift 2 ;;
+    --pubkeys) pubkeys_arg="$2"; shift 2 ;;
+    --push)    push=1;           shift ;;
+    -h | --help) usage; exit 0 ;;
+    -*) echo "gcrypt-init: unknown option: $1" >&2; usage >&2; exit 2 ;;
+    *) [ -z "$url" ] || { echo "gcrypt-init: more than one url given" >&2; exit 2; }
+       url="$1"; shift ;;
+  esac
+done
+
+[ -n "$url" ] || { echo "gcrypt-init: no url given" >&2; usage >&2; exit 2; }
+
+command -v git-remote-gcrypt >/dev/null ||
+  { echo "gcrypt-init: git-remote-gcrypt not on PATH — add pkgs.git-remote-gcrypt" >&2; exit 1; }
+
+repo=$(git rev-parse --show-toplevel 2>/dev/null) ||
+  { echo "gcrypt-init: not inside a git repo" >&2; exit 1; }
+
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+sync="$here/gcrypt-sync"
+[ -x "$sync" ] || { echo "gcrypt-init: $sync missing" >&2; exit 1; }
+
+say() { printf '\n== %s\n' "$*"; }
+
+# --- 1. the remote ----------------------------------------------------------
+case "$url" in
+  gcrypt::*) ;;
+  *) url="gcrypt::$url" ;;
+esac
+
+existing=$(git -C "$repo" remote get-url "$remote" 2>/dev/null || true)
+if [ -z "$existing" ]; then
+  git -C "$repo" remote add "$remote" "$url"
+  say "added $remote -> $url"
+elif [ "$existing" = "$url" ]; then
+  say "$remote already points at $url"
+else
+  echo "gcrypt-init: $remote already points at $existing" >&2
+  echo "  change it deliberately: git remote set-url $remote $url" >&2
+  exit 1
+fi
+
+# --- 2. trust ---------------------------------------------------------------
+# gpg refuses to encrypt to a key you have never signed unless told otherwise,
+# and every machine key here is unsigned. Set globally by nix/home-manager/
+# git.nix; set it locally when this repo is used somewhere that isn't managed.
+if [ -z "$(git -C "$repo" config --get gcrypt.gpg-args || true)" ]; then
+  git -C "$repo" config gcrypt.gpg-args "--trust-model always"
+  say "set gcrypt.gpg-args=--trust-model always"
+fi
+
+# --- 3. the participants ----------------------------------------------------
+sync_args=(--remote "$remote")
+if [ -n "$pubkeys_arg" ]; then
+  sync_args+=(--pubkeys "$pubkeys_arg")
+fi
+"$sync" "${sync_args[@]}" "$repo"
+
+# --- 4. the first push ------------------------------------------------------
+# The first push is what creates the manifest, so until it happens there is
+# nothing on the far end to clone — a repo configured but never pushed looks
+# identical to one that was never set up.
+if [ "$push" -eq 1 ]; then
+  branch=$(git -C "$repo" symbolic-ref --short HEAD 2>/dev/null) ||
+    { echo "gcrypt-init: detached HEAD — check out a branch to push" >&2; exit 1; }
+  git -C "$repo" rev-parse HEAD >/dev/null 2>&1 ||
+    { echo "gcrypt-init: no commits yet — commit something to push" >&2; exit 1; }
+
+  say "pushing $branch — passphrase needed"
+  git -C "$repo" push --set-upstream "$remote" "$branch"
+else
+  say "configured; push when ready: git push --set-upstream $remote <branch>"
+fi

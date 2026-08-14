@@ -8,12 +8,14 @@ Every machine imports all of these at activation (`nix/home-manager/gpg-keys.nix
 each one can encrypt to every other one. That is what sops needs in order to
 write a secret readable by all three.
 
-This directory doubles as the roster for the **git-remote-gcrypt repos** listed
-in `nix/home-manager/gcrypt.nix`: it reads every fingerprint here into each
-repo's `remote.<name>.gcrypt-participants`, so one public key gets a machine
-both the secrets and those repos. Unlike sops, gcrypt only re-keys on push —
-a key added here takes effect once a machine that is *already* a participant
-runs `git commit --allow-empty -m rekey && git push` there.
+This directory doubles as the roster for **git-remote-gcrypt repos**. `bin/gcrypt-init`
+sets one up (`gcrypt-init <url>`, inside the repo) and `bin/gcrypt-sync` writes
+every fingerprint here into that repo's `remote.<name>.gcrypt-participants`, so
+one public key gets a machine both the secrets and those repos. Neither is run
+by a rebuild: participants live in each repo's own `.git/config`, and unlike
+sops, gcrypt only re-keys on push — a key added here takes effect once a machine
+that is *already* a participant runs `gcrypt-sync <repo>` there, then
+`git commit --allow-empty -m rekey && git push`.
 
 Add a machine — `./secrets/enroll-machine`, on the new machine and then on one
 that is already a recipient (see `secrets/README.md` §5). By hand that is:

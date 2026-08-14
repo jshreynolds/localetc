@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+# =============================================================================
+# gcrypt-sync — point a repo's gcrypt remote at the machines in secrets/pubkeys.
+#
+# A gcrypt remote encrypts objects client-side, so the forge hosting it only
+# ever stores ciphertext. gcrypt keeps the packfile keys in a manifest,
+# encrypts that manifest to `remote.<name>.gcrypt-participants` and signs it
+# with `gcrypt-signingkey`. Both are plain PGP fingerprints — the same
+# per-machine keys secrets/ already distributes — so each machine has ONE key
+# to look after, not two, and secrets/pubkeys/*.asc is the single roster: a
+# machine with a public key there gets the encrypted repos too.
+#
+# Participants live in each repo's own .git/config, which nothing outside that
+# repo can write, so this reconciles them on demand. It only writes on a real
+# change, so re-running on a matching repo is silent.
+#
+# IMPORTANT: running this re-keys nothing by itself. gcrypt rewrites the
+# manifest on PUSH only, and that push must come from a machine that is already
+# a participant — the same two-machine dance as enrolling a sops recipient
+# (secrets/README.md §5):
+#
+#   on a current participant:  git -C <repo> commit --allow-empty -m rekey
+#                              git -C <repo> push
+#   on the new machine:        git clone gcrypt::<url>
+#
+# Until that push happens, a newly listed machine can read secrets and still
+# not clone.
+# =============================================================================
+set -euo pipefail
+
+pubkeys_arg=""
+remote_arg=""
+repos=()
+
+usage() {
+  cat <<'EOF'
+usage: gcrypt-sync [options] [repo...]
+
+  --remote NAME   gcrypt remote to configure  (default: the only gcrypt:: one)
+  --pubkeys DIR   key roster                  (default: <this repo>/secrets/pubkeys)
+  -h, --help      this
+
+With no repo arguments, works on the repo containing the current directory.
+EOF
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --pubkeys) pubkeys_arg="$2"; shift 2 ;;
+    --remote)  remote_arg="$2";  shift 2 ;;
+    -h | --help) usage; exit 0 ;;
+    -*) echo "gcrypt-sync: unknown option: $1" >&2; usage >&2; exit 2 ;;
+    *) repos+=("$1"); shift ;;
+  esac
+done
+
+for tool in gpg git awk; do
+  command -v "$tool" >/dev/null || { echo "gcrypt-sync: $tool not on PATH" >&2; exit 1; }
+done
+
+# The roster lives next to this script, not next to the repo being configured —
+# any repo anywhere can be a gcrypt repo, but the machines are always these.
+if [ -n "$pubkeys_arg" ]; then
+  pubkeys="$pubkeys_arg"
+else
+  here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+  pubkeys="$(git -C "$here" rev-parse --show-toplevel)/secrets/pubkeys"
+fi
+[ -d "$pubkeys" ] || { echo "gcrypt-sync: no key roster at $pubkeys" >&2; exit 1; }
+
+if [ ${#repos[@]} -eq 0 ]; then
+  cwd_repo=$(git rev-parse --show-toplevel 2>/dev/null) ||
+    { echo "gcrypt-sync: not in a git repo, and no repo given" >&2; exit 1; }
+  repos=("$cwd_repo")
+fi
+
+# --- the roster -------------------------------------------------------------
+participants=$(
+  for key in "$pubkeys"/*.asc; do
+    [ -e "$key" ] || continue
+    gpg --show-keys --with-colons "$key" | awk -F: '$1 == "fpr" { print $10; exit }'
+  done | sort -u | xargs
+)
+[ -n "$participants" ] || { echo "gcrypt-sync: no public keys in $pubkeys" >&2; exit 1; }
+
+# This machine signs the manifest with whichever participant key it holds the
+# secret half of. gcrypt rejects a manifest signed by a non-participant.
+signingkey=""
+for fpr in $participants; do
+  if gpg --list-secret-keys "$fpr" >/dev/null 2>&1; then
+    signingkey="$fpr"
+    break
+  fi
+done
+[ -n "$signingkey" ] ||
+  echo "gcrypt-sync: no secret key for any participant — this machine cannot push" >&2
+
+# --- per repo ---------------------------------------------------------------
+# One config key at a time, written only when it differs, so the output is a
+# log of what actually changed.
+set_conf() {
+  local repo="$1" key="$2" want="$3" have
+  have=$(git -C "$repo" config --get "$key" || true)
+  [ "$have" = "$want" ] && return 0
+  git -C "$repo" config "$key" "$want"
+  echo "   $key -> $want"
+}
+
+status=0
+for repo in "${repos[@]}"; do
+  if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+    echo "gcrypt-sync: $repo is not a git repo — skipped" >&2
+    status=1
+    continue
+  fi
+
+  remote="$remote_arg"
+  if [ -z "$remote" ]; then
+    # The remote is discoverable: its URL is the only one carrying the helper.
+    read -ra found <<<"$(git -C "$repo" remote -v | awk '$2 ~ /^gcrypt::/ { print $1 }' | sort -u | xargs)"
+    case ${#found[@]} in
+      1) remote="${found[0]}" ;;
+      0) echo "gcrypt-sync: no gcrypt:: remote in $repo — gcrypt-init it first" >&2
+         status=1; continue ;;
+      *) echo "gcrypt-sync: $repo has ${#found[@]} gcrypt remotes — pass --remote" >&2
+         status=1; continue ;;
+    esac
+  fi
+
+  printf '\n== %s (%s)\n' "$repo" "$remote"
+  set_conf "$repo" "remote.$remote.gcrypt-participants" "$participants"
+  if [ -n "$signingkey" ]; then
+    set_conf "$repo" "remote.$remote.gcrypt-signingkey" "$signingkey"
+  fi
+done
+
+exit "$status"
