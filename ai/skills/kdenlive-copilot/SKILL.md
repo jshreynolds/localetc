@@ -149,7 +149,8 @@ relying on these for anything unusual — this list covers the stable core):
 | Next/Prev edit point | `Up`/`Down` | `Up`/`Down` (same) |
 | Add marker | `M` (varies) | `M` (same) |
 | Zoom timeline in/out | `Ctrl+Shift+Wheel` or `+`/`-` | `+`/`-` (same) |
-| Toggle snapping | `S` (icon toggle) | `S` (same) |
+| Toggle snapping | `Alt+M` (or magnet icon) — verified | `S` (differs) |
+| Go to prev/next snap point | `Alt+Left`/`Alt+Right` | `Up`/`Down`-ish |
 
 Don't present this table as gospel to the user verbatim without checking —
 treat it as your starting hypothesis, confirm against their actual bindings

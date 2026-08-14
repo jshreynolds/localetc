@@ -42,3 +42,33 @@ missing-shortcut situation — worth a feature request upstream if it comes
 up often.
 
 _Answered: 2026-08-09_
+
+## No audio output, but meters bounce
+
+**Q:** Kdenlive plays, the audio meters bounce, the Mac is unmuted and
+other apps play sound — but nothing comes out of Kdenlive.
+
+**A:** Kdenlive/MLT binds the output audio device at app start and does
+not follow macOS device changes. If the system output device changed
+(headphones plugged/unplugged, BT connect, display audio, aggregate
+device switch) after Kdenlive launched, it keeps rendering to the old
+device — meters bounce because the SDL consumer is fed fine, the samples
+just go nowhere audible. **Fix: restart Kdenlive** after any output-device
+change. If it recurs, pin an explicit device in Settings ‣ Configure
+Kdenlive ‣ Playback (Audio Backend / Driver / Device) instead of leaving
+it on default/auto.
+
+_Answered: 2026-08-10_
+
+## Toggle timeline snapping
+
+**Q:** How do I disable/enable snapping on the timeline?
+
+**A:** `Alt+M` (Option+M on Mac) — Sequence menu ‣ Snap; magnet icon in the
+timeline toolbar is the mouse path. Snaps to clip edges, markers, and
+guides across tracks. Related: `Alt+Left`/`Alt+Right` = go to
+previous/next snap point. NOT `S` — that was a bad guess in the
+cheat-sheet (Premiere's key); corrected against
+`user_interface/menu/sequence_menu.md`.
+
+_Answered: 2026-08-10_
