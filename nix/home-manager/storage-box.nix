@@ -89,7 +89,15 @@ let
           args+=(--resync)
         fi
 
+        # Finder droppings. Changing this list changes bisync's filter hash,
+        # which forces a --resync — delete the .seeded marker when you edit it.
         rclone bisync "$local_dir" "box:$STORAGE_BOX_ROOT/$folder" ''${args[@]+"''${args[@]}"} \
+          --exclude '.DS_Store' \
+          --exclude '._*' \
+          --exclude '.Spotlight-V100/**' \
+          --exclude '.Trashes/**' \
+          --exclude '.fseventsd/**' \
+          --exclude '.TemporaryItems/**' \
           --create-empty-src-dirs \
           --resilient \
           --recover \
