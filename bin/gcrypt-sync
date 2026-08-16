@@ -132,6 +132,18 @@ for repo in "${repos[@]}"; do
   if [ -n "$signingkey" ]; then
     set_conf "$repo" "remote.$remote.gcrypt-signingkey" "$signingkey"
   fi
+  # Name the recipients in the manifest instead of gcrypt's default hidden
+  # ones (-R). With -R, gpg has to trial-decrypt every packet to find yours;
+  # gpg 2.4.9 exits nonzero once any of those trials fails, even though it
+  # went on to decrypt successfully, and gcrypt chains on that exit status —
+  # so with more than one curve25519 machine on the roster, every machine but
+  # the one whose packet comes first fails to read the manifest at all. The
+  # cost of naming them is that the manifest reveals which keys can read the
+  # repo; the forge still learns nothing about the contents.
+  #
+  # This is a property of the manifest, so it is the PUSHING machine that
+  # decides. One push from a machine without it set breaks reads for everyone.
+  set_conf "$repo" "remote.$remote.gcrypt-publish-participants" "true"
 done
 
 exit "$status"
