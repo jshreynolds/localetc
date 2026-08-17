@@ -67,6 +67,15 @@ in
   # Where sops looks for the secret key that decrypts secrets/.
   sops.gnupg.home = "${config.home.homeDirectory}/.gnupg";
 
+  # sops-nix defaults its unit into graphical-session-pre.target, where the key's
+  # passphrase cannot yet be read back out of the login keyring: pinentry falls
+  # back to a dialog, and a dialog raised that early dies unanswered. Nothing
+  # pulls it in at login now — storage-box.nix's timer does, once the desktop has
+  # settled and the lookup is silent again.
+  systemd.user.services.sops-nix = lib.mkIf (!isDarwin) {
+    Install.WantedBy = lib.mkForce [ ];
+  };
+
   # Public keys only — safe to import unconditionally, and a no-op once present.
   #
   # A failed import is reported but does not abort activation: it costs this
@@ -75,16 +84,9 @@ in
   # a stale keyboxd lock that made every import time out for days, leaving an
   # empty keyring behind while rebuilds still looked green.
   #
-  # Skipped when no user session exists, which on linux means the boot run of
-  # home-manager-<user>.service — the same unit a rebuild restarts, so this is
-  # the only thing that tells the two apart. With use-keyboxd, importing before
-  # login spawns `keyboxd --daemon` with no /run/user/$UID to hold its socket,
-  # so it lands in ~/.gnupg and outlives activation holding pubring.db.lock. The
-  # session's gpg then looks under /run/user/$UID, finds nothing, starts a second
-  # keyboxd, and that one waits ~40s on the lock and times out. sops-nix.service
-  # is ordered before graphical-session-pre.target, so GNOME — mouse included —
-  # hangs for those 40s and no secret gets rendered. Nothing is lost by waiting:
-  # these keys only change with the repo, and that means a rebuild.
+  # Skipped at boot, detected by /run/user/$UID not existing yet: importing there
+  # strands a keyboxd holding pubring.db.lock, and every later gpg blocks 40s on
+  # it. Rebuilds run from a session, and only a rebuild changes these keys.
   home.activation.importGpgPubkeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if ${if isDarwin then "true" else ''[ -d "/run/user/$(id -u)" ]''}; then
       for key in ${pubkeys}/*.asc; do

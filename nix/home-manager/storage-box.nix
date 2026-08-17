@@ -127,6 +127,11 @@ in
   # would fail. `storage-box-sync` stays on PATH and says so if run by hand.
   systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin && isSopsRecipient) {
     Unit.Description = "Sync ~/sbox with the Hetzner Storage Box";
+    # Renders the env file read below, and is the only thing that runs sops-nix
+    # on linux at all — see gpg-keys.nix for why it no longer runs at login.
+    # Requires pulls it in and fails this run with it; After waits for it.
+    Unit.Requires = [ "sops-nix.service" ];
+    Unit.After = [ "sops-nix.service" ];
     Service = {
       Type = "oneshot";
       ExecStart = lib.getExe storage-box-sync;
