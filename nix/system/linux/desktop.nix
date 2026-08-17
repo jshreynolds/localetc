@@ -35,6 +35,16 @@
     variant = "";
   };
 
+  # ---- Qt apps under GNOME ---------------------------------------------------
+  # Qt auto-loads its gtk3 platform theme on GNOME, so a Qt file dialog is
+  # really a GtkFileChooser — which g_settings_new()s "org.gtk.Settings.FileChooser"
+  # and abort()s if that schema is unreachable. gtk3 is already in the system
+  # closure, but GLib only looks under $XDG_DATA_DIRS/glib-2.0/schemas, which no
+  # profile path provides. Without this, kdenlive dies on File > Open.
+  environment.sessionVariables.XDG_DATA_DIRS = [
+    "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
+  ];
+
   # ---- printing --------------------------------------------------------------
   services.printing.enable = true; # CUPS
 
