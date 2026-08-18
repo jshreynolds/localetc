@@ -87,6 +87,15 @@ keys of a YAML or JSON secret.
    a public key in `pubkeys/`. Copy that pattern for anything that must not
    break rebuilds on a half-enrolled machine.
 
+   On linux the secret then appears about 30s after login, when the sops-nix
+   timer fires (§7). Anything that must not depend on that timing says so:
+   ```nix
+   Unit.Requires = [ "sops-nix.service" ];   # run it, and fail with it
+   Unit.After = [ "sops-nix.service" ];      # and wait for it
+   ```
+   `storage-box.nix` does, which is also what re-runs the decryption if the
+   timer's attempt failed.
+
 3. `git add` both files, rebuild.
 
 Some secrets also need per-service setup that has nothing to do with sops — for
@@ -172,11 +181,14 @@ Back up the new key's revocation certificate
 ### Boot / login
 
 1. Runtime dir is empty — every secret is gone by design.
-2. `sops-nix.service` starts. Because `sops.gnupg.home` is set, it is
-   `WantedBy = graphical-session-pre.target`, i.e. it runs as the graphical
-   session comes up rather than at plain login.
-3. It decrypts. → **passphrase needed**, and nobody is typing at a terminal.
-   This is the fragile moment. See §7 and §8.
+2. Nothing decrypts *at* login. sops-nix ships its unit `WantedBy =
+   graphical-session-pre.target`; `gpg-keys.nix` forces that list empty, so the
+   unit exists and waits.
+3. 30s later `sops-nix.timer` fires it, and every declared secret is rendered.
+   → **no passphrase typed**: the login keyring is open by then, and pinentry
+   reads the stored passphrase back out of it silently (§7).
+4. `RemainAfterExit` holds the unit active, so everything that `Requires` it
+   afterwards reuses that one decryption instead of repeating it.
 
 ### Steady state
 
@@ -184,12 +196,14 @@ Nothing on a timer touches gpg:
 
 | unit | schedule | needs passphrase? |
 |---|---|---|
-| `storage-box-sync` | 5 min after boot, then hourly | **no** — reads the already-decrypted file |
+| `sops-nix` | 30s after login | **no** — pinentry answers from the login keyring |
+| `storage-box-sync` | 2 min after login, then hourly | **no** — reads what sops-nix already rendered |
+| `storage-box-sync-failed` | on failure of the above | notify-send, so a broken sync is visible |
 | `gpg-expiry-check` | daily | **no** — only lists public key metadata |
 
-This is the important asymmetry: **decryption happens rarely** (activation and
-boot), while the things that *use* secrets run constantly and never need your
-key. A sync at 3am doesn't wake up a passphrase prompt.
+This is the important asymmetry: **decryption happens rarely** (activation, and
+once per boot), while the things that *use* secrets run constantly and never
+need your key. A sync at 3am doesn't wake up a passphrase prompt.
 
 ---
 
@@ -212,26 +226,36 @@ simply never appear after a reboot.
 `max-cache-ttl 7200` (2h absolute). Within those windows you won't be asked
 again. Across a reboot the cache is always gone.
 
-**Open risk, not yet verified on this hardware:** `sops-nix.service` is ordered
-at `graphical-session-pre.target`, which is *before* GNOME Shell is fully up,
-and `pinentry-gnome3` needs Shell's gcr prompter to draw its dialog. It may
-prompt fine, or it may fail on the first boot after a rebuild. Test it with a
-real reboot and:
+**Why nothing prompts at boot.** `pinentry-gnome3` has two ways to answer: read
+the passphrase out of the login keyring over libsecret, silently, or draw a
+dialog through GNOME's gcr prompter. The silent path needs gnome-keyring's
+secret service, which PAM unlocks at login but which is not there yet while the
+session is still assembling. Run sops-nix at `graphical-session-pre.target` and
+both paths fail — the lookup has nothing to talk to, and the dialog gcr does
+draw is torn down unanswered in the same second:
 
 ```
-systemctl --user status sops-nix
-journalctl --user -u sops-nix -b
+gcr-prompter: received PerformPrompt call from callback …/Prompt/p1
+gcr-prompter: stopping prompting for operation …/Prompt/p1
+gcr-prompter: couldn't find the callback for prompting operation
 ```
 
-If it fails there, the fix is to order it later, in `nix/home-manager/gpg-keys.nix`:
+Ordering it at `graphical-session.target` instead is **not** enough; that was
+tried, and the dialog still died. So it is not ordered against the session at
+all. `gpg-keys.nix` forces its `WantedBy` empty and gives it a timer instead:
 
 ```nix
-systemd.user.services.sops-nix.Install.WantedBy = lib.mkForce [ "graphical-session.target" ];
+Timer.OnStartupSec = "30s";
 ```
 
-Recovering a failed boot decrypt without a reboot is just
-`systemctl --user restart sops-nix` from a terminal — the prompt then has
-somewhere to go.
+`OnStartupSec`, not `OnBootSec` — in a user manager the latter counts from
+system boot, so by the time you log in it has usually elapsed and the timer
+fires immediately, back into the session start it was meant to avoid. Counting
+from the user manager's own start means counting from login, which is when PAM
+unlocks the keyring the passphrase lives in.
+
+Recovering by hand is still `systemctl --user restart sops-nix` from a
+terminal.
 
 ---
 
@@ -242,7 +266,9 @@ somewhere to go.
 | a consumer says its env file isn't there (e.g. `storage-box: sops has not rendered …`) | the secret was never decrypted | `systemctl --user status sops-nix`, then restart it |
 | sops-nix unit failed, log says no secret key | this machine's fingerprint isn't in `.sops.yaml` | `./secrets/enroll-machine`, then again on a recipient machine (§5) |
 | `gpg: Inappropriate ioctl for device` | a tty-only pinentry with no tty | `export GPG_TTY=$(tty)`, or use the GUI pinentry |
-| gpg hangs forever, `waiting for lock (held by …)` | stale lock file in `~/.gnupg/public-keys.d/`, often after a **hostname change** — the lock records the old host so gpg won't break it | `gpgconf --kill all`, then delete `.#lk*` and `*.lock` there |
+| every gpg waits ~40s, then `keydb_search_first failed: Connection timed out`, log says `waiting for lock (held by <pid>)` | a **live** keyboxd holds `public-keys.d/pubring.db.lock` — classically one stranded by the boot-time home-manager activation, which sits in `system.slice` where `gpgconf --kill` from your session never reaches it | `kill <pid>` from the message. `gpg-keys.nix` skips the pubkey import at boot so this should not recur |
+| gpg hangs and the holding pid is **dead** | stale lock file in `~/.gnupg/public-keys.d/`, e.g. after a crash or a **hostname change** — the lock records the old host so gpg won't break it | `gpgconf --kill all`, then delete the `.#lk*` and `*.lock` whose pids are gone |
+| the desktop freezes for ~40s right after login, mouse included | something in the session start path is blocked on gpg — the row above, hit from a unit GNOME waits for | as above; check `systemd-analyze blame --user` for the unit that took the 40s |
 | `skipped: Unusable public key` when encrypting | the recipient's key carries an expiry and it has passed | `gpg --quick-set-expire <FPR> never`, re-export to `pubkeys/` |
 | passphrase asked again ~2h later | `max-cache-ttl 7200` | expected; raise it in `git.nix` if it grates |
 | secrets gone after reboot, before login completes | tmpfs, by design | they come back when `sops-nix.service` runs |

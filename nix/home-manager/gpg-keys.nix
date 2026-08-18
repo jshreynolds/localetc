@@ -72,8 +72,23 @@ in
   # back to a dialog, and a dialog raised that early dies unanswered. Nothing
   # pulls it in at login now — storage-box.nix's timer does, once the desktop has
   # settled and the lookup is silent again.
+  # RemainAfterExit so a consumer's Requires= is satisfied by the run that
+  # already happened, rather than decrypting again every time. Activation still
+  # restarts it, so an edited secret re-renders.
   systemd.user.services.sops-nix = lib.mkIf (!isDarwin) {
     Install.WantedBy = lib.mkForce [ ];
+    Service.RemainAfterExit = true;
+  };
+
+  # OnStartupSec, not OnBootSec: in a user manager the latter is measured from
+  # system boot, so by login it has usually elapsed already and the timer fires
+  # at once — back into the session start, where the keyring isn't up and the
+  # decryption fails. Half a minute after login it is up and pinentry answers
+  # from it without asking anyone.
+  systemd.user.timers.sops-nix = lib.mkIf (!isDarwin) {
+    Unit.Description = "Render sops secrets once the session has settled";
+    Timer.OnStartupSec = "30s";
+    Install.WantedBy = [ "timers.target" ];
   };
 
   # Public keys only — safe to import unconditionally, and a no-op once present.

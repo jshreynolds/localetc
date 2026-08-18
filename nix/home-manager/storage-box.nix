@@ -135,23 +135,38 @@ in
   # PATH either way and says so if run by hand.
   systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin && enabled) {
     Unit.Description = "Sync ~/sbox with the Hetzner Storage Box";
-    # Renders the env file read below, and is the only thing that runs sops-nix
-    # on linux at all — see gpg-keys.nix for why it no longer runs at login.
-    # Requires pulls it in and fails this run with it; After waits for it.
+    # Renders the env file read below. gpg-keys.nix's timer has normally done
+    # this 90s earlier; naming it here keeps a hand-started sync correct too,
+    # and re-runs it if that timer's attempt failed. Requires pulls it in and
+    # fails this run with it; After waits for it.
     Unit.Requires = [ "sops-nix.service" ];
     Unit.After = [ "sops-nix.service" ];
+    # Otherwise a failure here is silent until someone notices files not moving.
+    Unit.OnFailure = [ "storage-box-sync-failed.service" ];
     Service = {
       Type = "oneshot";
       ExecStart = lib.getExe storage-box-sync;
     };
   };
 
+  systemd.user.services.storage-box-sync-failed = lib.mkIf (!isDarwin && enabled) {
+    Unit.Description = "Report a failed Storage Box sync";
+    Service = {
+      Type = "oneshot";
+      ExecStart = ''
+        ${pkgs.libnotify}/bin/notify-send --urgency=critical "Storage Box sync failed" \
+          "journalctl --user -u storage-box-sync -e"
+      '';
+    };
+  };
+
   systemd.user.timers.storage-box-sync = lib.mkIf (!isDarwin && enabled) {
     Unit.Description = "Hourly Hetzner Storage Box sync";
     Timer = {
-      OnBootSec = "5m";
+      # After gpg-keys.nix's sops-nix timer, for the same reason it uses
+      # OnStartupSec: OnBootSec here fired the moment the session started.
+      OnStartupSec = "2m";
       OnUnitActiveSec = "1h";
-      Persistent = true;
     };
     Install.WantedBy = [ "timers.target" ];
   };
