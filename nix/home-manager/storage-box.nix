@@ -1,6 +1,10 @@
 # =============================================================================
 # storage-box.nix — two-way sync of ~/sbox folders with a Hetzner Storage Box,
-# on every machine.
+# on the machines that ask for them.
+#
+# Which folders a machine carries is `sboxFolders` in hosts/<hostname>/default.nix
+# (see mkDarwinHost in flake.nix). It defaults to none, so a new machine gets no
+# ~/sbox content until it names what it wants.
 #
 # rclone bisync over SFTP. A Storage Box has no shell, so nothing can run on
 # the far end — it is a dumb hub, and each machine reconciles against it on a
@@ -32,6 +36,7 @@
   config,
   isDarwin,
   hostname,
+  sboxFolders,
   ...
 }:
 let
@@ -43,9 +48,11 @@ let
   # another machine got around to running `sops updatekeys`.
   isSopsRecipient = builtins.pathExists ../../secrets/pubkeys/${hostname}.asc;
 
-  # Add a name here to sync another folder from the same box. Each entry pairs
-  # ~/sbox/<name> with <STORAGE_BOX_ROOT>/<name>.
-  folders = [ "yellingatrobots" ];
+  # `sboxFolders` comes from hosts/<hostname>/default.nix; each entry pairs
+  # ~/sbox/<name> with <STORAGE_BOX_ROOT>/<name>. Empty is the default, so a
+  # machine opts IN to the content rather than out of it — and with nothing to
+  # sync there is nothing to schedule.
+  enabled = isSopsRecipient && sboxFolders != [ ];
 
   envFile = "${config.xdg.configHome}/storage-box/env";
   localRoot = "${config.home.homeDirectory}/sbox";
@@ -77,7 +84,7 @@ let
       state="''${XDG_STATE_HOME:-$HOME/.local/state}/storage-box"
       mkdir -p "$state"
 
-      folders=(${lib.escapeShellArgs folders})
+      folders=(${lib.escapeShellArgs sboxFolders})
       for folder in "''${folders[@]}"; do
         local_dir="${localRoot}/$folder"
         mkdir -p "$local_dir"
@@ -114,7 +121,7 @@ in
 {
   home.packages = [ storage-box-sync ];
 
-  sops.secrets."storage-box.env" = lib.mkIf isSopsRecipient {
+  sops.secrets."storage-box.env" = lib.mkIf enabled {
     sopsFile = ../../secrets/storage-box.env;
     format = "dotenv";
     path = envFile;
@@ -122,10 +129,11 @@ in
   };
 
   # Linux: a plain oneshot on a timer. Persistent catches up after the machine
-  # has been off, which is the normal case here. Not scheduled on a machine
-  # without the key: nothing would have rendered the env file, so every run
-  # would fail. `storage-box-sync` stays on PATH and says so if run by hand.
-  systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin && isSopsRecipient) {
+  # has been off, which is the normal case here. Not scheduled on a machine that
+  # named no folders, nor on one without the key — there nothing would have
+  # rendered the env file, so every run would fail. `storage-box-sync` stays on
+  # PATH either way and says so if run by hand.
+  systemd.user.services.storage-box-sync = lib.mkIf (!isDarwin && enabled) {
     Unit.Description = "Sync ~/sbox with the Hetzner Storage Box";
     # Renders the env file read below, and is the only thing that runs sops-nix
     # on linux at all — see gpg-keys.nix for why it no longer runs at login.
@@ -138,7 +146,7 @@ in
     };
   };
 
-  systemd.user.timers.storage-box-sync = lib.mkIf (!isDarwin && isSopsRecipient) {
+  systemd.user.timers.storage-box-sync = lib.mkIf (!isDarwin && enabled) {
     Unit.Description = "Hourly Hetzner Storage Box sync";
     Timer = {
       OnBootSec = "5m";
@@ -150,7 +158,7 @@ in
 }
 // lib.optionalAttrs isDarwin {
   launchd.agents.storage-box-sync = {
-    enable = isSopsRecipient;
+    enable = enabled;
     config = {
       ProgramArguments = [ (lib.getExe storage-box-sync) ];
       RunAtLoad = true;

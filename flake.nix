@@ -200,6 +200,7 @@
           repo,
           isDarwin,
           work,
+          sboxFolders,
         }:
         {
           home-manager.useGlobalPkgs = true; # reuse the system nixpkgs (incl. allowUnfree)
@@ -216,6 +217,7 @@
               repo
               isDarwin
               work
+              sboxFolders
               ;
           };
           # If a real file already sits where home-manager wants to place a
@@ -227,6 +229,9 @@
       # `hostname` must equal `scutil --get LocalHostName` on that machine.
       # `casks`/`brews`/`masApps` are OPTIONAL host-specific apps, merged onto
       # the shared lists in nix/system/darwin/homebrew.nix.
+      # `sboxFolders` is OPTIONAL: the ~/sbox folders this machine keeps in sync
+      # with the Hetzner Storage Box (nix/home-manager/storage-box.nix). Empty
+      # by default — a machine only carries that content if it asks for it.
       # `modules` is the escape hatch for nix that belongs to ONE machine — see
       # the note at the `++ modules` line below.
       mkDarwinHost =
@@ -239,6 +244,7 @@
           casks ? [ ],
           brews ? [ ],
           masApps ? { },
+          sboxFolders ? [ ],
           modules ? [ ],
         }:
         nix-darwin.lib.darwinSystem {
@@ -279,6 +285,7 @@
                 home
                 repo
                 work
+                sboxFolders
                 ;
               isDarwin = true;
             })
@@ -299,7 +306,8 @@
       #
       # `apps` is the counterpart of mkDarwinHost's `casks`: OPTIONAL
       # host-specific GUI apps, given as nixpkgs attribute names and merged onto
-      # the shared list in nix/system/linux/apps.nix.
+      # the shared list in nix/system/linux/apps.nix. `sboxFolders` means the
+      # same thing it does in mkDarwinHost.
       mkNixosHost =
         {
           hostname,
@@ -309,6 +317,7 @@
           repo ? "${home}/${repoDirName}",
           work ? false,
           apps ? [ ],
+          sboxFolders ? [ ],
           modules ? [ ],
         }:
         nixpkgs.lib.nixosSystem {
@@ -348,6 +357,7 @@
                 home
                 repo
                 work
+                sboxFolders
                 ;
               isDarwin = false;
             })

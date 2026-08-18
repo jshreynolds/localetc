@@ -20,6 +20,8 @@
   system = "x86_64-linux";
   work = false;
 
+  sboxFolders = [ "yellingatrobots" ];
+
   apps = [
     # apps only THIS machine gets (shared list: nix/system/linux/apps.nix)
   ];

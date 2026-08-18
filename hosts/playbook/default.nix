@@ -9,6 +9,8 @@
   username = "jreynolds";
   work = false;
 
+  sboxFolders = [ "yellingatrobots" ];
+
   casks = [
     "lulu"
     "scrivener"
