@@ -30,6 +30,7 @@
     ./clipboard.nix # term_copy/term_paste over pbcopy or wl-copy
     ./agents.nix # agent skills + subagent specs: ~/.agents/skills (mirrored to claude/codex), ~/.claude/agents
     ./rnnoise-models.nix # pinned .rnnn models for ffmpeg's arnndn filter
+    ./kdenlive.nix # saved effect stacks + custom shortcuts, shared across machines
     ./protonmail-bridge.nix # headless IMAP/SMTP gateway for Proton Mail
     ./proton-drive.nix # pinned Proton Drive CLI (not in nixpkgs)
     ./storage-box.nix # rclone bisync of ~/sbox with the Hetzner Storage Box

@@ -56,6 +56,7 @@
       # -- daily drivers --------------------------------------------------
       "1password"
       "alacritty"
+      "ghostty"
       "obsidian"
       "rectangle"
       "slack"
@@ -88,6 +89,7 @@
       "kdenlive"
       "miro"
       "muesli"
+      "thunderbird"
     ]
     ++ hostCasks;
 

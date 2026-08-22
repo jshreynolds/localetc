@@ -17,10 +17,6 @@
     let
       # app names as they appear in /Applications (without .app)
       loginApps = [
-        "Rectangle"
-        "1Password"
-        "Dropbox"
-        "Muesli"
       ];
       mkLoginItem = app: {
         # lowercased, spaces stripped → launchd label / plist filename

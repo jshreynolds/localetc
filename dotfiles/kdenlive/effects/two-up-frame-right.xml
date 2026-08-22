@@ -1,0 +1,16 @@
+<effectgroup description="Podcast side by side, standard numbers algned on the right of the screen." id="two_up_frame_right" parentIn="2559">
+ <description>Podcast side by side, standard numbers algned on the right of the screen.</description>
+ <effect id="qtcrop">
+  <property name="radius">2559=0</property>
+  <property name="color">2559=0x00000000</property>
+  <property name="circle">0</property>
+  <property name="rect">2559=320 0 640 720</property>
+ </effect>
+ <effect id="qtblend">
+  <property name="rotation">2559=0</property>
+  <property name="rect">2559=320 0 1280 720 1.000000</property>
+  <property name="rotate_center">1</property>
+  <property name="distort">0</property>
+  <property name="compositing">0</property>
+ </effect>
+</effectgroup>

@@ -1,0 +1,16 @@
+<effectgroup description="Podcast side by side view.  Standard crop and transform to the left." id="two_up_frame_left" parentIn="2560">
+ <description>Podcast side by side view.  Standard crop and transform to the left.</description>
+ <effect id="qtcrop">
+  <property name="radius">2560=0</property>
+  <property name="color">2560=0x00000000</property>
+  <property name="circle">0</property>
+  <property name="rect">2560=320 0 640 720</property>
+ </effect>
+ <effect id="qtblend">
+  <property name="rotation">2560=0</property>
+  <property name="rect">2560=-320 0 1280 720 1.000000</property>
+  <property name="rotate_center">1</property>
+  <property name="distort">0</property>
+  <property name="compositing">0</property>
+ </effect>
+</effectgroup>

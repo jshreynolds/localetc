@@ -72,3 +72,69 @@ cheat-sheet (Premiere's key); corrected against
 `user_interface/menu/sequence_menu.md`.
 
 _Answered: 2026-08-10_
+
+## Side-by-side / two-up podcast layout
+
+**Q:** How do I set up a side-by-side podcast layout from two cameras?
+
+**A:** Two effects per clip, in order — **Crop by Padding** (`qtcrop`) to cut
+the slice, then **Transform** (`qtblend`) to move it. Not Position and Zoom
+(confirmed compositing-artifact bug; manual says use Transform). Transform
+can't clip, so it can't do the job alone: Size 50% gives two letterboxed
+boxes, Size 100% gives two overlapping full frames. Transform's **Size** is a
+uniform scale driving W/H together — W/H only split when **Distort** is on,
+which stretches faces. Shape the panel in the crop, not in Transform.
+
+Values for 1280x720, centered subjects (halves are 640x720):
+
+| | Crop rect | Transform |
+|---|---|---|
+| Left | `320 0 640 720` | X −320 |
+| Right | `320 0 640 720` | X +320 |
+
+Rect X 320 = (1280−640)/2. Transform X is a **frame offset**, not a
+destination coordinate — the slice already sits at 320. For 1920x1080 halves
+are 960x1080: rect `480 0 960 1080`, Transform X ∓480.
+
+Prereqs: Enable Track Compositing checked in the timeline toolbar (default
+on); sync cams with right-click ‣ Set Audio Reference then Align Audio to
+Reference. Save the stack via right-click in the effect stack ‣ Save Effect.
+
+_Answered: 2026-08-22_
+
+## Syncing/backing up saved effect stacks and custom shortcuts
+
+**Q:** Kdenlive has no sync. Where do saved effect stacks and custom keyboard
+shortcuts actually live, and can they be backed up without a hack?
+
+**A:** Three plain-XML locations, no absolute paths inside — fully portable.
+
+| What | macOS | Linux |
+|---|---|---|
+| Saved effect stacks (one .xml per stack) | `~/Library/Application Support/kdenlive/effects/` | `~/.local/share/kdenlive/effects/` |
+| Custom shortcuts **and** toolbar/menu layout | `~/Library/Application Support/kxmlgui5/kdenlive/kdenliveui.rc` | `~/.local/share/kxmlgui5/kdenlive/kdenliveui.rc` |
+| Custom project/render profiles, titles | siblings of `effects/` | same |
+
+Shortcuts are the `<ActionProperties>` block at the end of `kdenliveui.rc`,
+e.g. `<Action name="multicam_tool" shortcut="Shift+M"/>`. That file also
+carries toolbar layout and a `version` attribute KXMLGUI reconciles against
+the installed Kdenlive — syncing it shares the whole UI layout, fine across
+comparable versions.
+
+Sync by symlinking the **directories** (not individual files) into a repo:
+`effects/` because Kdenlive creates a new .xml per saved stack, and
+`kxmlgui5/kdenlive/` because Kdenlive may rewrite `kdenliveui.rc` atomically
+(temp + rename), which replaces a file-level symlink with a regular file.
+Quit Kdenlive before swapping — it rewrites `kdenliveui.rc` on exit.
+
+Do NOT blanket-sync `kdenliverc` (`~/Library/Preferences/` on macOS,
+`~/.config/` on Linux) — machine-specific project paths, MLT path, and the
+audio device behind the no-audio bug logged above.
+
+Portable snapshot without symlinks: Settings ‣ Configure Shortcuts ‣ Manage
+Schemes ‣ Export → `.kks`. Backup only, not live sync.
+
+This user's setup: home-manager module at `~/etc/nix/home-manager/kdenlive.nix`
+using `mkOutOfStoreSymlink`, content in `~/etc/dotfiles/kdenlive/`.
+
+_Answered: 2026-08-22_
